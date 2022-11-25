@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 
 import { useForm } from "react-hook-form";
@@ -7,8 +7,10 @@ import * as Yup from "yup";
 import { Typography, Box, Grid, Button, Alert } from "@mui/material";
 import { StyledModal, StyledInput } from "../styled";
 import CloseIcon from "@mui/icons-material/Close";
+import UserContext from "../UserContext";
 
-export default function Register({ close, setSB }) {
+export default function UpdateUser({ close, user, refetch }) {
+  const { setUserData } = useContext(UserContext);
   const [alert, setAlert] = useState(null);
 
   const validationSchema = Yup.object().shape({
@@ -19,13 +21,6 @@ export default function Register({ close, setSB }) {
       .min(2, "Username must be at least 2 characters")
       .max(20, "Username must not exceed 20 characters"),
     email: Yup.string().required("Email is required").email("Email is invalid"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(2, "Password must be at least 2 characters")
-      .max(40, "Password must not exceed 40 characters"),
-    confirmPassword: Yup.string()
-      .required("Confirm Password is required")
-      .oneOf([Yup.ref("password"), null], "Confirm Password does not match"),
   });
 
   const {
@@ -38,14 +33,13 @@ export default function Register({ close, setSB }) {
 
   async function onSubmit(values) {
     try {
-      const res = await axios.post(
-        "/register",
+      const res = await axios.patch(
+        "/user/update",
         {
           firstname: values.firstname,
           lastname: values.lastname,
           username: values.username,
           email: values.email,
-          password: values.password,
         },
         {
           withCredentials: true,
@@ -53,8 +47,11 @@ export default function Register({ close, setSB }) {
       );
       if (res.status === 201) {
         console.log(res.statusText, res.data.message);
-        setAlert(null);
-        setSB({ open: true, message: res.data.message });
+        setUserData({
+          username: values.username,
+          email: values.email,
+        });
+        refetch();
         close();
       }
     } catch (err) {
@@ -68,7 +65,7 @@ export default function Register({ close, setSB }) {
     <StyledModal component="main" maxWidth="xs">
       <Grid container>
         <Typography variant="h5" sx={{ mb: 2 }}>
-          Register
+          Update account
         </Typography>
         <Grid item xs>
           <Grid container direction="row-reverse">
@@ -83,6 +80,7 @@ export default function Register({ close, setSB }) {
           <Grid item xs={12} sm={6}>
             <StyledInput
               fullWidth
+              defaultValue={user.firstname}
               id="firstname"
               name="firstname"
               label="First name"
@@ -95,6 +93,7 @@ export default function Register({ close, setSB }) {
           <Grid item xs={12} sm={6}>
             <StyledInput
               fullWidth
+              defaultValue={user.lastname}
               id="lastname"
               name="lastname"
               label="Last name"
@@ -106,6 +105,7 @@ export default function Register({ close, setSB }) {
           <Grid item xs={12}>
             <StyledInput
               fullWidth
+              defaultValue={user.username}
               id="username"
               name="username"
               label="Username"
@@ -117,36 +117,13 @@ export default function Register({ close, setSB }) {
           <Grid item xs={12}>
             <StyledInput
               fullWidth
+              defaultValue={user.email}
               id="email"
               name="email"
               label="Email"
               {...register("email")}
               error={errors.email ? true : false}
               helperText={errors.email?.message}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <StyledInput
-              fullWidth
-              name="password"
-              id="password"
-              label="Password"
-              type="password"
-              {...register("password")}
-              error={errors.password ? true : false}
-              helperText={errors.password?.message}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <StyledInput
-              fullWidth
-              id="confirmPassword"
-              name="confirmPassword"
-              label="Confirm password"
-              type="password"
-              {...register("confirmPassword")}
-              error={errors.confirmPassword ? true : false}
-              helperText={errors.confirmPassword?.message}
             />
           </Grid>
           <Grid item xs={12}>

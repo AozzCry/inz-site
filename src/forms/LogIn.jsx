@@ -1,6 +1,5 @@
 import { useState } from "react";
 import axios from "axios";
-import API from "../env.jsx";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { StyledModal, StyledInput } from "../styled";
 
-export default function LogIn({ close, setUsername, setSB }) {
+export default function LogIn({ close, setUserData, setSB }) {
   const [alert, setAlert] = useState(null);
 
   const validationSchema = Yup.object().shape({
@@ -30,20 +29,24 @@ export default function LogIn({ close, setUsername, setSB }) {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit = async (values) => {
+  async function onSubmit(values) {
     try {
-      const res = await axios.request({
-        method: "POST",
-        url: API + "/login",
-        withCredentials: true,
-        data: {
+      const res = await axios.post(
+        "/login",
+        {
           email: values.email,
           password: values.password,
         },
-      });
+        {
+          withCredentials: true,
+        }
+      );
       if (res.status === 200) {
-        console.log(res.statusText, res.data.message);
-        setUsername(res.data.user.username);
+        console.log(res.data.message);
+        setUserData({
+          username: res.data.user.username,
+          email: res.data.user.email,
+        });
         setAlert(null);
         setSB({ open: true, message: res.data.message });
         close();
@@ -53,7 +56,7 @@ export default function LogIn({ close, setUsername, setSB }) {
         setAlert(err.response.data.message);
       } else throw err;
     }
-  };
+  }
 
   return (
     <StyledModal component="main" maxWidth="xs">
@@ -73,7 +76,6 @@ export default function LogIn({ close, setUsername, setSB }) {
       <Box component="form">
         <StyledInput
           margin="normal"
-          required
           fullWidth
           id="email"
           name="email"
@@ -86,7 +88,6 @@ export default function LogIn({ close, setUsername, setSB }) {
         />
         <StyledInput
           margin="normal"
-          required
           fullWidth
           name="password"
           label="Password"
@@ -104,7 +105,7 @@ export default function LogIn({ close, setUsername, setSB }) {
           onClick={handleSubmit(onSubmit)}
           sx={{ mt: 1, mb: 2 }}
         >
-          Log In
+          Submit
         </Button>
       </Box>
     </StyledModal>

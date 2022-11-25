@@ -1,23 +1,29 @@
-import { useState } from "react";
+import { Button, List, ListItem, ListItemText, Stack } from "@mui/material";
+import { NavLink, Outlet } from "react-router-dom";
 
-import { Button, Modal } from "@mui/material";
-
-import AddAddress from "../forms/AddAddress.jsx";
-
-export default function Home() {
-  const [openAddAddress, setOpenAddAddress] = useState(false);
-  const handleOpenAddAddress = () => setOpenAddAddress(true);
-  const handleCloseAddAddress = () => setOpenAddAddress(false);
+export default function UserInfo() {
   return (
-    <>
-      <Button onClick={handleOpenAddAddress} variant="contained">
-        AddAddress
-      </Button>
-      <Modal open={openAddAddress} onClose={handleCloseAddAddress}>
-        <>
-          <AddAddress close={handleCloseAddAddress} />
-        </>
-      </Modal>
-    </>
+    <Stack direction="row">
+      <List>
+        <ListItem>
+          <Button variant="contained" component={NavLink} to="/user/account">
+            <ListItemText primary="Account" />
+          </Button>
+        </ListItem>
+        <ListItem>
+          <Button variant="contained">
+            <ListItemText primary="Orders" />
+          </Button>
+        </ListItem>
+        <ListItem>
+          <Button variant="contained">
+            <ListItemText primary="Reviews" />
+          </Button>
+        </ListItem>
+      </List>
+      <List>
+        <Outlet />
+      </List>
+    </Stack>
   );
 }
