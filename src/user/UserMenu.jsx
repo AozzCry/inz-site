@@ -1,7 +1,7 @@
 import { Button, List, ListItem, ListItemText, Stack } from "@mui/material";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function UserInfo() {
+export default function UserMenu() {
   return (
     <Stack direction="row">
       <List>

@@ -1,31 +1,19 @@
 import { useState } from "react";
-import axios from "axios";
 import { useQuery } from "react-query";
 
 import { Button, CircularProgress, List, ListItem, Modal } from "@mui/material";
 
-import AddAddress from "../forms/AddAddress.jsx";
-import UpdateUser from "../forms/UpdateUser.jsx";
+import AddAddress from "../components/modalforms/AddAddress.jsx";
+import UpdateUser from "../components/modalforms/UpdateUser.jsx";
+import { getFetch } from "../hooks/fetchHooks.jsx";
 
 export default function Account() {
   const [openAddAddress, setOpenAddAddress] = useState(false);
   const [openUpdateUser, setOpenUpdateUser] = useState(false);
 
-  async function getUser() {
-    try {
-      const res = await axios.get("/user", {
-        withCredentials: true,
-      });
-      if (res.status === 200) {
-        return res.data;
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
   const { status, data, error, refetch } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
+    queryKey: ["/user"],
+    queryFn: getFetch,
   });
 
   if (status === "loading") {
@@ -44,27 +32,32 @@ export default function Account() {
         <Button onClick={() => setOpenUpdateUser(true)} variant="contained">
           Modify account
         </Button>
-        <ListItem>
-          Address:
-          {data.address ? (
-            <List>
-              <ListItem>Street: {data.address.street}</ListItem>
-              <ListItem>Street number: {data.address.streetNr}</ListItem>
-              <ListItem>City: {data.address.city}</ListItem>
-              <ListItem>Postal code: {data.address.postalCode}</ListItem>
+        {!data.isAdmin && (
+          <ListItem>
+            Address:
+            {data.address ? (
+              <List>
+                <ListItem>Street: {data.address.street}</ListItem>
+                <ListItem>Street number: {data.address.streetNr}</ListItem>
+                <ListItem>City: {data.address.city}</ListItem>
+                <ListItem>Postal code: {data.address.postalCode}</ListItem>
+                <Button
+                  onClick={() => setOpenAddAddress(true)}
+                  variant="contained"
+                >
+                  Change address
+                </Button>
+              </List>
+            ) : (
               <Button
                 onClick={() => setOpenAddAddress(true)}
                 variant="contained"
               >
-                Change address
+                Add address
               </Button>
-            </List>
-          ) : (
-            <Button onClick={() => setOpenAddAddress(true)} variant="contained">
-              Add address
-            </Button>
-          )}
-        </ListItem>
+            )}
+          </ListItem>
+        )}
       </List>
 
       <Modal open={openAddAddress} onClose={() => setOpenAddAddress(false)}>

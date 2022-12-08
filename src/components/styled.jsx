@@ -17,15 +17,15 @@ export const StyledModal = styled(Container)(({ theme }) => ({
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
-  "& .MuiFormLabel-root": {
-    color: theme.palette.primary.light,
-  },
-  "& input": {
-    color: theme.palette.text.white,
-  },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: theme.palette.primary.main,
+    },
+    "&:hover fieldset": {
+      borderColor: theme.palette.secondary.light,
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: theme.palette.primary.light,
     },
   },
 }));
@@ -38,11 +38,6 @@ export const StyledSearch = styled("div")(({ theme }) => ({
   alignItems: "center",
   display: "flex",
   borderRadius: "25px",
-  margin: theme.spacing(
-    0,
-    1,
-    useMediaQuery(theme.breakpoints.up("md")) ? 0 : 1,
-    1
-  ),
-  padding: theme.spacing(0, 1),
+  margin: theme.spacing(0.75, 1, 0.75, 1),
+  padding: theme.spacing(0.5, 2),
 }));

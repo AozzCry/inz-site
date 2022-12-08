@@ -1,5 +1,5 @@
-import { useState, useContext } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { postFetch } from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,13 +7,11 @@ import * as Yup from "yup";
 import { Typography, Box, Grid, Button, Alert } from "@mui/material";
 import { StyledModal, StyledInput } from "../styled";
 import CloseIcon from "@mui/icons-material/Close";
-import UserContext from "../UserContext";
 
-export default function UpdateUser({ close, user, refetch }) {
-  const { setUserData } = useContext(UserContext);
+export default function Register({ close, setSB }) {
   const [alert, setAlert] = useState(null);
 
-  const validationSchema = Yup.object().shape({
+  const registerValidationSchema = Yup.object().shape({
     firstname: Yup.string().required("Fullname is required"),
     lastname: Yup.string().required("Fullname is required"),
     username: Yup.string()
@@ -21,6 +19,13 @@ export default function UpdateUser({ close, user, refetch }) {
       .min(2, "Username must be at least 2 characters")
       .max(20, "Username must not exceed 20 characters"),
     email: Yup.string().required("Email is required").email("Email is invalid"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(2, "Password must be at least 2 characters")
+      .max(40, "Password must not exceed 40 characters"),
+    confirmPassword: Yup.string()
+      .required("Confirm Password is required")
+      .oneOf([Yup.ref("password"), null], "Confirm Password does not match"),
   });
 
   const {
@@ -28,44 +33,32 @@ export default function UpdateUser({ close, user, refetch }) {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(registerValidationSchema),
   });
 
-  async function onSubmit(values) {
-    try {
-      const res = await axios.patch(
-        "/user/update",
-        {
-          firstname: values.firstname,
-          lastname: values.lastname,
-          username: values.username,
-          email: values.email,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      if (res.status === 201) {
-        console.log(res.statusText, res.data.message);
-        setUserData({
-          username: values.username,
-          email: values.email,
-        });
-        refetch();
+  async function registerSubmit(values) {
+    postFetch("/register", {
+      firstname: values.firstname,
+      lastname: values.lastname,
+      username: values.username,
+      email: values.email,
+      password: values.password,
+    }).then(({ error, message }) => {
+      if (error) {
+        setAlert(error);
+      } else {
+        setAlert(null);
+        setSB({ open: true, message: message });
         close();
       }
-    } catch (err) {
-      if (err.response && err.response.status === 409) {
-        setAlert(err.response.data.message);
-      } else throw err;
-    }
+    });
   }
 
   return (
     <StyledModal component="main" maxWidth="xs">
       <Grid container>
         <Typography variant="h5" sx={{ mb: 2 }}>
-          Update account
+          Register
         </Typography>
         <Grid item xs>
           <Grid container direction="row-reverse">
@@ -80,7 +73,6 @@ export default function UpdateUser({ close, user, refetch }) {
           <Grid item xs={12} sm={6}>
             <StyledInput
               fullWidth
-              defaultValue={user.firstname}
               id="firstname"
               name="firstname"
               label="First name"
@@ -93,7 +85,6 @@ export default function UpdateUser({ close, user, refetch }) {
           <Grid item xs={12} sm={6}>
             <StyledInput
               fullWidth
-              defaultValue={user.lastname}
               id="lastname"
               name="lastname"
               label="Last name"
@@ -105,7 +96,6 @@ export default function UpdateUser({ close, user, refetch }) {
           <Grid item xs={12}>
             <StyledInput
               fullWidth
-              defaultValue={user.username}
               id="username"
               name="username"
               label="Username"
@@ -117,7 +107,6 @@ export default function UpdateUser({ close, user, refetch }) {
           <Grid item xs={12}>
             <StyledInput
               fullWidth
-              defaultValue={user.email}
               id="email"
               name="email"
               label="Email"
@@ -127,13 +116,37 @@ export default function UpdateUser({ close, user, refetch }) {
             />
           </Grid>
           <Grid item xs={12}>
+            <StyledInput
+              fullWidth
+              name="password"
+              id="password"
+              label="Password"
+              type="password"
+              {...register("password")}
+              error={errors.password ? true : false}
+              helperText={errors.password?.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <StyledInput
+              fullWidth
+              id="confirmPassword"
+              name="confirmPassword"
+              label="Confirm password"
+              type="password"
+              {...register("confirmPassword")}
+              error={errors.confirmPassword ? true : false}
+              helperText={errors.confirmPassword?.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
             {alert ? <Alert severity="error">{alert}</Alert> : <></>}
           </Grid>
         </Grid>
         <Button
           fullWidth
           variant="contained"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit(registerSubmit)}
           sx={{ mt: 1, mb: 2 }}
         >
           Submit

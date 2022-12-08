@@ -1,35 +1,22 @@
-import axios from "axios";
+import { putFetch } from "../../hooks/fetchHooks";
 
 import { Typography, Box, Grid, Button } from "@mui/material";
 import { StyledModal, StyledInput } from "../styled";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function AddAddress({ close, address, refetch }) {
-  const handleSubmit = async (event) => {
+  function addAddressSubmit(event) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    try {
-      const res = await axios.put(
-        "/user/address",
-        {
-          street: data.get("street"),
-          streetNr: data.get("streetNr"),
-          city: data.get("city"),
-          postalCode: data.get("postalCode"),
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      if (res.status === 201) {
-        console.log(res.statusText, res.data.message);
+    putFetch(
+      "/user/address",
+      Object.fromEntries(new FormData(event.currentTarget))
+    ).then(({ error }) => {
+      if (!error) {
         refetch();
         close();
       }
-    } catch (err) {
-      throw err;
-    }
-  };
+    });
+  }
 
   return (
     <StyledModal component="main" maxWidth="xs">
@@ -46,7 +33,7 @@ export default function AddAddress({ close, address, refetch }) {
         </Grid>
       </Grid>
 
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box component="form" onSubmit={addAddressSubmit}>
         <StyledInput
           margin="normal"
           fullWidth

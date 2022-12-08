@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { postFetch } from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,7 +13,7 @@ import { StyledModal, StyledInput } from "../styled";
 export default function LogIn({ close, setUserData, setSB }) {
   const [alert, setAlert] = useState(null);
 
-  const validationSchema = Yup.object().shape({
+  const loginValidationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
     password: Yup.string()
       .required("Password is required")
@@ -26,36 +26,27 @@ export default function LogIn({ close, setUserData, setSB }) {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(loginValidationSchema),
   });
 
-  async function onSubmit(values) {
-    try {
-      const res = await axios.post(
-        "/login",
-        {
-          email: values.email,
-          password: values.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      if (res.status === 200) {
-        console.log(res.data.message);
+  function loginSubmit(values) {
+    postFetch("/login", {
+      email: values.email,
+      password: values.password,
+    }).then(({ error, message, data }) => {
+      if (error) {
+        setAlert(error);
+      } else {
         setUserData({
-          username: res.data.user.username,
-          email: res.data.user.email,
+          username: data.username,
+          email: data.email,
+          isAdmin: data.isAdmin,
         });
         setAlert(null);
-        setSB({ open: true, message: res.data.message });
+        setSB({ open: true, message: message });
         close();
       }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setAlert(err.response.data.message);
-      } else throw err;
-    }
+    });
   }
 
   return (
@@ -102,7 +93,7 @@ export default function LogIn({ close, setUserData, setSB }) {
         <Button
           fullWidth
           variant="contained"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit(loginSubmit)}
           sx={{ mt: 1, mb: 2 }}
         >
           Submit
