@@ -1,7 +1,13 @@
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
+import { useState } from "react";
 import { StyledInput } from "../components/styled";
 
-export default function PaymentForm({ setPayment }) {
+export default function PaymentForm({ setActiveStep, payment, setPayment }) {
+  const [newPayment, setNewPayment] = useState(payment);
+  function savePayment() {
+    setPayment(newPayment);
+    setActiveStep((s) => s + 1);
+  }
   return (
     <>
       <Grid container spacing={3}>
@@ -13,7 +19,7 @@ export default function PaymentForm({ setPayment }) {
             fullWidth
             autoComplete="cc-name"
             onChange={(e) =>
-              setPayment((p) => ({ ...p, cardName: e.target.value }))
+              setNewPayment((p) => ({ ...p, cardName: e.target.value }))
             }
           />
         </Grid>
@@ -29,7 +35,7 @@ export default function PaymentForm({ setPayment }) {
             placeholder="____-____-____-____"
             name="card"
             onChange={(e) =>
-              setPayment((p) => ({ ...p, cardNumber: e.target.value }))
+              setNewPayment((p) => ({ ...p, cardNumber: e.target.value }))
             }
           />
         </Grid>
@@ -41,7 +47,7 @@ export default function PaymentForm({ setPayment }) {
             fullWidth
             autoComplete="cc-exp"
             onChange={(e) =>
-              setPayment((p) => ({ ...p, expDate: e.target.value }))
+              setNewPayment((p) => ({ ...p, expDate: e.target.value }))
             }
           />
         </Grid>
@@ -52,10 +58,22 @@ export default function PaymentForm({ setPayment }) {
             label="CVV"
             fullWidth
             autoComplete="cc-csc"
-            onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value }))}
+            onChange={(e) =>
+              setNewPayment((p) => ({ ...p, cvv: e.target.value }))
+            }
           />
         </Grid>
       </Grid>
+      <Button
+        variant="outlined"
+        sx={{ m: 1 }}
+        onClick={() => setActiveStep((s) => s - 1)}
+      >
+        Back
+      </Button>
+      <Button variant="contained" sx={{ m: 1 }} onClick={savePayment}>
+        Next
+      </Button>
     </>
   );
 }

@@ -1,17 +1,21 @@
 import { createContext, useEffect, useState } from "react";
 
-const UserContext = createContext({
+const Context = createContext({
   userData: {},
   setUserData: () => {},
   cart: [],
   setCart: () => {},
+  SBHandler: {},
+  setSB: () => {},
 });
 
-export const UserContextProvider = (props) => {
+export const ContextProvider = (props) => {
+  const [SBHandler, setSB] = useState({ open: false, message: "" });
   const [userData, setUserData] = useState({
     username: null,
     email: null,
     isAdmin: null,
+    userId: null,
   });
   const [cart, setCart] = useState(() => {
     const cart = localStorage.getItem("cart");
@@ -22,17 +26,19 @@ export const UserContextProvider = (props) => {
   }, [cart]);
 
   return (
-    <UserContext.Provider
+    <Context.Provider
       value={{
         userData,
         setUserData,
         cart,
         setCart,
+        SBHandler,
+        setSB,
       }}
     >
       {props.children}
-    </UserContext.Provider>
+    </Context.Provider>
   );
 };
 
-export default UserContext;
+export default Context;

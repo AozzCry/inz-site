@@ -16,17 +16,17 @@ export default function Categories({
   procSearch,
   searchCategories = "",
 }) {
+  const { palette } = useTheme();
+
   const { status, data, error } = useQuery({
     queryKey: ["/category"],
     queryFn: getFetch,
   });
-  const { palette } = useTheme();
-  if (status === "loading") {
-    return <CircularProgress />;
-  }
-  if (status === "error") {
-    return <span>Error: {error.message}</span>;
-  }
+
+  if (status === "loading") return <CircularProgress />;
+
+  if (status === "error") return <span>Error: {error.message}</span>;
+
   return (
     <List sx={{ bgcolor: palette.primary.dark }}>
       {data

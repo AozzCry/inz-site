@@ -1,7 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { Button } from "@mui/material";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { StyledInput } from "../components/styled";
 
-export default function AddressForm({ address, setAddress }) {
+export default function AddressForm({ address, setAddress, setActiveStep }) {
+  const nav = useNavigate();
+  const [newAddress, setNewAddress] = useState(address);
+  function saveAddress() {
+    setAddress(newAddress);
+    setActiveStep((s) => s + 1);
+  }
+
   return (
     <form>
       <StyledInput
@@ -13,7 +22,9 @@ export default function AddressForm({ address, setAddress }) {
         name="street"
         type="text"
         autoFocus
-        onChange={(e) => setAddress({ ...address, street: e.target.value })}
+        onChange={(e) =>
+          setNewAddress((a) => ({ ...a, street: e.target.value }))
+        }
       />
       <StyledInput
         margin="normal"
@@ -23,6 +34,9 @@ export default function AddressForm({ address, setAddress }) {
         label="Street number"
         name="streetNr"
         type="text"
+        onChange={(e) =>
+          setNewAddress((a) => ({ ...a, streetNr: e.target.value }))
+        }
       />
       <StyledInput
         margin="normal"
@@ -32,6 +46,7 @@ export default function AddressForm({ address, setAddress }) {
         label="City"
         name="city"
         type="text"
+        onChange={(e) => setNewAddress((a) => ({ ...a, city: e.target.value }))}
       />
       <StyledInput
         margin="normal"
@@ -41,7 +56,21 @@ export default function AddressForm({ address, setAddress }) {
         label="Postal code"
         name="postalCode"
         type="text"
+        onChange={(e) =>
+          setNewAddress((a) => ({ ...a, postalCode: e.target.value }))
+        }
       />
+      <Button sx={{ m: 1 }} variant="outlined" onClick={() => nav("/cart")}>
+        Back
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ m: 1 }}
+        type="submit"
+        onClick={saveAddress}
+      >
+        Next
+      </Button>
     </form>
   );
 }

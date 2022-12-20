@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { Container, TextField } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { Button, Container, TextField } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 export const StyledModal = styled(Container)(({ theme }) => ({
   position: "absolute",
@@ -22,10 +22,16 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
       borderColor: theme.palette.primary.main,
     },
     "&:hover fieldset": {
-      borderColor: theme.palette.secondary.light,
+      borderColor: theme.palette.primary.light,
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.light,
+      borderColor: theme.palette.secondary.light,
+    },
+  },
+
+  "&.MuiFormControl-root": {
+    label: {
+      color: theme.palette.text.primary,
     },
   },
 }));

@@ -1,4 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
+
+import { NavLink } from "react-router-dom";
 
 import {
   Typography,
@@ -12,24 +14,24 @@ import {
   Card,
   CardContent,
   CardActions,
-  TextField,
   IconButton,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 
-import UserContext from "../utils/UserContext";
-import { useTheme } from "@emotion/react";
-import { Link } from "react-router-dom";
+import Context from "../utils/Context";
 
 export default function Cart() {
-  const { cart, setCart } = useContext(UserContext);
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesMd = useMediaQuery(breakpoints.up("md"));
+
+  const { setSB, cart, setCart, userData } = useContext(Context);
+
   return (
     <Container sx={{ bgcolor: palette.primary.dark }}>
       <Typography variant="h4">
@@ -40,12 +42,18 @@ export default function Cart() {
             color: palette.action.delete,
           }}
           variant="outlined"
-          onClick={() => setCart([])}
+          onClick={() => {
+            setCart([]);
+            setSB({
+              open: true,
+              message: "Product cleared.",
+            });
+          }}
         >
           Clear cart
           <ClearAllIcon />
         </Button>
-        Cart({cart.reduce((sum, ci) => (sum += ci.count), 0)})
+        Cart({cart.reduce((sum, ci) => sum + ci.count, 0)})
       </Typography>
 
       <Stack direction={matchesMd ? "row" : "column"}>
@@ -54,7 +62,14 @@ export default function Cart() {
             cart.map(({ product }, index) => {
               return (
                 <ListItem
-                  sx={{ borderTop: 1, display: "flex", flexWrap: "wrap" }}
+                  sx={{
+                    p: 1,
+                    border: 1,
+                    borderRadius: 3,
+                    borderColor: palette.primary.main,
+                    display: "flex",
+                    flexWrap: "wrap",
+                  }}
                   key={index}
                   disablePadding
                 >
@@ -67,9 +82,13 @@ export default function Cart() {
                       border: 2,
                       borderColor: palette.action.delete,
                     }}
-                    onClick={() =>
-                      setCart(cart.filter((c) => c !== cart[index]))
-                    }
+                    onClick={() => {
+                      setCart(cart.filter((c) => c !== cart[index]));
+                      setSB({
+                        open: true,
+                        message: "Product removed from cart.",
+                      });
+                    }}
                   >
                     <DeleteIcon sx={{ color: palette.action.delete }} />
                   </IconButton>
@@ -83,59 +102,61 @@ export default function Cart() {
                     align="right"
                     primary={product.price.toFixed(2) + " CUR"}
                   />
-                  <Typography
-                    sx={{ m: 1, fontSize: "1.5em" }}
-                    color="text.primary"
-                  >
-                    x {cart[index].count}
-                  </Typography>
-
-                  <IconButton
-                    sx={{
-                      mr: 1,
-                      border: 2,
-                      borderColor: palette.action.positive,
-                    }}
-                    size="small"
-                    disabled={
-                      cart[index].count < cart[index].product.quantity
-                        ? false
-                        : true
-                    }
-                    onClick={() => {
-                      setCart(() => {
-                        let newCart = [...cart];
-                        newCart[index].count += 1;
-                        return newCart;
-                      });
-                    }}
-                  >
-                    <ExpandLessIcon sx={{ color: palette.action.positive }} />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      mr: 1,
-                      border: 2,
-                      borderColor: palette.action.negative,
-                    }}
-                    size="small"
-                    disabled={cart[index].count > 1 ? false : true}
-                    onClick={() => {
-                      setCart(() => {
-                        let newCart = [...cart];
-                        newCart[index].count -= 1;
-                        return newCart;
-                      });
-                    }}
-                  >
-                    <ExpandMoreIcon sx={{ color: palette.action.negative }} />
-                  </IconButton>
+                  <Stack direction="row">
+                    <IconButton
+                      sx={{
+                        mx: 1,
+                        border: 2,
+                        borderColor: palette.action.negative,
+                      }}
+                      size="small"
+                      disabled={cart[index].count > 1 ? false : true}
+                      onClick={() => {
+                        setCart(() => {
+                          let newCart = [...cart];
+                          newCart[index].count -= 1;
+                          return newCart;
+                        });
+                      }}
+                    >
+                      <ArrowBackIosNewIcon
+                        sx={{ color: palette.action.negative }}
+                      />
+                    </IconButton>
+                    <Typography sx={{ fontSize: "1.5em" }} color="text.primary">
+                      {cart[index].count}
+                    </Typography>
+                    <IconButton
+                      sx={{
+                        mx: 1,
+                        border: 2,
+                        borderColor: palette.action.positive,
+                      }}
+                      size="small"
+                      disabled={
+                        cart[index].count < cart[index].product.quantity
+                          ? false
+                          : true
+                      }
+                      onClick={() => {
+                        setCart(() => {
+                          let newCart = [...cart];
+                          newCart[index].count += 1;
+                          return newCart;
+                        });
+                      }}
+                    >
+                      <ArrowForwardIosIcon
+                        sx={{ color: palette.action.positive }}
+                      />
+                    </IconButton>
+                  </Stack>
                 </ListItem>
               );
             })}
         </List>
         <Box sx={{ width: 1 }}>
-          <Card sx={{ bgcolor: palette.secondary.main }}>
+          <Card sx={{ bgcolor: palette.secondary.main, m: 1 }}>
             <CardContent>
               <Typography sx={{ fontSize: 14 }} gutterBottom>
                 Sum of order:
@@ -143,13 +164,24 @@ export default function Cart() {
               <Typography variant="h5" component="div">
                 {cart
                   .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
-                  .toFixed(2) + " CUR"}
+                  .toFixed(2) + " PLN"}
               </Typography>
             </CardContent>
             <CardActions>
-              <Link to="../checkout" state={{ cart: cart }}>
-                <Button variant={"contained"}>Order</Button>
-              </Link>
+              {userData.email ? (
+                <Button
+                  to={cart.length > 0 ? "../checkout" : "#"}
+                  component={NavLink}
+                  variant={"contained"}
+                  disabled={cart.length > 0 && userData.email ? false : true}
+                >
+                  Order
+                </Button>
+              ) : (
+                <Typography variant="h6" sx={{ m: 1 }}>
+                  You must be logged in to order.
+                </Typography>
+              )}
             </CardActions>
           </Card>
         </Box>

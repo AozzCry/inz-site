@@ -9,10 +9,10 @@ import { Typography, Box, Grid, Button, Alert } from "@mui/material";
 import { StyledModal, StyledInput } from "../styled";
 import CloseIcon from "@mui/icons-material/Close";
 
-import UserContext from "../../utils/UserContext";
+import Context from "../../utils/Context";
 
 export default function UpdateUser({ close, user, refetch }) {
-  const { setUserData } = useContext(UserContext);
+  const { setUserData } = useContext(Context);
   const [alert, setAlert] = useState(null);
 
   const userUpdateValidationSchema = Yup.object().shape({

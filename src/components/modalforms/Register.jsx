@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import Context from "../../utils/Context";
+
 import { postFetch } from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
 import { Typography, Box, Grid, Button, Alert } from "@mui/material";
-import { StyledModal, StyledInput } from "../styled";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function Register({ close, setSB }) {
+import { StyledModal, StyledInput } from "../styled";
+
+export default function Register({ close }) {
   const [alert, setAlert] = useState(null);
+  const { setSB } = useContext(Context);
 
   const registerValidationSchema = Yup.object().shape({
     firstname: Yup.string().required("Fullname is required"),
@@ -18,7 +23,12 @@ export default function Register({ close, setSB }) {
       .required("Username is required")
       .min(2, "Username must be at least 2 characters")
       .max(20, "Username must not exceed 20 characters"),
-    email: Yup.string().required("Email is required").email("Email is invalid"),
+    email: Yup.string()
+      .required("Email is required")
+      .matches(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+        "Email is invalid"
+      ),
     password: Yup.string()
       .required("Password is required")
       .min(2, "Password must be at least 2 characters")
@@ -70,7 +80,7 @@ export default function Register({ close, setSB }) {
       </Grid>
       <Box component="form">
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               id="firstname"
@@ -82,7 +92,7 @@ export default function Register({ close, setSB }) {
               helperText={errors.firstname?.message}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={6} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               id="lastname"
@@ -93,7 +103,7 @@ export default function Register({ close, setSB }) {
               helperText={errors.lastname?.message}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               id="username"
@@ -104,7 +114,7 @@ export default function Register({ close, setSB }) {
               helperText={errors.username?.message}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               id="email"
@@ -115,7 +125,7 @@ export default function Register({ close, setSB }) {
               helperText={errors.email?.message}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               name="password"
@@ -127,7 +137,7 @@ export default function Register({ close, setSB }) {
               helperText={errors.password?.message}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ width: 1 }}>
             <StyledInput
               fullWidth
               id="confirmPassword"

@@ -3,14 +3,14 @@ import { createTheme } from "@mui/material/styles";
 export const darkTheme = createTheme({
   palette: {
     primary: {
-      main: "#718ab2",
-      light: "#03F090",
-      dark: "#073b4c",
+      main: "#0D7377",
+      light: "#14FFEC",
+      dark: "#212121",
     },
     secondary: {
-      main: "#251f47",
-      light: "#f8e16c",
-      dark: "#43415c",
+      main: "#23415c",
+      light: "#b8e16c",
+      dark: "#323232",
     },
     text: {
       primary: "#e3e3e3",
@@ -21,6 +21,8 @@ export const darkTheme = createTheme({
       delete: "#fa8585",
       positive: "#00ff11",
       negative: "#55ccee",
+      disabledBackground: "#424242",
+      disabled: "#000000",
     },
   },
   breakpoints: {
@@ -28,16 +30,10 @@ export const darkTheme = createTheme({
       xs: 400,
       sm: 600,
       md: 900,
+      pr: 1100,
     },
   },
   components: {
-    MuiMenu: {
-      styleOverrides: {
-        list: {
-          backgroundColor: "#073b4c",
-        },
-      },
-    },
     MuiContainer: {
       styleOverrides: {
         root: {
@@ -46,6 +42,7 @@ export const darkTheme = createTheme({
       },
     },
   },
+
   typography: {
     allVariants: {
       color: "#e3e3e3",

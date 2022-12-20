@@ -1,6 +1,5 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { postFetch } from "../hooks/fetchHooks";
 
@@ -13,26 +12,23 @@ import {
   Modal,
   Menu,
   MenuItem,
-  Divider,
   Drawer,
   Snackbar,
-  Slide,
   Alert,
   useTheme,
   TextField,
   Badge,
 } from "@mui/material";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
 import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
-import CategoryIcon from "@mui/icons-material/Category";
+import SegmentIcon from "@mui/icons-material/Segment";
 import LoginIcon from "@mui/icons-material/Login";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import UserContext from "../utils/UserContext";
+import Context from "../utils/Context";
 import LogIn from "../components/modalforms/LogIn";
 import Register from "../components/modalforms/Register";
 import Categories from "./Categories";
@@ -40,24 +36,28 @@ import Categories from "./Categories";
 import { StyledSearch } from "../components/styled";
 
 export default function Navbar() {
-  const { cart, userData, setUserData } = useContext(UserContext);
+  const { palette, breakpoints } = useTheme();
+  const matchesMd = useMediaQuery(breakpoints.up("md"));
+  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { SBHandler, setSB, cart, userData, setUserData } = useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
-
-  const { palette, breakpoints } = useTheme();
-  const matchesMd = useMediaQuery(breakpoints.up("md"));
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const [anchorElLog, setAnchorElLog] = useState(null);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const [SBHandler, setSB] = useState({ open: false, message: "" });
+  const [searchCategories, setSearchCategories] = useState("");
+  const [search, setSearch] = useState(null);
 
-  const nav = useNavigate();
   async function logoutSubmit() {
     postFetch("/logout").then(({ error, message }) => {
       if (!error) {
@@ -67,58 +67,13 @@ export default function Navbar() {
           email: null,
           isAdmin: null,
         });
-        nav("/");
+        navigate("/");
       }
     });
   }
 
-  // const { status, data, error, refetch } = useQuery({
-  //   queryKey: ["categories"],
-  //   queryFn: async () => {
-  //     try {
-  //       const res = await axios.get("/category", {
-  //         withCredentials: true,
-  //       });
-  //       return res.data;
-  //     } catch (err) {
-  //       if (err.response && err.response.data.message) {
-  //         console.error(err.response.status, err.response.data.message);
-  //       } else {
-  //         throw err;
-  //       }
-  //     }
-  //   },
-  // });
-
-  //------------ lol
-  useEffect(() => {
-    axios
-      .post(
-        "/login",
-        {
-          email: "eml@eml.eml",
-          password: "eml",
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res.data.message);
-        setUserData({
-          username: res.data.content.username,
-          email: res.data.content.email,
-          isAdmin: res.data.content.isAdmin,
-        });
-        setSB({ open: true, message: res.data.message });
-      });
-  }, []);
-  const [searchCategories, setSearchCategories] = useState("");
-
-  const [search, setSearch] = useState(null);
-  const location = useLocation();
   function procSearch(category) {
-    nav("/product", {
+    navigate("/product", {
       state: {
         name: search ? search : "",
         category: category ? [category] : [],
@@ -128,7 +83,7 @@ export default function Navbar() {
 
   return (
     <>
-      <AppBar position="static" color="secondary">
+      <AppBar position="static" sx={{ bgcolor: palette.primary.dark }}>
         <Toolbar
           sx={{
             display: "flex",
@@ -143,8 +98,8 @@ export default function Navbar() {
                   sx={{ mr: 1 }}
                   variant="contained"
                 >
+                  <SegmentIcon />
                   {matchesSm && "Categories"}
-                  <CategoryIcon />
                 </Button>
                 <Drawer
                   PaperProps={{
@@ -170,29 +125,30 @@ export default function Navbar() {
                 </Drawer>
               </>
             )}
-            {matchesXs && (
-              <NavLink to="/">
-                <Button sx={{ mr: 1 }} variant="contained">
-                  {matchesMd && "Home"}
-                  <HomeIcon />
-                </Button>
-              </NavLink>
-            )}
-          </Box>
-          {matchesMd && location.pathname !== "/product" && (
-            <StyledSearch>
-              <InputBase
-                fullWidth
-                sx={{ input: { color: palette.text.contrast } }}
-                placeholder="Search…"
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && procSearch()}
-              />
-              <Button onClick={procSearch}>
-                <SearchIcon />
+
+            <NavLink to="/">
+              <Button sx={{ mr: 1 }} variant="contained">
+                <HomeIcon />
+                {matchesMd && "Home"}
               </Button>
-            </StyledSearch>
-          )}
+            </NavLink>
+          </Box>
+          {matchesMd &&
+            location.pathname !== "/product" &&
+            !location.pathname.includes("admin") && (
+              <StyledSearch>
+                <InputBase
+                  fullWidth
+                  sx={{ input: { color: palette.text.contrast } }}
+                  placeholder="Search…"
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && procSearch()}
+                />
+                <Button onClick={() => procSearch()}>
+                  <SearchIcon />
+                </Button>
+              </StyledSearch>
+            )}
           <Box>
             <>
               <Button
@@ -206,7 +162,7 @@ export default function Navbar() {
                     vertical: "bottom",
                     horizontal: "left",
                   }}
-                  badgeContent={cart.reduce((sum, ci) => (sum += ci.count), 0)}
+                  badgeContent={cart.reduce((sum, ci) => sum + ci.count, 0)}
                   color="secondary"
                   invisible={cart.count < 0}
                 >
@@ -222,18 +178,23 @@ export default function Navbar() {
                       onClick={(e) => setAnchorEl(e.currentTarget)}
                     >
                       <AccountCircleIcon />
-                      {userData.username.slice(0, 9)}
-                      {userData.username.length > 10 && "..."}
+                      {matchesXs && userData.username.slice(0, 9)}
                     </Button>
                     <Menu
-                      classes={{ paper: { bgcolor: palette.primary.dark } }}
+                      sx={{
+                        ul: {
+                          backgroundColor: palette.secondary.dark,
+                          p: 0,
+                        },
+                      }}
                       anchorEl={anchorEl}
                       open={open}
                       onClose={() => setAnchorEl(null)}
                     >
                       {userData.isAdmin ? (
                         <MenuItem
-                          sx={{ bgcolor: palette.primary.dark }}
+                          dense={true}
+                          sx={{ bgcolor: palette.primary.main }}
                           component={NavLink}
                           to="/admin"
                           onClick={() => {
@@ -244,7 +205,7 @@ export default function Navbar() {
                         </MenuItem>
                       ) : (
                         <MenuItem
-                          sx={{ bgcolor: palette.primary.dark }}
+                          sx={{ bgcolor: palette.primary.main }}
                           component={NavLink}
                           to="/user"
                           onClick={() => {
@@ -254,9 +215,8 @@ export default function Navbar() {
                           User info
                         </MenuItem>
                       )}
-                      <Divider />
                       <MenuItem
-                        sx={{ bgcolor: palette.primary.dark }}
+                        sx={{ bgcolor: palette.primary.main }}
                         onClick={() => {
                           logoutSubmit();
                           setAnchorEl(null);
@@ -269,38 +229,85 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <Button
-                    onClick={() => setOpenLogIn(true)}
-                    variant="contained"
-                    sx={{ mr: 1 }}
-                  >
-                    {matchesMd ? "Log in" : <LoginIcon />}
-                  </Button>
-                  <Button
-                    onClick={() => setOpenRegister(true)}
-                    variant="contained"
-                  >
-                    {matchesMd ? "Register" : <AppRegistrationIcon />}
-                  </Button>
+                  {matchesSm ? (
+                    <>
+                      <Button
+                        onClick={() => setOpenLogIn(true)}
+                        variant="contained"
+                        sx={{
+                          mr: 1,
+                        }}
+                      >
+                        {matchesMd ? "Log in" : <LoginIcon />}
+                      </Button>
+                      <Button
+                        onClick={() => setOpenRegister(true)}
+                        variant="contained"
+                      >
+                        {matchesMd ? "Register" : <AppRegistrationIcon />}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        aria-controls="simple-menu"
+                        aria-haspopup="true"
+                        variant="contained"
+                        onClick={(e) => setAnchorElLog(e.currentTarget)}
+                      >
+                        <AccountCircleIcon />
+                      </Button>
+                      <Menu
+                        sx={{ ul: { bgcolor: palette.primary.dark } }}
+                        anchorEl={anchorElLog}
+                        keepMounted
+                        open={Boolean(anchorElLog)}
+                        onClose={() => setAnchorElLog(false)}
+                      >
+                        <Button
+                          onClick={() => {
+                            setOpenLogIn(true);
+                            setAnchorElLog(false);
+                          }}
+                          sx={{ mr: 1 }}
+                          variant="contained"
+                        >
+                          Log in
+                          <LoginIcon />
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setOpenRegister(true);
+                            setAnchorElLog(false);
+                          }}
+                          variant="contained"
+                        >
+                          Register <AppRegistrationIcon />
+                        </Button>
+                      </Menu>
+                    </>
+                  )}
                 </>
               )}
             </>
           </Box>
         </Toolbar>
-        {!matchesMd && location.pathname !== "/product" && (
-          <StyledSearch>
-            <InputBase
-              fullWidth
-              placeholder="Search…"
-              sx={{ input: { color: palette.text.contrast } }}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && procSearch()}
-            />
-            <Button onClick={procSearch}>
-              <SearchIcon />
-            </Button>
-          </StyledSearch>
-        )}
+        {!matchesMd &&
+          location.pathname !== "/product" &&
+          !location.pathname.includes("admin") && (
+            <StyledSearch>
+              <InputBase
+                fullWidth
+                placeholder="Search…"
+                sx={{ input: { color: palette.text.contrast } }}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && procSearch()}
+              />
+              <Button onClick={() => procSearch()}>
+                <SearchIcon />
+              </Button>
+            </StyledSearch>
+          )}
       </AppBar>
       <>
         <Modal open={openLogIn} onClose={() => setOpenLogIn(false)}>
@@ -308,13 +315,12 @@ export default function Navbar() {
             <LogIn
               close={() => setOpenLogIn(false)}
               setUserData={setUserData}
-              setSB={setSB}
             />
           </>
         </Modal>
         <Modal open={openRegister} onClose={() => setOpenRegister(false)}>
           <>
-            <Register close={() => setOpenRegister(false)} setSB={setSB} />
+            <Register close={() => setOpenRegister(false)} />
           </>
         </Modal>
       </>

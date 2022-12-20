@@ -9,7 +9,6 @@ import { getFetch, patchFetch, postFetch } from "../hooks/fetchHooks";
 
 import {
   Button,
-  Alert,
   Container,
   CircularProgress,
   InputBase,
@@ -19,13 +18,17 @@ import {
   Stack,
   useTheme,
   Typography,
+  useMediaQuery,
+  Box,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 import { StyledInput, StyledSearch } from "../components/styled";
 
 export default function ManageCategories() {
-  const { palette } = useTheme();
+  const { palette, breakpoints } = useTheme();
+  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+
   const { status, data, error, refetch } = useQuery({
     queryKey: ["/category"],
     queryFn: getFetch,
@@ -59,24 +62,35 @@ export default function ManageCategories() {
       }
     });
   }
-  function removeCategory(name) {
-    patchFetch("category/remove", { name: name }).then(({ error }) => {
+  function deleteCategory(name) {
+    patchFetch("category/delete", { name: name }).then(({ error }) => {
       if (!error) refetch();
     });
   }
 
   const [search, setSearch] = useState("");
 
-  if (status === "loading") {
-    return <CircularProgress />;
-  }
-  if (status === "error") {
-    return <span>Error: {error.message}</span>;
-  }
+  if (status === "loading") return <CircularProgress />;
+
+  if (status === "error") return <span>Error: {error.message}</span>;
+
   return (
-    <Container>
+    <Container sx={{ pb: 1 }}>
       <Stack direction="row">
+        {matchesSm && (
+          <Box sx={{ width: 1, mt: 2 }}>
+            <StyledSearch>
+              <InputBase
+                sx={{ width: 1, input: { color: palette.text.contrast } }}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Find category..."
+              />
+              <SearchIcon />
+            </StyledSearch>
+          </Box>
+        )}
         <StyledInput
+          sx={{ width: 1 }}
           margin="normal"
           fullWidth
           id="name"
@@ -87,41 +101,50 @@ export default function ManageCategories() {
           error={errors.name ? true : false}
           helperText={errors.name?.message}
         />
+        {alert && <Typography>{alert}</Typography>}
         <Button
           variant="contained"
+          size="small"
           onClick={handleSubmit(createCategory)}
-          sx={{ ml: 1, mt: 3, mb: 2 }}
+          sx={{ width: 0.5, ml: 1, mt: 3, mb: 2, maxHeight: "40px" }}
         >
           Create
         </Button>
       </Stack>
-      {alert ? <Alert severity="error">{alert}</Alert> : <></>}
-
-      <StyledSearch>
-        <InputBase
-          sx={{ width: 1 }}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Find category..."
-        />
-        <SearchIcon />
-      </StyledSearch>
-      <List>
+      {!matchesSm && (
+        <StyledSearch>
+          <InputBase
+            sx={{ width: 1, input: { color: palette.text.contrast } }}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Find category..."
+          />
+          <SearchIcon />
+        </StyledSearch>
+      )}
+      <List sx={{ mt: 2, borderRadius: "10px", bgcolor: palette.primary.main }}>
         {data
-          .filter((c) => c.name.toLowerCase().includes(search))
+          .filter((c) => c.name.toLowerCase().includes(search.trim()))
           .map((category) => {
             return (
-              <ListItem key={category._id}>
+              <ListItem
+                key={category._id}
+                sx={{
+                  borderRadius: "15px",
+                  bgcolor: palette.secondary.dark,
+                  m: 1,
+                }}
+              >
                 <ListItemText
                   primary={
                     <Typography color="textPrimary">{category.name}</Typography>
                   }
                 />
                 <Button
-                  onClick={() => removeCategory(category.name)}
+                  onClick={() => deleteCategory(category.name)}
                   variant="contained"
                   edge={"end"}
                 >
-                  Remove
+                  Delete
                 </Button>
               </ListItem>
             );

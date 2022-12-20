@@ -6,8 +6,10 @@ import { Button, CircularProgress, List, ListItem, Modal } from "@mui/material";
 import AddAddress from "../components/modalforms/AddAddress.jsx";
 import UpdateUser from "../components/modalforms/UpdateUser.jsx";
 import { getFetch } from "../hooks/fetchHooks.jsx";
+import { useTheme } from "@emotion/react";
 
 export default function Account() {
+  const { palette } = useTheme();
   const [openAddAddress, setOpenAddAddress] = useState(false);
   const [openUpdateUser, setOpenUpdateUser] = useState(false);
 
@@ -24,16 +26,30 @@ export default function Account() {
   }
   return (
     <>
-      <List>
+      <List
+        sx={{
+          bgcolor: palette.secondary.dark,
+          color: palette.text.primary,
+          m: 1,
+          borderRadius: 4,
+          border: 1,
+          borderColor: palette.primary.main,
+          p: 2,
+        }}
+      >
         <ListItem>First name: {data.firstname}</ListItem>
         <ListItem>Last name: {data.lastname}</ListItem>
         <ListItem>Username: {data.username}</ListItem>
-        <ListItem>Email: {data.email}</ListItem>
-        <Button onClick={() => setOpenUpdateUser(true)} variant="contained">
+        <ListItem sx={{ borderBottom: 1 }}>Email: {data.email}</ListItem>
+        <Button
+          sx={{ my: 1 }}
+          onClick={() => setOpenUpdateUser(true)}
+          variant="contained"
+        >
           Modify account
         </Button>
         {!data.isAdmin && (
-          <ListItem>
+          <ListItem sx={{ mt: 1 }}>
             Address:
             {data.address ? (
               <List>

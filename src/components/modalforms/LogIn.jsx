@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import Context from "../../utils/Context";
+
 import { postFetch } from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
@@ -10,11 +12,16 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { StyledModal, StyledInput } from "../styled";
 
-export default function LogIn({ close, setUserData, setSB }) {
+export default function LogIn({ close, setUserData }) {
   const [alert, setAlert] = useState(null);
-
+  const { setSB } = useContext(Context);
   const loginValidationSchema = Yup.object().shape({
-    email: Yup.string().required("Email is required").email("Email is invalid"),
+    email: Yup.string()
+      .required("Email is required")
+      .matches(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+        "Email is invalid"
+      ),
     password: Yup.string()
       .required("Password is required")
       .min(2, "Password must be at least 2 characters")
@@ -41,6 +48,7 @@ export default function LogIn({ close, setUserData, setSB }) {
           username: data.username,
           email: data.email,
           isAdmin: data.isAdmin,
+          userId: data.userId,
         });
         setAlert(null);
         setSB({ open: true, message: message });

@@ -14,22 +14,26 @@ import AdminMenu from "./admin/AdminMenu.jsx";
 import CreateProduct from "./admin/CreateProduct.jsx";
 import ManageCategories from "./admin/ManageCategories.jsx";
 import ManageUsers from "./admin/ManageUsers.jsx";
+import ManageOrders from "./admin/ManageOrders.jsx";
 
 import Account from "./user/Account.jsx";
 import UserMenu from "./user/UserMenu.jsx";
+import Orders from "./user/Orders.jsx";
 
-import UserContext from "./utils/UserContext.jsx";
-import Footer from "./main/Footer.jsx";
+import Context from "./utils/Context.jsx";
+import ProductDetails from "./product/ProductDetails.jsx";
 
 export default function App() {
-  const { userData } = useContext(UserContext);
+  const { userData } = useContext(Context);
   return (
     <BrowserRouter>
-      <Navbar />
-      <Container sx={{ minHeight: "80vh" }} disableGutters>
+      <Container disableGutters sx={{ minHeight: "100vh" }}>
+        <Navbar />
         <Routes>
           <Route path="" element={<Home />} />
           <Route path="product" element={<Products />} />
+          <Route path="product/:nameLink" element={<ProductDetails />} />
+
           <Route path="cart" element={<Cart />} />
           {userData.username && !userData.isAdmin && (
             <Route path="checkout" element={<Checkout />} />
@@ -39,23 +43,20 @@ export default function App() {
               <Route path="createproduct" element={<CreateProduct />} />
               <Route path="categories" element={<ManageCategories />} />
               <Route path="users" element={<ManageUsers />} />
+              <Route path="orders" element={<ManageOrders />} />
             </Route>
           )}
 
           {userData.username && !userData.isAdmin && (
             <Route path="user" element={<UserMenu />}>
               <Route path="account" element={<Account />} />
-              <>
-                <Route path="orders" element={<NotFound />} />
-                <Route path="reviews" element={<NotFound />} />
-              </>
+              <Route path="orders" element={<Orders />} />
             </Route>
           )}
 
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
-      <Footer />
     </BrowserRouter>
   );
 }

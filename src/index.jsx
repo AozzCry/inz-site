@@ -9,7 +9,7 @@ import { darkTheme } from "./utils/themes.jsx";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import { UserContextProvider } from "./utils/UserContext.jsx";
+import { ContextProvider } from "./utils/Context.jsx";
 
 axios.defaults.baseURL = API;
 const queryClient = new QueryClient();
@@ -19,9 +19,9 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
       <QueryClientProvider client={queryClient}>
-        <UserContextProvider>
+        <ContextProvider>
           <App />
-        </UserContextProvider>
+        </ContextProvider>
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>

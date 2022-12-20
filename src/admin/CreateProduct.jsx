@@ -5,34 +5,32 @@ import { getFetch, postFetch } from "../hooks/fetchHooks";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
 import {
   Box,
   Button,
   Alert,
   Container,
-  TextField,
   MenuItem,
   Stack,
-  Menu,
   useTheme,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+
 import { StyledInput } from "../components/styled";
-import { Palette } from "@mui/icons-material";
-const statuses = [
-  "in stock",
-  "stocked on demand",
-  "out of stock",
-  "discontinued",
-];
+
+const statuses = ["in stock", "out of stock", "discontinued"];
 
 export default function CreateProduct() {
   const { palette } = useTheme();
+
   const [alert, setAlert] = useState(null);
   const [specification, setSpecification] = useState({ name: "", value: "" });
   const [specifications, setSpecifications] = useState([]);
+
   const [categories, setCategories] = useState([]);
   const [searchCategories, setSearchCategories] = useState("");
+
   const { status, data } = useQuery({
     queryKey: ["/category"],
     queryFn: getFetch,
@@ -44,18 +42,22 @@ export default function CreateProduct() {
       .min(3, "Name must be at least 3 characters.")
       .max(127, "Name must not exceed 127 characters."),
     price: Yup.number()
-      .typeError("Price is required.")
+      .typeError("Price must be a number.")
       .required("Price is required.")
       .min(0.01, "Price must be bigger than 0."),
     shortDescription: Yup.string().max(
       63,
-      "Username must not exceed 63 characters."
+      "Short description must not exceed 63 characters."
     ),
     longDescription: Yup.string().max(
-      508,
-      "Username must not exceed 508 characters."
+      4000,
+      "Long description must not exceed 4000 characters."
     ),
-    quantity: Yup.number(),
+    quantity: Yup.number()
+      .typeError("Quantity must be a number.")
+      .min(0, "Quantity can't be negative.")
+      .nullable(true)
+      .transform((_, val) => (val ? Number(val) : null)),
     status: Yup.string(),
   });
 
@@ -69,7 +71,7 @@ export default function CreateProduct() {
   });
 
   async function crerateProductSubmit(values) {
-    const { error } = postFetch("/product/create", {
+    postFetch("/product/create", {
       name: values.name,
       price: values.price,
       shortDescription: values.shortDescription,
@@ -78,14 +80,17 @@ export default function CreateProduct() {
       quantity: values.quantity,
       status: values.status,
       categories: categories.map((c) => c.name),
+    }).then(({ error, message }) => {
+      if (error) setAlert(error);
+      else {
+        reset();
+        setSpecifications([]);
+        setCategories([]);
+        setAlert("");
+      }
     });
-    if (error) setAlert(error);
-    else {
-      reset();
-      setSpecifications([]);
-      setCategories([]);
-    }
   }
+
   return (
     <Container>
       <Box component="form">
@@ -196,18 +201,22 @@ export default function CreateProduct() {
           <StyledInput
             select
             fullWidth
-            sx={{
-              ".MuiSvgIcon-root ": {
-                fill: palette.primary.main,
+            inputProps={{
+              ...register("status"),
+              MenuProps: {
+                MenuListProps: {
+                  sx: {
+                    backgroundColor: palette.primary.dark,
+                  },
+                },
               },
             }}
             margin="dense"
             label="Status"
             defaultValue="out of stock"
-            inputProps={register("status")}
           >
             {statuses.map((value) => (
-              <MenuItem MenuProps key={value} value={value}>
+              <MenuItem key={value} value={value}>
                 {value}
               </MenuItem>
             ))}
@@ -257,8 +266,9 @@ export default function CreateProduct() {
                   (category) =>
                     category.name
                       .toLowerCase()
-                      .includes(searchCategories ? searchCategories : null) &&
-                    !categories.includes(category)
+                      .includes(
+                        searchCategories ? searchCategories.trim() : null
+                      ) && !categories.includes(category)
                 )
                 .map((category) => (
                   <Button
@@ -279,7 +289,6 @@ export default function CreateProduct() {
           </Container>
         </Stack>
         {alert ? <Alert severity="error">{alert}</Alert> : <></>}
-
         <Button
           fullWidth
           variant="contained"
