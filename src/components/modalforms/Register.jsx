@@ -47,7 +47,7 @@ export default function Register({ close }) {
   });
 
   async function registerSubmit(values) {
-    postFetch("/register", {
+    postFetch("auth/register", {
       firstname: values.firstname,
       lastname: values.lastname,
       username: values.username,

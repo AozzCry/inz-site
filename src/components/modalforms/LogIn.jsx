@@ -37,7 +37,7 @@ export default function LogIn({ close, setUserData }) {
   });
 
   function loginSubmit(values) {
-    postFetch("/login", {
+    postFetch("auth/login", {
       email: values.email,
       password: values.password,
     }).then(({ error, message, data }) => {
