@@ -32,6 +32,8 @@ import Question from "../question/Question";
 import ImageDetails from "../image/ImageDetails";
 import ProductNavbar from "./ProductNavbar";
 import ConfirmDialog from "../components/ConfirmDialog";
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
 
 export default function ProductDetails() {
   const { palette, breakpoints } = useTheme();
@@ -51,13 +53,19 @@ export default function ProductDetails() {
   const reviewsRef = useRef(null);
   const questionsRef = useRef(null);
 
-  const { data, isError, isLoading, refetch } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: product,
+    refetch,
+  } = useQuery({
     queryKey: [window.location.pathname],
     queryFn: getFetch,
   });
 
   function deleteProduct() {
-    patchFetch("/product/delete", { productId: data.product._id }).then(
+    patchFetch("/product/delete", { productId: product.product._id }).then(
       ({ message }) => {
         setSB({ open: true, message: message });
         navigate("-1");
@@ -66,12 +74,12 @@ export default function ProductDetails() {
   }
 
   function addToCart() {
-    if (!cart.some((p) => p.product._id === data.product._id))
-      setCart([...cart, { product: data.product, count: 1 }]);
+    if (!cart.some((p) => p.product._id === product.product._id))
+      setCart([...cart, { product: product.product, count: 1 }]);
   }
-  if (isError) return <div>error</div>;
-  if (isLoading) return <div>skeleton</div>;
-  if (data)
+  if (isLoading) return <LoadingPage what="product" />;
+  if (isError) return <ErrorPage error={error.message} />;
+  if (product)
     return (
       <>
         <span ref={mainRef} />
@@ -96,16 +104,16 @@ export default function ProductDetails() {
               <ImageDetails
                 setConfirmDialog={setConfirmDialog}
                 images={
-                  data.images.length > 0 && data.images.slice(0).reverse()
+                  product.images.length > 0 && product.images.slice(0).reverse()
                 }
-                productId={data.product._id}
+                productId={product.product._id}
                 isAdmin={userData && userData.isAdmin}
               />
 
               <CardContent sx={{ m: 0.25, border: 1, borderRadius: 5 }}>
-                {data.product.categories.map((category, index) => (
+                {product.product.categories.map((category) => (
                   <Button
-                    key={index}
+                    key={category}
                     sx={{ mr: 1, mb: 1, color: palette.text.primary }}
                     variant="outlined"
                     onClick={() => {
@@ -121,10 +129,10 @@ export default function ProductDetails() {
                   </Button>
                 ))}
                 <Typography sx={{ borderBottom: 1 }} gutterBottom variant="h6">
-                  {data.product.name}
+                  {product.product.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {data.product.shortDescription}
+                  {product.product.shortDescription}
                 </Typography>
                 <Stack sx={{ mt: 2 }} direction="row">
                   <Paper
@@ -134,19 +142,19 @@ export default function ProductDetails() {
                       p: 1,
                     }}
                   >
-                    {data.product.gradeFromReviews !== null && (
+                    {product.product.gradeFromReviews !== null && (
                       <>
                         <Rating
                           readOnly
                           value={
-                            data.product.starsFromReviews /
-                            data.product.countOfReviews
+                            product.product.starsFromReviews /
+                            product.product.countOfReviews
                           }
                           precision={0.5}
                           emptyIcon={<StarIcon />}
                         />
                         <Typography textAlign={"center"} variant="body1">
-                          ({data.product.countOfReviews})
+                          ({product.product.countOfReviews})
                         </Typography>
                       </>
                     )}
@@ -159,11 +167,11 @@ export default function ProductDetails() {
                       ml: 1,
                     }}
                   >
-                    {data.product.gradeFromReviews !== null && (
+                    {product.product.gradeFromReviews !== null && (
                       <>
                         <Typography align="center">Times bought:</Typography>
                         <Typography align="center" sx={{ ml: 1 }}>
-                          {data.product.timesBought}
+                          {product.product.timesBought}
                         </Typography>
                       </>
                     )}
@@ -181,7 +189,7 @@ export default function ProductDetails() {
             >
               <Stack sx={{ p: 1 }}>
                 <Typography variant="h5" sx={{ m: 1 }}>
-                  Price: {data.product.price.toFixed(2)}PLN
+                  Price: {product.product.price.toFixed(2)}PLN
                   {userData.isAdmin && (
                     <Button
                       sx={{ ml: 1, p: 0.5 }}
@@ -208,7 +216,7 @@ export default function ProductDetails() {
                     p: 1,
                   }}
                 >
-                  {data.product.gradeFromReviews !== null && (
+                  {product.product.gradeFromReviews !== null && (
                     <Container
                       sx={{
                         borderRadius: 3,
@@ -219,16 +227,16 @@ export default function ProductDetails() {
                       disableGutters
                     >
                       <Typography align="center">
-                        Status: {data.product.status}
+                        Status: {product.product.status}
                       </Typography>
                       <Typography sx={{ ml: 2 }} align="center">
-                        Remaining: {data.product.quantity}
+                        Remaining: {product.product.quantity}
                       </Typography>
                     </Container>
                   )}
                 </Paper>
                 {cart &&
-                cart.find((ci) => ci.product._id === data.product._id) ? (
+                cart.find((ci) => ci.product._id === product.product._id) ? (
                   <NavLink to="/cart">
                     <Button fullWidth variant="contained">
                       Go to cart
@@ -252,7 +260,7 @@ export default function ProductDetails() {
             Description
           </Typography>
           <Typography sx={{ mx: 1 }} style={{ whiteSpace: "pre-line" }}>
-            {data.product.longDescription}
+            {product.product.longDescription}
           </Typography>
           <Typography
             ref={specificationRef}
@@ -263,8 +271,8 @@ export default function ProductDetails() {
           </Typography>
           <Table>
             <TableBody>
-              {data.product.specifications.map((specification, index) => (
-                <TableRow key={index}>
+              {product.product.specifications.map((specification, index) => (
+                <TableRow key={specification.name}>
                   <TableCell
                     sx={{ bgcolor: palette.primary.dark, borderRadius: 6 }}
                     component="th"
@@ -284,24 +292,24 @@ export default function ProductDetails() {
           </Table>
           <span ref={reviewsRef} />
           {userData.isAdmin === false && (
-            <AddReview productId={data.product._id} refetch={refetch} />
+            <AddReview productId={product.product._id} refetch={refetch} />
           )}
-          {data.reviews.map((review, index) => (
+          {product.reviews.map((review) => (
             <Review
               user={{ isAdmin: userData.isAdmin, userId: userData.userId }}
-              key={index}
+              key={review._id}
               review={review}
               refetch={refetch}
             />
           ))}
           <span ref={questionsRef} />
           {userData.isAdmin === false && (
-            <AddQuestion productId={data.product._id} refetch={refetch} />
+            <AddQuestion productId={product.product._id} refetch={refetch} />
           )}
-          {data.questions.map((question, index) => (
+          {product.questions.map((question) => (
             <Question
               user={{ isAdmin: userData.isAdmin, userId: userData.userId }}
-              key={index}
+              key={question._id}
               question={question}
               refetch={refetch}
             />

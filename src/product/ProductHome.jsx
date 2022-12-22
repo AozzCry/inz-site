@@ -1,7 +1,5 @@
-import { Buffer } from "buffer";
-
 import { useContext } from "react";
-import Context from "../utils/Context";
+import { Buffer } from "buffer";
 
 import { useNavigate } from "react-router-dom";
 
@@ -19,17 +17,21 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 
+import Context from "../utils/Context";
+
 export default function Product({ product }) {
+  const { palette, breakpoints } = useTheme();
+  const matchesMd = useMediaQuery(breakpoints.up("md"));
+
   const { cart, setCart } = useContext(Context);
-  const { breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+
   const navigate = useNavigate();
 
   function addToCart(product) {
     if (!cart.some((p) => p.product._id === product._id))
       setCart([...cart, { product: product, count: 1 }]);
   }
-  const { palette } = useTheme();
+
   return (
     <Card
       raised
@@ -38,7 +40,7 @@ export default function Product({ product }) {
         p: 1,
         mr: 1,
         mb: 1,
-        flexGrow: matchesSm ? 1 / 2 : 1,
+        flexGrow: matchesMd ? 1 / 2 : 1,
         borderRadius: 4,
       }}
     >

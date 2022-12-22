@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { patchFetch } from "../hooks/fetchHooks";
 
 import {
@@ -20,26 +21,25 @@ import {
   Typography,
   List,
   ListItem,
+  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { useContext } from "react";
 import Context from "../utils/Context";
-import { Box } from "@mui/system";
 
 export default function ManageOrder({ order, refetch }) {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
 
-  const { setSB } = useContext(Context);
+  const { notification } = useContext(Context);
 
   function updateOrderStatus(status, successMessage) {
     patchFetch("/order/status", { orderId: order._id, status: status }).then(
       ({ error }) => {
         if (!error) {
           refetch();
-          setSB({ open: true, message: successMessage });
+          notification(successMessage);
         }
       }
     );
@@ -50,12 +50,12 @@ export default function ManageOrder({ order, refetch }) {
       ({ error, message }) => {
         if (!error) {
           refetch();
-          setSB({ open: true, message: message });
+          notification(message);
         }
       }
     );
   }
-  console.log(order);
+
   return (
     <Accordion sx={{ bgcolor: palette.secondary.dark, m: 1 }} key={order._id}>
       <AccordionSummary
@@ -158,8 +158,8 @@ export default function ManageOrder({ order, refetch }) {
               </TableHead>
               <TableBody>
                 {order.products.map(
-                  ({ productName, productPrice, count }, index) => (
-                    <TableRow key={index}>
+                  ({ productId, productName, productPrice, count }, index) => (
+                    <TableRow key={productId}>
                       <TableCell>{productName}</TableCell>
                       <TableCell>{productPrice.toFixed(2)}</TableCell>
                       <TableCell>{count}</TableCell>

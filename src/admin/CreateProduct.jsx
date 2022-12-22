@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 import { getFetch, postFetch } from "../hooks/fetchHooks";
 
@@ -18,11 +18,13 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 
 import { StyledInput } from "../components/styled";
+import Context from "../utils/Context";
 
 const statuses = ["in stock", "out of stock", "discontinued"];
 
 export default function CreateProduct() {
   const { palette } = useTheme();
+  const { notification } = useContext(Context);
 
   const [alert, setAlert] = useState(null);
   const [specification, setSpecification] = useState({ name: "", value: "" });
@@ -87,8 +89,19 @@ export default function CreateProduct() {
         setSpecifications([]);
         setCategories([]);
         setAlert("");
+        notification(message);
       }
     });
+  }
+
+  function addSpecification() {
+    if (specification.name && specification.value) {
+      if (!specifications.some((s) => s.name === specification.name)) {
+        setSpecifications((s) => [...s, specification]);
+        setSpecification({ name: "", value: "" });
+        setAlert("");
+      } else setAlert("Specification names must be unqiue.");
+    }
   }
 
   return (
@@ -168,24 +181,19 @@ export default function CreateProduct() {
           />
           <Button
             variant="contained"
-            onClick={() => {
-              if (specification.name && specification.value) {
-                setSpecifications((s) => [...s, specification]);
-                setSpecification({ name: "", value: "" });
-              }
-            }}
+            onClick={addSpecification}
             sx={{ ml: 1, mt: 1.0, mb: 0.5 }}
           >
             Add
           </Button>
         </Stack>
         <Container disableGutters={true}>
-          {specifications.map((specification, index) => (
+          {specifications.map((specification) => (
             <Button
               size="dense"
               sx={{ m: 0.5 }}
               variant="contained"
-              key={index}
+              key={specification.name}
               onClick={() => {
                 setSpecifications(
                   specifications.filter((c) => c !== specification)
@@ -239,7 +247,6 @@ export default function CreateProduct() {
             margin="dense"
             label="Search categories"
             onChange={(e) => setSearchCategories(e.target.value)}
-            error={alert ? true : false}
           />
           <Container sx={{ ml: 0.5 }} disableGutters={true}>
             {categories.map((category) => (

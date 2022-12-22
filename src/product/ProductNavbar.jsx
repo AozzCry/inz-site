@@ -26,6 +26,12 @@ export default function ProductNavbar({
 
   const navigate = useNavigate();
 
+  function scrollToRef(ref) {
+    ref.current.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+
   return (
     <AppBar position="sticky">
       <Container
@@ -47,11 +53,7 @@ export default function ProductNavbar({
         <Button
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={() =>
-            mainRef.current.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={scrollToRef}
         >
           <ArrowUpwardIcon />
           {matchesSm && "Product"}
@@ -59,11 +61,7 @@ export default function ProductNavbar({
         <Button
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={() =>
-            descriptionRef.current.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={scrollToRef}
         >
           <DescriptionIcon />
           {matchesSm && "Description"}
@@ -71,11 +69,7 @@ export default function ProductNavbar({
         <Button
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={() =>
-            specificationRef.current.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={scrollToRef}
         >
           <FormatListBulletedIcon />
           {matchesSm && "Specification"}
@@ -83,11 +77,7 @@ export default function ProductNavbar({
         <Button
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={() =>
-            reviewsRef.current.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={scrollToRef}
         >
           <ReviewsIcon />
           {matchesSm && "Reviews"}
@@ -95,11 +85,7 @@ export default function ProductNavbar({
         <Button
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={() =>
-            questionsRef.current.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
+          onClick={scrollToRef}
         >
           <QuestionAnswerIcon />
           {matchesSm && "Questions"}

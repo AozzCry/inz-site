@@ -26,7 +26,7 @@ export default function ConfirmOrder({
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
-  const { setSB, cart, setCart } = useContext(Context);
+  const { notification, cart, setCart } = useContext(Context);
 
   const sumPrice = cart
     .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
@@ -54,7 +54,7 @@ export default function ConfirmOrder({
     }).then(({ error, message }) => {
       if (!error) {
         setCart([]);
-        setSB({ open: true, message: message });
+        notification(message);
         setActiveStep((s) => s + 1);
       }
     });

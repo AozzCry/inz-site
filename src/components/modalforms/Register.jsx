@@ -14,7 +14,7 @@ import { StyledModal, StyledInput } from "../styled";
 
 export default function Register({ close }) {
   const [alert, setAlert] = useState(null);
-  const { setSB } = useContext(Context);
+  const { notification } = useContext(Context);
 
   const registerValidationSchema = Yup.object().shape({
     firstname: Yup.string().required("Fullname is required"),
@@ -58,7 +58,7 @@ export default function Register({ close }) {
         setAlert(error);
       } else {
         setAlert(null);
-        setSB({ open: true, message: message });
+        notification(message);
         close();
       }
     });

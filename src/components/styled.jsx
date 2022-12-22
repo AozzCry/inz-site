@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Container, TextField } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Container, TextField } from "@mui/material";
 
 export const StyledModal = styled(Container)(({ theme }) => ({
   position: "absolute",

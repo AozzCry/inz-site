@@ -3,36 +3,33 @@ import { useQuery } from "react-query";
 
 import { getFetch } from "../hooks/fetchHooks";
 
-import {
-  Container,
-  CircularProgress,
-  List,
-  Divider,
-  InputBase,
-  useTheme,
-} from "@mui/material";
+import { Container, List, Divider, InputBase, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 import OneUser from "./OneUser";
 
 import { StyledSearch } from "../components/styled";
+import ErrorPage from "../main/ErrorPage";
+import LoadingPage from "../main/LoadingPage";
 
 export default function ManageUsers() {
   const { palette } = useTheme();
 
   const [search, setSearch] = useState("");
 
-  const { status, data, error, refetch } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: users,
+    refetch,
+  } = useQuery({
     queryKey: ["/user/getall"],
     queryFn: getFetch,
   });
 
-  if (status === "loading") {
-    return <CircularProgress />;
-  }
-  if (status === "error") {
-    return <span>Error: {error.message}</span>;
-  }
+  if (isLoading) return <LoadingPage what={"user"} />;
+  if (isError) return <ErrorPage error={error.message} />;
   return (
     <Container disableGutters sx={{ my: 1, px: 1 }}>
       <StyledSearch>
@@ -45,14 +42,14 @@ export default function ManageUsers() {
       </StyledSearch>
       <Divider />
       <List sx={{ borderRadius: "10px", bgcolor: palette.primary.main }}>
-        {data
+        {users
           .filter(
             (user) =>
               user.username.toLowerCase().includes(search) ||
               user.email.includes(search.toLowerCase())
           )
-          .map((user, index) => (
-            <OneUser key={index} user={user} refetch={refetch} />
+          .map((user) => (
+            <OneUser key={user._id} user={user} refetch={refetch} />
           ))}
       </List>
     </Container>

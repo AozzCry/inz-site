@@ -14,10 +14,8 @@ export async function getFetch({ queryKey }) {
     return res.data;
   } catch (error) {
     if (error.response && error.response.data.message) {
-      console.error(error.response.status, error.response.data.message);
-    } else {
-      throw error;
-    }
+      throw new Error(error.response.data.message);
+    } else throw new Error(error.message);
   }
 }
 
@@ -31,7 +29,8 @@ export async function postFetch(url, data = null) {
       console.error(error.response.status, error.response.data.message);
       return { error: error.response.data.message };
     } else {
-      throw error;
+      console.error(error.message);
+      return { error: error.message };
     }
   }
 }
@@ -46,7 +45,7 @@ export async function putFetch(url, data = null) {
       console.error(error.response.status, error.response.data.message);
       return { error: error.response.data.message };
     } else {
-      throw error;
+      console.error(error.message);
     }
   }
 }
@@ -61,7 +60,7 @@ export async function patchFetch(url, data = null) {
       console.error(error.response.status, error.response.data.message);
       return { error: error.response.data.message };
     } else {
-      throw error;
+      console.error(error.message);
     }
   }
 }

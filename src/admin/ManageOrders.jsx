@@ -1,50 +1,53 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 
+import { useLocation } from "react-router-dom";
+
 import { getFetch } from "../hooks/fetchHooks";
 
 import {
   Container,
-  CircularProgress,
   Box,
   InputBase,
   useTheme,
   TextField,
   useMediaQuery,
+  Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
 
 import OneOrder from "./OneOrder";
 
 import { StyledSearch } from "../components/styled";
-import { useLocation } from "react-router-dom";
-import { Stack } from "@mui/system";
 
 export default function ManageOrders() {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const location = useLocation();
 
-  const [search, setSearch] = useState(
-    location.state ? location.state.search : ""
-  );
   const [dateFrom, setdateFrom] = useState(null);
   const [dateTo, setdateTo] = useState(null);
 
+  const [search, setSearch] = useState(
+    location.state ? location.state.search : ""
+  );
+
   const {
-    status,
-    data: orders,
+    isLoading,
+    isError,
     error,
+    data: orders,
     refetch,
   } = useQuery({
     queryKey: ["/order/getAll"],
     queryFn: getFetch,
   });
 
-  if (status === "loading") return <CircularProgress />;
-
-  if (status === "error") return <span>Error: {error.message}</span>;
-
+  if (isLoading) return <LoadingPage what={"orders"} />;
+  if (isError) return <ErrorPage message={error.message} />;
   return (
     <Container disableGutters sx={{ pt: 1, width: 1 }}>
       <Stack
@@ -99,7 +102,7 @@ export default function ManageOrders() {
           .filter((o) => (dateTo ? o.orderDate <= dateTo : true))
 
           .map((order, index) => (
-            <OneOrder key={index} order={order} refetch={refetch} />
+            <OneOrder key={order._id} order={order} refetch={refetch} />
           ))}
       </Stack>
     </Container>

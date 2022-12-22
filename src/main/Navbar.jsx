@@ -13,11 +13,11 @@ import {
   Menu,
   MenuItem,
   Drawer,
-  Snackbar,
-  Alert,
   useTheme,
   TextField,
   Badge,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import SearchIcon from "@mui/icons-material/Search";
@@ -44,7 +44,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { SBHandler, setSB, cart, userData, setUserData } = useContext(Context);
+  const { notification, SBHandler, setSB, cart, userData, setUserData } =
+    useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
@@ -58,10 +59,10 @@ export default function Navbar() {
   const [searchCategories, setSearchCategories] = useState("");
   const [search, setSearch] = useState(null);
 
-  async function logoutSubmit() {
-    postFetch("/logout").then(({ error, message }) => {
+  function logoutSubmit() {
+    postFetch("/auth/logout").then(({ error, message }) => {
       if (!error) {
-        setSB({ open: true, message: message });
+        notification(message);
         setUserData({
           username: null,
           email: null,
@@ -326,10 +327,12 @@ export default function Navbar() {
       </>
       <Snackbar
         open={SBHandler.open}
-        onClose={() => setSB({ open: false, message: null })}
+        onClose={() =>
+          setSB({ open: false, message: null, severity: "success" })
+        }
         autoHideDuration={3000}
       >
-        <Alert>{SBHandler.message}</Alert>
+        <Alert severity={SBHandler.severity}>{SBHandler.message}</Alert>
       </Snackbar>
     </>
   );

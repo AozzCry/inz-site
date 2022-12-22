@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { patchFetch } from "../hooks/fetchHooks";
 
+import { NavLink } from "react-router-dom";
+
 import {
   ListItem,
   ListItemText,
@@ -10,7 +12,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { NavLink } from "react-router-dom";
 
 export default function OneUser({ user, refetch }) {
   const { palette } = useTheme();

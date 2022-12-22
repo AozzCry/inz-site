@@ -9,7 +9,6 @@ import {
   Button,
   Drawer,
   Input,
-  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -22,6 +21,9 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 
 import { StyledSearch } from "../components/styled";
 import Product from "./Product";
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
+import { Box } from "@mui/system";
 
 export default function Products() {
   const { palette, breakpoints } = useTheme();
@@ -38,9 +40,10 @@ export default function Products() {
   const [priceTo, setPriceTo] = useState("");
 
   const {
-    data: products,
-    error,
     isLoading,
+    isError,
+    error,
+    data: products,
   } = useQuery({
     queryKey: ["/product", searchParams],
     queryFn: getFetch,
@@ -51,6 +54,52 @@ export default function Products() {
     queryKey: ["/category"],
     queryFn: getFetch,
   });
+
+  function productDisplay() {
+    if (isLoading) return <LoadingPage what="products" />;
+    if (isError) return <ErrorPage error={error.message} />;
+    if (products && products.length === 0)
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight={1}
+        >
+          <Typography variant="h6" textAlign="center">
+            No products found
+            {searchParams.name && " for search: " + searchParams.name}
+            {searchParams.category.length &&
+              " in category: " + searchParams.category}
+          </Typography>
+        </Box>
+      );
+    if (products)
+      return (
+        <Container
+          disableGutters
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
+          spacing={1}
+        >
+          {products
+            .filter(
+              (p) =>
+                p.price > Number(priceFrom) &&
+                (p.price < Number(priceTo) || priceTo === "")
+            )
+            .map((product) => (
+              <Product
+                key={product._id}
+                product={product}
+                searchParams={searchParams}
+              />
+            ))}
+        </Container>
+      );
+  }
   return (
     <>
       <Stack direction={"row"}>
@@ -86,10 +135,10 @@ export default function Products() {
               onChange={(e) => setSearchCategories(e.target.value)}
             />
             {searchParams.category &&
-              searchParams.category.map((category, index) => (
+              searchParams.category.map((category) => (
                 <Button
                   sx={{ ml: 1, mb: 0.25 }}
-                  key={index}
+                  key={category.name}
                   fullWidth
                   variant={"contained"}
                   onClick={() =>
@@ -166,9 +215,9 @@ export default function Products() {
                 onChange={(e) => setSearchCategories(e.target.value)}
               />
               {searchParams.category &&
-                searchParams.category.map((category, index) => (
+                searchParams.category.map((category) => (
                   <Button
-                    key={index}
+                    key={category._id + "active"}
                     fullWidth
                     variant={"contained"}
                     onClick={() =>
@@ -193,7 +242,7 @@ export default function Products() {
                       !searchParams.category.includes(c.name)
                   )
                   .slice(0, 10)
-                  .map((category, index) => (
+                  .map((category) => (
                     <Button
                       key={category._id}
                       variant={"outlined"}
@@ -254,54 +303,7 @@ export default function Products() {
               </StyledSearch>
             </Container>
           </Container>
-          <Container
-            disableGutters
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-            }}
-            spacing={1}
-          >
-            {error && <div>{error}</div>}
-            {isLoading && (
-              <>
-                <Skeleton
-                  sx={{ mt: 2 }}
-                  variant="rectangular"
-                  width="100%"
-                  height={"20vh"}
-                />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-                <Skeleton
-                  sx={{ mt: 2 }}
-                  variant="rectangular"
-                  width="100%"
-                  height={118}
-                />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-                <Skeleton width="100%" />
-              </>
-            )}
-            {products &&
-              products
-                .filter(
-                  (p) =>
-                    p.price > Number(priceFrom) &&
-                    (p.price < Number(priceTo) || priceTo === "")
-                )
-                .map((product) => (
-                  <Product
-                    key={product._id}
-                    product={product}
-                    searchParams={searchParams}
-                  />
-                ))}
-          </Container>
+          {productDisplay()}
         </Container>
       </Stack>
     </>

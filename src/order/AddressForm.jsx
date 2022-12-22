@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { StyledInput } from "../components/styled";
 
 export default function AddressForm({ address, setAddress, setActiveStep }) {
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const [newAddress, setNewAddress] = useState(address);
   function saveAddress() {
     setAddress(newAddress);
@@ -60,7 +60,11 @@ export default function AddressForm({ address, setAddress, setActiveStep }) {
           setNewAddress((a) => ({ ...a, postalCode: e.target.value }))
         }
       />
-      <Button sx={{ m: 1 }} variant="outlined" onClick={() => nav("/cart")}>
+      <Button
+        sx={{ m: 1 }}
+        variant="outlined"
+        onClick={() => navigate("/cart")}
+      >
         Back
       </Button>
       <Button

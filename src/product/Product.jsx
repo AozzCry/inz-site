@@ -45,6 +45,7 @@ export default function Product({ product }) {
         mb: 1,
         mr: matchesMd ? 1 : 0,
         flexGrow: 1,
+        borderRadius: 2,
       }}
     >
       <Stack direction={matchesMd ? "row" : "column"}>
@@ -95,9 +96,9 @@ export default function Product({ product }) {
 
               {matchesXs && product.specifications && (
                 <Stack>
-                  {product.specifications.slice(0, 4).map((spec, index) => (
-                    <Typography key={index}>
-                      {spec.name}:{spec.value}
+                  {product.specifications.slice(0, 4).map((specification) => (
+                    <Typography key={specification.name}>
+                      {specification.name}:{specification.value}
                     </Typography>
                   ))}
                 </Stack>
@@ -107,16 +108,16 @@ export default function Product({ product }) {
         </CardActionArea>
         <CardActions sx={{ bgcolor: palette.secondary.dark }}>
           <Stack direction={matchesMd || !matchesXs ? "column" : "row"}>
-            <Typography sx={{ mr: 1, mb: 1 }} variant="h5">
+            <Typography sx={{ m: 1 }} variant="h5">
               {product.price.toFixed(2)}PLN
             </Typography>
             <Stack direction={matchesMd || matchesSm ? "column" : "row"}>
               <Button
-                sx={{ mr: 1, mb: 1, whiteSpace: "nowrap", minWidth: "auto" }}
+                sx={{ m: 1, whiteSpace: "nowrap", minWidth: "auto" }}
                 onClick={() => addToCart(product)}
                 variant="contained"
               >
-                {"Add to cart"}
+                Add to cart
               </Button>
             </Stack>
           </Stack>

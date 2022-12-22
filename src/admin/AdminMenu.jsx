@@ -1,7 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import {
   Stack,
-  Container,
   Button,
   BottomNavigation,
   BottomNavigationAction,
@@ -14,47 +13,68 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
 import { Box } from "@mui/system";
+
 export default function AdminMenu() {
   const { palette, breakpoints } = useTheme();
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
 
-  const MenuButton = ({ to, text }) => (
-    <Button
-      sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
-      variant="contained"
-      component={NavLink}
-      to={to}
-      style={({ isActive }) => ({
-        backgroundColor: isActive && palette.primary.light,
-        color: isActive && palette.primary.dark,
-      })}
-    >
-      {text}
-    </Button>
-  );
   const [value, setValue] = useState(0);
+
+  const onAcive = (isActive) => {
+    return {
+      backgroundColor: isActive && palette.primary.light,
+      color: isActive && palette.primary.dark,
+    };
+  };
+
   return (
     <Stack
       direction={matchesMd ? "row" : "column"}
       sx={{ bgcolor: palette.primary.dark, borderRadius: 30 }}
     >
-      {matchesMd ? (
-        <Stack>
-          <MenuButton to="/admin/orders" text="Orders" />
-          <MenuButton to="/admin/createproduct" text="Product" />
-          <MenuButton to="/admin/categories" text="Categories" />
-          <MenuButton to="/admin/users" text="Users" />
+      {matchesXs && (
+        <Stack
+          direction={!matchesMd ? "row" : "column"}
+          sx={{ display: matchesXs ? "flex" : "inline" }}
+        >
+          <Button
+            sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
+            variant="contained"
+            component={NavLink}
+            to={"/admin/orders"}
+            style={({ isActive }) => onAcive(isActive)}
+          >
+            {"Orders"}
+          </Button>
+          <Button
+            sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
+            variant="contained"
+            component={NavLink}
+            to={"/admin/createproduct"}
+            style={({ isActive }) => onAcive(isActive)}
+          >
+            Product
+          </Button>
+          <Button
+            sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
+            variant="contained"
+            component={NavLink}
+            to={"/admin/categories"}
+            style={({ isActive }) => onAcive(isActive)}
+          >
+            Orders
+          </Button>
+          <Button
+            sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
+            variant="contained"
+            component={NavLink}
+            to={"/admin/users"}
+            style={({ isActive }) => onAcive(isActive)}
+          >
+            Users
+          </Button>
         </Stack>
-      ) : (
-        matchesXs && (
-          <Container sx={{ display: "flex" }}>
-            <MenuButton to="/admin/orders" text="Orders" />
-            <MenuButton to="/admin/createproduct" text="Product" />
-            <MenuButton to="/admin/categories" text="Categories" />
-            <MenuButton to="/admin/users" text="Users" />
-          </Container>
-        )
       )}
       <Box
         sx={{ width: 1, borderBottom: 4, borderColor: palette.primary.dark }}

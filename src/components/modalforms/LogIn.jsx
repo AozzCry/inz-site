@@ -14,7 +14,7 @@ import { StyledModal, StyledInput } from "../styled";
 
 export default function LogIn({ close, setUserData }) {
   const [alert, setAlert] = useState(null);
-  const { setSB } = useContext(Context);
+  const { notification } = useContext(Context);
   const loginValidationSchema = Yup.object().shape({
     email: Yup.string()
       .required("Email is required")
@@ -51,7 +51,7 @@ export default function LogIn({ close, setUserData }) {
           userId: data.userId,
         });
         setAlert(null);
-        setSB({ open: true, message: message });
+        notification(message);
         close();
       }
     });
