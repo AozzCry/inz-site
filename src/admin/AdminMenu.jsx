@@ -63,7 +63,7 @@ export default function AdminMenu() {
             to={"/admin/categories"}
             style={({ isActive }) => onAcive(isActive)}
           >
-            Orders
+            Categories
           </Button>
           <Button
             sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}

@@ -5,32 +5,39 @@ import { Container, Typography } from "@mui/material";
 
 import ProductHome from "../product/ProductHome";
 import { Stack } from "@mui/system";
+import LoadingPage from "./LoadingPage";
+import ErrorPage from "./ErrorPage";
 export default function Home() {
-  const { data, error, isLoading } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: homeProducts,
+  } = useQuery({
     queryKey: ["/product/home"],
     queryFn: getFetch,
   });
 
-  if (isLoading) return <div>isLoading</div>;
+  if (isLoading) return <LoadingPage what="products" />;
 
-  if (error) return <div>{error}</div>;
+  if (isError) return <ErrorPage error={error.message} />;
 
   return (
     <Stack>
       <Typography sx={{ m: 1 }} variant="h5">
         Check out our newest products:
       </Typography>
-      {data.randomFiveProducts && (
+      {homeProducts.randomFiveProducts && (
         <Container
           disableGutters
           sx={{ pl: 1, display: "flex", flexWrap: "wrap" }}
         >
-          {data.randomFiveProducts.map((product, index) => (
+          {homeProducts.randomFiveProducts.map((product, index) => (
             <ProductHome key={index} product={product} />
           ))}
         </Container>
       )}
-      {data.lastSeenProducts && (
+      {homeProducts.lastSeenProducts && (
         <>
           <Typography sx={{ m: 1 }} variant="h5">
             Your last looked at products:
@@ -39,7 +46,7 @@ export default function Home() {
             disableGutters
             sx={{ pl: 1, display: "flex", flexWrap: "wrap" }}
           >
-            {data.lastSeenProducts.map((product, index) => (
+            {homeProducts.lastSeenProducts.map((product, index) => (
               <ProductHome key={index} product={product} />
             ))}
           </Container>
