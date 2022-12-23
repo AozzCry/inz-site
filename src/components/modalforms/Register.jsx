@@ -7,14 +7,23 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { Typography, Box, Grid, Button, Alert } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Grid,
+  Button,
+  Alert,
+  IconButton,
+  Link,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { StyledModal, StyledInput } from "../styled";
 
-export default function Register({ close }) {
-  const [alert, setAlert] = useState(null);
+export default function Register({ close, setOpenLogIn }) {
   const { notification } = useContext(Context);
+
+  const [alert, setAlert] = useState(null);
 
   const registerValidationSchema = Yup.object().shape({
     firstname: Yup.string().required("Fullname is required"),
@@ -67,14 +76,16 @@ export default function Register({ close }) {
   return (
     <StyledModal component="main" maxWidth="xs">
       <Grid container>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Register
-        </Typography>
-        <Grid item xs>
+        <Grid item sx={{ width: 0.2 }}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Register
+          </Typography>
+        </Grid>
+        <Grid item sx={{ width: 0.8 }}>
           <Grid container direction="row-reverse">
-            <Button onClick={close}>
+            <IconButton onClick={close} color="primary">
               <CloseIcon />
-            </Button>
+            </IconButton>
           </Grid>
         </Grid>
       </Grid>
@@ -161,6 +172,15 @@ export default function Register({ close }) {
         >
           Submit
         </Button>
+        <Link
+          href="#"
+          onClick={() => {
+            setOpenLogIn(true);
+            close();
+          }}
+        >
+          {"Already have an account? Log in here..."}
+        </Link>
       </Box>
     </StyledModal>
   );

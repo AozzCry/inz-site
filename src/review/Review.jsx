@@ -1,3 +1,6 @@
+import { useContext } from "react";
+import { patchFetch } from "../hooks/fetchHooks";
+
 import {
   Rating,
   Typography,
@@ -13,15 +16,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDwonAltIcon from "@mui/icons-material/ThumbDownAlt";
 
-import { patchFetch } from "../hooks/fetchHooks";
-import { useContext } from "react";
 import Context from "../utils/Context";
 import { daysSince } from "../utils/functions";
 
 export default function Review({ review, refetch, user }) {
   const { palette, breakpoints } = useTheme();
 
-  const { setSB } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   function reactionHandler(action) {
@@ -29,7 +30,7 @@ export default function Review({ review, refetch, user }) {
       ({ error, message }) => {
         if (!error) {
           refetch();
-          setSB(message);
+          notify(message);
         }
       }
     );
@@ -46,6 +47,7 @@ export default function Review({ review, refetch, user }) {
       !error && refetch();
     });
   }
+
   return (
     <Stack
       sx={{

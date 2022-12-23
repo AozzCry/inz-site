@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { patchFetch } from "../hooks/fetchHooks";
 
 import { NavLink } from "react-router-dom";
@@ -12,10 +12,13 @@ import {
   MenuItem,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Context from "../utils/Context";
 
-export default function OneUser({ user, refetch }) {
+export default function ManageUser({ user, refetch }) {
   const { palette } = useTheme();
   const matches = useMediaQuery(useTheme().breakpoints.up("md"));
+
+  const { notify, confirm } = useContext(Context);
 
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
@@ -24,6 +27,7 @@ export default function OneUser({ user, refetch }) {
     patchFetch("/user/banbyid", { id }).then(({ error }) => {
       if (!error) {
         refetch();
+        notify("User banned");
       }
     });
   }
@@ -32,6 +36,7 @@ export default function OneUser({ user, refetch }) {
       if (!error) {
         refetch();
         setAnchorEl(false);
+        notify("User deleted");
       }
     });
   }
@@ -58,25 +63,32 @@ export default function OneUser({ user, refetch }) {
       {matches ? (
         <>
           <Button
+            title="View user orders"
             component={NavLink}
             to={"../orders"}
+            state={{ search: user.email }}
             sx={{ mr: 1 }}
-            variant="contained"
+            variant="outlined"
+            color="info"
             edge={"end"}
           >
             Orders
           </Button>
           <Button
+            title="Ban user"
             sx={{ mr: 1 }}
-            variant="contained"
+            variant="outlined"
             edge={"end"}
+            color="warning"
             onClick={() => banUserSubmit(user._id)}
           >
             Ban
           </Button>
           <Button
-            variant="contained"
+            title="Delete user"
+            variant="outlined"
             edge={"end"}
+            color="error"
             onClick={() => deleteUserSubmit(user._id)}
           >
             Remove
@@ -85,6 +97,7 @@ export default function OneUser({ user, refetch }) {
       ) : (
         <>
           <Button
+            title="Options"
             variant="contained"
             value={user._id}
             onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -103,6 +116,7 @@ export default function OneUser({ user, refetch }) {
             onClose={() => setAnchorEl(null)}
           >
             <MenuItem
+              title="View user orders"
               component={NavLink}
               to={"../orders"}
               state={{ search: user.email }}
@@ -112,17 +126,23 @@ export default function OneUser({ user, refetch }) {
               Orders
             </MenuItem>
             <MenuItem
+              title="Ban user"
               variant="contained"
               edge={"end"}
               onClick={() => banUserSubmit(anchorEl.value)}
             >
               Ban
             </MenuItem>
-
             <MenuItem
+              sx={{ bgcolor: palette.action.negative }}
+              title="Delete user"
               variant="contained"
               edge={"end"}
-              onClick={() => deleteUserSubmit(anchorEl.value)}
+              onClick={() =>
+                confirm("Do you want to delete this user?", () =>
+                  deleteUserSubmit(anchorEl.value)
+                )
+              }
             >
               Remove
             </MenuItem>

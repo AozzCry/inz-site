@@ -1,15 +1,11 @@
 import { Buffer } from "buffer";
 
-import { useContext } from "react";
-import Context from "../utils/Context";
-
 import { useNavigate } from "react-router-dom";
 
 import {
   Card,
   CardContent,
   Typography,
-  Button,
   CardActionArea,
   CardActions,
   Stack,
@@ -20,6 +16,7 @@ import {
 import StarIcon from "@mui/icons-material/Star";
 
 import { useTheme } from "@emotion/react";
+import AddToCartButton from "../components/AddToCartButton";
 
 export default function Product({ product }) {
   const { palette, breakpoints } = useTheme();
@@ -27,14 +24,7 @@ export default function Product({ product }) {
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
 
-  const { cart, setCart } = useContext(Context);
-
   const navigate = useNavigate();
-
-  function addToCart(product) {
-    if (!cart.some((p) => p.product._id === product._id))
-      setCart([...cart, { product: product, count: 1 }]);
-  }
 
   return (
     <Card
@@ -107,18 +97,18 @@ export default function Product({ product }) {
           </Stack>
         </CardActionArea>
         <CardActions sx={{ bgcolor: palette.secondary.dark }}>
-          <Stack direction={matchesMd || !matchesXs ? "column" : "row"}>
+          <Stack
+            sx={{ width: 1 }}
+            direction={matchesMd || !matchesXs ? "column" : "row"}
+          >
             <Typography sx={{ m: 1 }} variant="h5">
               {product.price.toFixed(2)}PLN
             </Typography>
-            <Stack direction={matchesMd || matchesSm ? "column" : "row"}>
-              <Button
-                sx={{ m: 1, whiteSpace: "nowrap", minWidth: "auto" }}
-                onClick={() => addToCart(product)}
-                variant="contained"
-              >
-                Add to cart
-              </Button>
+            <Stack
+              sx={{ width: 1, mt: matchesSm ? 1 : 0 }}
+              direction={matchesMd || matchesSm ? "column" : "row"}
+            >
+              <AddToCartButton product={product} />
             </Stack>
           </Stack>
         </CardActions>

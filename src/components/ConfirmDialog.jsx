@@ -1,17 +1,28 @@
-import * as React from "react";
+import { useContext } from "react";
 
-import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material/";
-import { useTheme } from "@emotion/react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  useTheme,
+} from "@mui/material/";
 
-export default function ConfirmDialog({ confirmDialog, setConfirmDialog }) {
+import Context from "../utils/Context";
+
+export default function ConfirmDialog() {
   const { palette } = useTheme();
+  const { confirmDialog, setConfirmDialog } = useContext(Context);
+
   return (
     <div>
       <Dialog
         transitionDuration={0}
         PaperProps={{ sx: { bgcolor: palette.primary.dark } }}
         open={confirmDialog.open}
-        onClose={() => setConfirmDialog(false)}
+        onClose={() =>
+          setConfirmDialog({ open: false, text: "", afterConfirm: null })
+        }
       >
         <DialogTitle id="alert-dialog-title">{confirmDialog.text}</DialogTitle>
 
@@ -20,7 +31,9 @@ export default function ConfirmDialog({ confirmDialog, setConfirmDialog }) {
             autoFocus
             variant="outlined"
             fullWidth
-            onClick={() => setConfirmDialog(false)}
+            onClick={() =>
+              setConfirmDialog({ open: false, text: "", afterConfirm: null })
+            }
           >
             No
           </Button>
@@ -29,8 +42,8 @@ export default function ConfirmDialog({ confirmDialog, setConfirmDialog }) {
             color="error"
             fullWidth
             onClick={() => {
-              setConfirmDialog(false);
               confirmDialog.afterConfirm();
+              setConfirmDialog({ open: false, text: "", afterConfirm: null });
             }}
           >
             Yes

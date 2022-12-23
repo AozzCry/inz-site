@@ -24,7 +24,7 @@ const statuses = ["in stock", "out of stock", "discontinued"];
 
 export default function CreateProduct() {
   const { palette } = useTheme();
-  const { notification } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const [alert, setAlert] = useState(null);
   const [specification, setSpecification] = useState({ name: "", value: "" });
@@ -89,7 +89,7 @@ export default function CreateProduct() {
         setSpecifications([]);
         setCategories([]);
         setAlert("");
-        notification(message);
+        notify(message);
       }
     });
   }
@@ -280,7 +280,7 @@ export default function CreateProduct() {
                 .map((category) => (
                   <Button
                     size="medium"
-                    sx={{ m: 0.1 }}
+                    sx={{ m: 0.1, color: palette.text.primary }}
                     variant="outlined"
                     key={category._id}
                     value={category.name}
@@ -297,8 +297,10 @@ export default function CreateProduct() {
         </Stack>
         {alert ? <Alert severity="error">{alert}</Alert> : <></>}
         <Button
+          title="Add product"
           fullWidth
           variant="contained"
+          color="success"
           onClick={handleSubmit(crerateProductSubmit)}
           sx={{ mt: 1, mb: 2 }}
         >

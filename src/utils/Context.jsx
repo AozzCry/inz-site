@@ -3,7 +3,7 @@ import { createContext, useEffect, useMemo, useState } from "react";
 const Context = createContext();
 
 export const ContextProvider = (props) => {
-  const [SBHandler, setSB] = useState({
+  const [snackBar, setSnackBar] = useState({
     open: false,
     message: "",
     sevrity: "success",
@@ -21,8 +21,18 @@ export const ContextProvider = (props) => {
     return cart ? JSON.parse(cart) : [];
   });
 
-  function notification(message, severity = "success") {
-    setSB({ open: true, message, severity });
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    text: "",
+    afterConfirm: null,
+  });
+
+  function confirm(text, afterConfirm) {
+    setConfirmDialog({ open: true, text, afterConfirm });
+  }
+
+  function notify(message, severity = "success") {
+    setSnackBar({ open: true, message, severity });
   }
 
   useEffect(() => {
@@ -33,13 +43,19 @@ export const ContextProvider = (props) => {
     () => ({
       userData,
       setUserData,
-      SBHandler,
-      setSB,
-      notification,
+
       cart,
       setCart,
+
+      snackBar,
+      setSnackBar,
+      notify,
+
+      confirmDialog,
+      setConfirmDialog,
+      confirm,
     }),
-    [userData, cart, SBHandler]
+    [userData, snackBar, cart, confirmDialog]
   );
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 };

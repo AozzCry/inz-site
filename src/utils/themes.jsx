@@ -3,8 +3,8 @@ import { createTheme } from "@mui/material/styles";
 export const darkTheme = createTheme({
   palette: {
     primary: {
-      main: "#0D7377",
-      light: "#14FFEC",
+      main: "#3D8387",
+      light: "#14BF9C",
       dark: "#212121",
     },
     secondary: {
@@ -19,7 +19,7 @@ export const darkTheme = createTheme({
     },
     action: {
       delete: "#fa8585",
-      positive: "#00ff11",
+      positive: "#008f51",
       negative: "#55ccee",
       disabledBackground: "#424242",
       disabled: "#000000",

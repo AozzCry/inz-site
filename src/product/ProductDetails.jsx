@@ -1,12 +1,14 @@
+import { useContext, useRef } from "react";
 import { useQuery } from "react-query";
+
 import { getFetch, patchFetch } from "../hooks/fetchHooks";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { useContext, useRef, useState } from "react";
 import Context from "../utils/Context";
 
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -31,21 +33,17 @@ import AddQuestion from "../question/AddQuestion";
 import Question from "../question/Question";
 import ImageDetails from "../image/ImageDetails";
 import ProductNavbar from "./ProductNavbar";
-import ConfirmDialog from "../components/ConfirmDialog";
 import LoadingPage from "../main/LoadingPage";
 import ErrorPage from "../main/ErrorPage";
+import AddToCartButton from "../components/AddToCartButton";
 
 export default function ProductDetails() {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("md"));
-  const navigate = useNavigate();
-  const { userData, cart, setCart, setSB } = useContext(Context);
 
-  const [confirmDialog, setConfirmDialog] = useState({
-    open: false,
-    text: "",
-    afterConfirm: null,
-  });
+  const navigate = useNavigate();
+
+  const { userData, notify, confirm } = useContext(Context);
 
   const mainRef = useRef(null);
   const descriptionRef = useRef(null);
@@ -53,33 +51,37 @@ export default function ProductDetails() {
   const reviewsRef = useRef(null);
   const questionsRef = useRef(null);
 
-  const {
-    isLoading,
-    isError,
-    error,
-    data: product,
-    refetch,
-  } = useQuery({
+  const { isLoading, isError, error, data, refetch } = useQuery({
     queryKey: [window.location.pathname],
     queryFn: getFetch,
   });
 
   function deleteProduct() {
-    patchFetch("/product/delete", { productId: product.product._id }).then(
+    patchFetch("/product/delete", { productId: data.product._id }).then(
       ({ message }) => {
-        setSB({ open: true, message: message });
+        notify(message);
         navigate("-1");
       }
     );
   }
 
-  function addToCart() {
-    if (!cart.some((p) => p.product._id === product.product._id))
-      setCart([...cart, { product: product.product, count: 1 }]);
-  }
   if (isLoading) return <LoadingPage what="product" />;
   if (isError) return <ErrorPage error={error.message} />;
-  if (product)
+  if (!data)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight={1}
+      >
+        <Typography variant="h6" textAlign="center">
+          Product with link {window.location.pathname.split("/")[2]} doesn't
+          exist.
+        </Typography>
+      </Box>
+    );
+  if (data)
     return (
       <>
         <span ref={mainRef} />
@@ -102,16 +104,16 @@ export default function ProductDetails() {
           <Stack direction={matchesSm ? "row" : "column"}>
             <Stack sx={{ width: matchesSm ? 0.6 : "auto" }}>
               <ImageDetails
-                setConfirmDialog={setConfirmDialog}
                 images={
-                  product.images.length > 0 && product.images.slice(0).reverse()
+                  data.images.length > 0 && data.images.slice(0).reverse()
                 }
-                productId={product.product._id}
+                productId={data.product._id}
                 isAdmin={userData && userData.isAdmin}
+                refetch={refetch}
               />
 
               <CardContent sx={{ m: 0.25, border: 1, borderRadius: 5 }}>
-                {product.product.categories.map((category) => (
+                {data.product.categories.map((category) => (
                   <Button
                     key={category}
                     sx={{ mr: 1, mb: 1, color: palette.text.primary }}
@@ -129,10 +131,10 @@ export default function ProductDetails() {
                   </Button>
                 ))}
                 <Typography sx={{ borderBottom: 1 }} gutterBottom variant="h6">
-                  {product.product.name}
+                  {data.product.name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {product.product.shortDescription}
+                  {data.product.shortDescription}
                 </Typography>
                 <Stack sx={{ mt: 2 }} direction="row">
                   <Paper
@@ -142,19 +144,19 @@ export default function ProductDetails() {
                       p: 1,
                     }}
                   >
-                    {product.product.gradeFromReviews !== null && (
+                    {data.product.gradeFromReviews !== null && (
                       <>
                         <Rating
                           readOnly
                           value={
-                            product.product.starsFromReviews /
-                            product.product.countOfReviews
+                            data.product.starsFromReviews /
+                            data.product.countOfReviews
                           }
                           precision={0.5}
                           emptyIcon={<StarIcon />}
                         />
                         <Typography textAlign={"center"} variant="body1">
-                          ({product.product.countOfReviews})
+                          ({data.product.countOfReviews})
                         </Typography>
                       </>
                     )}
@@ -167,11 +169,11 @@ export default function ProductDetails() {
                       ml: 1,
                     }}
                   >
-                    {product.product.gradeFromReviews !== null && (
+                    {data.product.gradeFromReviews !== null && (
                       <>
                         <Typography align="center">Times bought:</Typography>
                         <Typography align="center" sx={{ ml: 1 }}>
-                          {product.product.timesBought}
+                          {data.product.timesBought}
                         </Typography>
                       </>
                     )}
@@ -189,7 +191,7 @@ export default function ProductDetails() {
             >
               <Stack sx={{ p: 1 }}>
                 <Typography variant="h5" sx={{ m: 1 }}>
-                  Price: {product.product.price.toFixed(2)}PLN
+                  Price: {data.product.price.toFixed(2)}PLN
                   {userData.isAdmin && (
                     <Button
                       sx={{ ml: 1, p: 0.5 }}
@@ -197,18 +199,16 @@ export default function ProductDetails() {
                       variant="outlined"
                       color="error"
                       onClick={() =>
-                        setConfirmDialog({
-                          open: true,
-                          text: "Are you sure you want to delete this product?",
-                          afterConfirm: deleteProduct,
-                        })
+                        confirm(
+                          "Are you sure you want to delete this product?",
+                          deleteProduct
+                        )
                       }
                     >
                       Delete product
                     </Button>
                   )}
                 </Typography>
-
                 <Paper
                   sx={{
                     borderRadius: 4,
@@ -216,7 +216,7 @@ export default function ProductDetails() {
                     p: 1,
                   }}
                 >
-                  {product.product.gradeFromReviews !== null && (
+                  {data.product.gradeFromReviews !== null && (
                     <Container
                       sx={{
                         borderRadius: 3,
@@ -227,26 +227,15 @@ export default function ProductDetails() {
                       disableGutters
                     >
                       <Typography align="center">
-                        Status: {product.product.status}
+                        Status: {data.product.status}
                       </Typography>
                       <Typography sx={{ ml: 2 }} align="center">
-                        Remaining: {product.product.quantity}
+                        Remaining: {data.product.quantity}
                       </Typography>
                     </Container>
                   )}
                 </Paper>
-                {cart &&
-                cart.find((ci) => ci.product._id === product.product._id) ? (
-                  <NavLink to="/cart">
-                    <Button fullWidth variant="contained">
-                      Go to cart
-                    </Button>
-                  </NavLink>
-                ) : (
-                  <Button fullWidth onClick={addToCart} variant="contained">
-                    Add to cart
-                  </Button>
-                )}
+                <AddToCartButton product={data.product} />
                 <AdditionalInfo />
               </Stack>
             </Stack>
@@ -260,7 +249,7 @@ export default function ProductDetails() {
             Description
           </Typography>
           <Typography sx={{ mx: 1 }} style={{ whiteSpace: "pre-line" }}>
-            {product.product.longDescription}
+            {data.product.longDescription}
           </Typography>
           <Typography
             ref={specificationRef}
@@ -271,7 +260,7 @@ export default function ProductDetails() {
           </Typography>
           <Table>
             <TableBody>
-              {product.product.specifications.map((specification, index) => (
+              {data.product.specifications.map((specification, index) => (
                 <TableRow key={specification.name}>
                   <TableCell
                     sx={{ bgcolor: palette.primary.dark, borderRadius: 6 }}
@@ -292,9 +281,9 @@ export default function ProductDetails() {
           </Table>
           <span ref={reviewsRef} />
           {userData.isAdmin === false && (
-            <AddReview productId={product.product._id} refetch={refetch} />
+            <AddReview productId={data.product._id} refetch={refetch} />
           )}
-          {product.reviews.map((review) => (
+          {data.reviews.map((review) => (
             <Review
               user={{ isAdmin: userData.isAdmin, userId: userData.userId }}
               key={review._id}
@@ -304,9 +293,9 @@ export default function ProductDetails() {
           ))}
           <span ref={questionsRef} />
           {userData.isAdmin === false && (
-            <AddQuestion productId={product.product._id} refetch={refetch} />
+            <AddQuestion productId={data.product._id} refetch={refetch} />
           )}
-          {product.questions.map((question) => (
+          {data.questions.map((question) => (
             <Question
               user={{ isAdmin: userData.isAdmin, userId: userData.userId }}
               key={question._id}
@@ -315,12 +304,6 @@ export default function ProductDetails() {
             />
           ))}
         </Stack>
-        <ConfirmDialog
-          {...{
-            confirmDialog,
-            setConfirmDialog,
-          }}
-        />
       </>
     );
 }

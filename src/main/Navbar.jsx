@@ -16,8 +16,6 @@ import {
   useTheme,
   TextField,
   Badge,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import SearchIcon from "@mui/icons-material/Search";
@@ -44,8 +42,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { notification, SBHandler, setSB, cart, userData, setUserData } =
-    useContext(Context);
+  const { notify, cart, userData, setUserData } = useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
@@ -62,7 +59,7 @@ export default function Navbar() {
   function logoutSubmit() {
     postFetch("/auth/logout").then(({ error, message }) => {
       if (!error) {
-        notification(message);
+        notify(message);
         setUserData({
           username: null,
           email: null,
@@ -95,6 +92,7 @@ export default function Navbar() {
             {location.pathname !== "/product" && (
               <>
                 <Button
+                  title="Categories"
                   onClick={() => setOpenDrawer(true)}
                   sx={{ mr: 1 }}
                   variant="contained"
@@ -126,16 +124,19 @@ export default function Navbar() {
                 </Drawer>
               </>
             )}
-
-            <NavLink to="/">
-              <Button sx={{ mr: 1 }} variant="contained">
-                <HomeIcon />
-                {matchesMd && "Home"}
-              </Button>
-            </NavLink>
+            <Button
+              title="Main page"
+              component={NavLink}
+              to="/"
+              sx={{ mr: 1 }}
+              variant="contained"
+            >
+              <HomeIcon />
+              {matchesMd && "Home"}
+            </Button>
           </Box>
           {matchesMd &&
-            location.pathname !== "/product" &&
+            location.pathname !== "/product/" &&
             !location.pathname.includes("admin") && (
               <StyledSearch>
                 <InputBase
@@ -145,7 +146,7 @@ export default function Navbar() {
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && procSearch()}
                 />
-                <Button onClick={() => procSearch()}>
+                <Button title="Search" onClick={() => procSearch()}>
                   <SearchIcon />
                 </Button>
               </StyledSearch>
@@ -175,6 +176,7 @@ export default function Navbar() {
                 <>
                   <>
                     <Button
+                      title="User info"
                       variant="contained"
                       onClick={(e) => setAnchorEl(e.currentTarget)}
                     >
@@ -251,8 +253,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       <Button
-                        aria-controls="simple-menu"
-                        aria-haspopup="true"
+                        title="User options"
                         variant="contained"
                         onClick={(e) => setAnchorElLog(e.currentTarget)}
                       >
@@ -304,7 +305,7 @@ export default function Navbar() {
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && procSearch()}
               />
-              <Button onClick={() => procSearch()}>
+              <Button title="Search" onClick={() => procSearch()}>
                 <SearchIcon />
               </Button>
             </StyledSearch>
@@ -316,24 +317,19 @@ export default function Navbar() {
             <LogIn
               close={() => setOpenLogIn(false)}
               setUserData={setUserData}
+              setOpenRegister={setOpenRegister}
             />
           </>
         </Modal>
         <Modal open={openRegister} onClose={() => setOpenRegister(false)}>
           <>
-            <Register close={() => setOpenRegister(false)} />
+            <Register
+              close={() => setOpenRegister(false)}
+              setOpenLogIn={setOpenLogIn}
+            />
           </>
         </Modal>
       </>
-      <Snackbar
-        open={SBHandler.open}
-        onClose={() =>
-          setSB({ open: false, message: null, severity: "success" })
-        }
-        autoHideDuration={3000}
-      >
-        <Alert severity={SBHandler.severity}>{SBHandler.message}</Alert>
-      </Snackbar>
     </>
   );
 }

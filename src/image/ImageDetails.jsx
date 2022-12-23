@@ -11,6 +11,7 @@ export default function ImageDetails({
   productId,
   isAdmin,
   setConfirmDialog,
+  refetch,
 }) {
   const { palette } = useTheme();
   const [imageIndex, setImageIndex] = useState(0);
@@ -27,10 +28,11 @@ export default function ImageDetails({
         alt={"product image number " + (imageIndex + 1)}
         title={"product image number " + (imageIndex + 1)}
         sx={{
-          maxHeight: 400,
           objectFit: "contain",
           bgcolor: palette.secondary.main,
         }}
+        height="400px"
+        width="400px"
       />
 
       {images && (
@@ -80,6 +82,7 @@ export default function ImageDetails({
             setConfirmDialog={setConfirmDialog}
             productId={productId}
             imageId={images && images[imageIndex].imageId}
+            refetch={refetch}
           />
         </Box>
       )}

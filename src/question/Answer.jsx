@@ -10,7 +10,7 @@ import { daysSince } from "../utils/functions";
 
 export default function Answer({ answer, refetch, questionId, user }) {
   const { palette } = useTheme();
-  const { setSB } = useContext(Context);
+  const { notify } = useContext(Context);
 
   function ThumbsHandler(action) {
     patchFetch("question/answer/" + action, {
@@ -19,7 +19,7 @@ export default function Answer({ answer, refetch, questionId, user }) {
     }).then(({ error, message }) => {
       if (!error) {
         refetch();
-        setSB(message);
+        notify(message);
       }
     });
   }

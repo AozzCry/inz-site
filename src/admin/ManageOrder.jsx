@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { patchFetch } from "../hooks/fetchHooks";
 
 import {
@@ -8,23 +9,20 @@ import {
   AccordionDetails,
   useTheme,
   Button,
-  Stack,
   useMediaQuery,
+  Stack,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { useContext } from "react";
 import Context from "../utils/Context";
-
 import OrderTable from "../components/order/OrderTable";
 import OrderInfo from "../components/order/OrderInfo";
 
 export default function ManageOrder({ order, refetch }) {
   const { palette, breakpoints } = useTheme();
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
-  const { notify } = useContext(Context);
+  const { notify, confirm } = useContext(Context);
 
   function updateOrderStatus(status, successMessage) {
     patchFetch("/order/status", { orderId: order._id, status: status }).then(
@@ -37,25 +35,42 @@ export default function ManageOrder({ order, refetch }) {
     );
   }
 
+  function deleteOrder() {
+    patchFetch("/order/delete", { orderId: order._id }).then(
+      ({ error, message }) => {
+        if (!error) {
+          refetch();
+          notify(message);
+        }
+      }
+    );
+  }
+
   return (
-    <Accordion sx={{ bgcolor: palette.secondary.dark, m: 1 }} key={order._id}>
+    <Accordion
+      sx={{
+        bgcolor: palette.primary.dark,
+        m: 1,
+        ".Mui-expanded": { bgcolor: palette.secondary.dark },
+      }}
+      key={order._id}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: palette.primary.main }} />}
       >
-        <Stack sx={{ width: 1 }} direction={matchesXs ? "row" : "column"}>
+        <Stack sx={{ width: 1 }} direction={matchesSm ? "row" : "column"}>
           <ListItemText
             primary={new Date(order.orderDate).toLocaleDateString("pl-PL")}
             secondary={order._id}
           />
           <ListItemText
             primary={"Status: " + order.status}
-            secondary={"Amount: " + order.sumPrice.toFixed(2)}
+            secondary={"Amount: " + order.sumPrice.toFixed(2) + " PLN"}
           />
         </Stack>
       </AccordionSummary>
-
+      <OrderInfo address={order.address} userInfo={order.userInfo} />
       <AccordionDetails sx={{ bgcolor: palette.primary.dark }}>
-        <OrderInfo address={order.address} userInfo={order.userInfo} />
         <Stack direction={matchesSm ? "row" : "column"}>
           <Stack
             direction={!matchesSm ? "row" : "column"}
@@ -67,14 +82,11 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus(
-                  "awaiting fulfillment",
-                  "Order is awaiting fulfillment."
-                )
+                updateOrderStatus("delivering", "Order is delivering.")
               }
-              disabled={order.status !== "awaiting payment"}
+              disabled={order.status !== "awaiting fulfillment"}
             >
-              Pay
+              Fulfill
             </Button>
             <Button
               sx={{ m: 1, borderRadius: 4 }}
@@ -82,11 +94,10 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("completed", "Order has been completed.")
+                updateOrderStatus("declined", "Order has been declined.")
               }
-              disabled={order.status !== "delivering"}
             >
-              Pickup
+              Decline
             </Button>
             <Button
               sx={{ m: 1, borderRadius: 4 }}
@@ -94,15 +105,13 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("cancelled", "Order has been cancelled.")
+                confirm("Do you want to delete this order?", deleteOrder)
               }
               disabled={
-                order.status === "declined" ||
-                order.status === "cancelled" ||
-                order.status === "completed"
+                order.status !== "declined" || order.status !== "cancelled"
               }
             >
-              Cancel
+              Delete
             </Button>
           </Stack>
           <OrderTable products={order.products} sumPrice={order.sumPrice} />

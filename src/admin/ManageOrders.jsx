@@ -19,7 +19,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoadingPage from "../main/LoadingPage";
 import ErrorPage from "../main/ErrorPage";
 
-import OneOrder from "./OneOrder";
+import ManageOrder from "./ManageOrder";
 
 import { StyledSearch } from "../components/styled";
 
@@ -69,7 +69,6 @@ export default function ManageOrders() {
           <TextField
             sx={{ mr: 1 }}
             fullWidth
-            id="date"
             label="Orders from..."
             type="date"
             InputLabelProps={{
@@ -79,7 +78,6 @@ export default function ManageOrders() {
           />
           <TextField
             fullWidth
-            id="date"
             label="Orders to..."
             type="date"
             InputLabelProps={{
@@ -102,7 +100,7 @@ export default function ManageOrders() {
           .filter((o) => (dateTo ? o.orderDate <= dateTo : true))
 
           .map((order, index) => (
-            <OneOrder key={order._id} order={order} refetch={refetch} />
+            <ManageOrder key={order._id} order={order} refetch={refetch} />
           ))}
       </Stack>
     </Container>

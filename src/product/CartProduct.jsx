@@ -20,14 +20,11 @@ export default function CartProduct({ product, index }) {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
-  const { setSB, cart, setCart } = useContext(Context);
+  const { notify, cart, setCart } = useContext(Context);
 
   function onDelete() {
     setCart(cart.filter((c) => c !== cart[index]));
-    setSB({
-      open: true,
-      message: "Product removed from cart.",
-    });
+    notify("Product removed from cart.");
   }
 
   function onAdd() {
@@ -63,6 +60,7 @@ export default function CartProduct({ product, index }) {
         <ListItemText sx={{ minWidth: 1 }} primary={product.name} />
       )}
       <IconButton
+        title="Remove from cart"
         sx={{
           mr: 1,
           border: 2,
@@ -82,6 +80,7 @@ export default function CartProduct({ product, index }) {
 
       <Stack direction="row">
         <IconButton
+          title="Decrease quantity"
           sx={{
             mx: 1,
             border: 2,
@@ -100,6 +99,7 @@ export default function CartProduct({ product, index }) {
           {cart[index].count}
         </Typography>
         <IconButton
+          title="Increase quantity"
           sx={{
             mx: 1,
             border: 2,

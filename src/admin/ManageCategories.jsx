@@ -32,7 +32,7 @@ export default function ManageCategories() {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
-  const { notification } = useContext(Context);
+  const { notify, confirm } = useContext(Context);
 
   const [search, setSearch] = useState("");
 
@@ -72,7 +72,7 @@ export default function ManageCategories() {
         setAlert(null);
         refetch();
         reset({ name: "" });
-        notification("Category created successfully");
+        notify("Category created successfully");
       }
     });
   }
@@ -81,7 +81,7 @@ export default function ManageCategories() {
     patchFetch("category/delete", { name: name }).then(({ error }) => {
       if (!error) {
         refetch();
-        notification("Category deleted successfully");
+        notify("Category deleted successfully");
       }
     });
   }
@@ -117,6 +117,7 @@ export default function ManageCategories() {
           />
           {alert && <Typography>{alert}</Typography>}
           <Button
+            title="Create category"
             type="submit"
             variant="contained"
             size="small"
@@ -156,8 +157,14 @@ export default function ManageCategories() {
                   }
                 />
                 <Button
-                  onClick={() => deleteCategory(category.name)}
-                  variant="contained"
+                  title="Delete category"
+                  onClick={() =>
+                    confirm("Do you want to delete this category?", () =>
+                      deleteCategory(category.name)
+                    )
+                  }
+                  variant="outlined"
+                  color="error"
                   edge={"end"}
                 >
                   Delete

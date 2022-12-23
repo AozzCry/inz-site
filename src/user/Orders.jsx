@@ -3,26 +3,29 @@ import { useQuery } from "react-query";
 
 import { getFetch } from "../hooks/fetchHooks";
 
+import { useLocation } from "react-router-dom";
+
 import {
   Container,
-  CircularProgress,
   Box,
   InputBase,
   useTheme,
   TextField,
   useMediaQuery,
+  Stack,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 import Order from "./Order";
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
 
 import { StyledSearch } from "../components/styled";
-import { useLocation } from "react-router-dom";
-import { Stack } from "@mui/system";
 
 export default function ManageOrders() {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
+
   const location = useLocation();
 
   const [search, setSearch] = useState(
@@ -32,19 +35,18 @@ export default function ManageOrders() {
   const [dateTo, setdateTo] = useState(null);
 
   const {
-    status,
-    data: orders,
+    isLoading,
+    isError,
     error,
+    data: orders,
     refetch,
   } = useQuery({
     queryKey: ["order"],
     queryFn: getFetch,
   });
 
-  if (status === "loading") return <CircularProgress />;
-
-  if (status === "error") return <span>Error: {error.message}</span>;
-
+  if (isLoading) return <LoadingPage what="orders" />;
+  if (isError) return <ErrorPage error={error.message} />;
   return (
     <Container disableGutters sx={{ pt: 1, width: 1 }}>
       <Stack
@@ -94,8 +96,8 @@ export default function ManageOrders() {
           .filter((o) => (dateFrom ? o.orderDate >= dateFrom : true))
           .filter((o) => (dateTo ? o.orderDate <= dateTo : true))
 
-          .map((order, index) => (
-            <Order key={index} order={order} refetch={refetch} />
+          .map((order) => (
+            <Order key={order._id} order={order} refetch={refetch} />
           ))}
       </Stack>
     </Container>

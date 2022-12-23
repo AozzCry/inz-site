@@ -3,13 +3,13 @@ import { useQuery } from "react-query";
 import { getFetch } from "../hooks/fetchHooks";
 
 import {
-  CircularProgress,
   List,
   ListItem,
   ListItemText,
   ListItemButton,
   useTheme,
 } from "@mui/material";
+import LoadingPage from "./LoadingPage";
 
 export default function Categories({
   setOpenDrawer,
@@ -18,18 +18,21 @@ export default function Categories({
 }) {
   const { palette } = useTheme();
 
-  const { status, data, error } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: categories,
+  } = useQuery({
     queryKey: ["/category"],
     queryFn: getFetch,
   });
 
-  if (status === "loading") return <CircularProgress />;
-
-  if (status === "error") return <span>Error: {error.message}</span>;
-
+  if (isLoading) return <LoadingPage />;
+  if (isError) return <>{error.message}</>;
   return (
     <List sx={{ bgcolor: palette.primary.dark }}>
-      {data
+      {categories
         .filter((c) => c.name.toLowerCase().includes(searchCategories))
         .map((category, index) => (
           <ListItem key={category._id} disablePadding>

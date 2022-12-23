@@ -14,11 +14,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export default function AdditionalInfo() {
   const { palette, breakpoints } = useTheme();
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
+
   const [expanded, setExpanded] = useState(matchesSm ? "panel1" : "");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
+
   return (
     <Stack
       sx={{ my: 1, div: { bgcolor: palette.secondary.main, borderRadius: 6 } }}

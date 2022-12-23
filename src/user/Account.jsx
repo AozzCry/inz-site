@@ -1,29 +1,33 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 
-import { Button, CircularProgress, List, ListItem, Modal } from "@mui/material";
+import { getFetch } from "../hooks/fetchHooks.jsx";
+
+import { Button, List, ListItem, Modal, useTheme } from "@mui/material";
 
 import AddAddress from "../components/modalforms/AddAddress.jsx";
 import UpdateUser from "../components/modalforms/UpdateUser.jsx";
-import { getFetch } from "../hooks/fetchHooks.jsx";
-import { useTheme } from "@emotion/react";
+import LoadingPage from "../main/LoadingPage.jsx";
+import ErrorPage from "../main/ErrorPage.jsx";
 
 export default function Account() {
   const { palette } = useTheme();
   const [openAddAddress, setOpenAddAddress] = useState(false);
   const [openUpdateUser, setOpenUpdateUser] = useState(false);
 
-  const { status, data, error, refetch } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: user,
+    refetch,
+  } = useQuery({
     queryKey: ["/user"],
     queryFn: getFetch,
   });
 
-  if (status === "loading") {
-    return <CircularProgress />;
-  }
-  if (status === "error") {
-    return <span>Error: {error.message}</span>;
-  }
+  if (isLoading) return <LoadingPage what="user" />;
+  if (isError) return <ErrorPage error={error.message} />;
   return (
     <>
       <List
@@ -37,10 +41,10 @@ export default function Account() {
           p: 2,
         }}
       >
-        <ListItem>First name: {data.firstname}</ListItem>
-        <ListItem>Last name: {data.lastname}</ListItem>
-        <ListItem>Username: {data.username}</ListItem>
-        <ListItem sx={{ borderBottom: 1 }}>Email: {data.email}</ListItem>
+        <ListItem>First name: {user.firstname}</ListItem>
+        <ListItem>Last name: {user.lastname}</ListItem>
+        <ListItem>Username: {user.username}</ListItem>
+        <ListItem sx={{ borderBottom: 1 }}>Email: {user.email}</ListItem>
         <Button
           sx={{ my: 1 }}
           onClick={() => setOpenUpdateUser(true)}
@@ -48,15 +52,15 @@ export default function Account() {
         >
           Modify account
         </Button>
-        {!data.isAdmin && (
+        {!user.isAdmin && (
           <ListItem sx={{ mt: 1 }}>
             Address:
-            {data.address ? (
+            {user.address ? (
               <List>
-                <ListItem>Street: {data.address.street}</ListItem>
-                <ListItem>Street number: {data.address.streetNr}</ListItem>
-                <ListItem>City: {data.address.city}</ListItem>
-                <ListItem>Postal code: {data.address.postalCode}</ListItem>
+                <ListItem>Street: {user.address.street}</ListItem>
+                <ListItem>Street number: {user.address.streetNr}</ListItem>
+                <ListItem>City: {user.address.city}</ListItem>
+                <ListItem>Postal code: {user.address.postalCode}</ListItem>
                 <Button
                   onClick={() => setOpenAddAddress(true)}
                   variant="contained"
@@ -80,7 +84,7 @@ export default function Account() {
         <>
           <AddAddress
             close={() => setOpenAddAddress(false)}
-            address={data.address}
+            address={user.address}
             refetch={refetch}
           />
         </>
@@ -89,7 +93,7 @@ export default function Account() {
         <>
           <UpdateUser
             close={() => setOpenUpdateUser(false)}
-            user={data}
+            user={user}
             refetch={refetch}
           />
         </>

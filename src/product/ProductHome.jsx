@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { Buffer } from "buffer";
 
 import { useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import {
   Card,
   CardMedia,
   Typography,
-  Button,
   CardActionArea,
   CardActions,
   Stack,
@@ -17,20 +15,14 @@ import {
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 
-import Context from "../utils/Context";
+import AddToCartButton from "../components/AddToCartButton";
 
 export default function Product({ product }) {
   const { palette, breakpoints } = useTheme();
   const matchesMd = useMediaQuery(breakpoints.up("md"));
-
-  const { cart, setCart } = useContext(Context);
+  const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
   const navigate = useNavigate();
-
-  function addToCart(product) {
-    if (!cart.some((p) => p.product._id === product._id))
-      setCart([...cart, { product: product, count: 1 }]);
-  }
 
   return (
     <Card
@@ -65,8 +57,9 @@ export default function Product({ product }) {
               sx={{
                 objectFit: "contain",
                 bgcolor: palette.secondary.dark,
-                maxHeight: "250px",
               }}
+              height={matchesSm ? 300 : 250}
+              width={matchesSm ? 300 : 250}
             />
 
             <Typography variant="h6" sx={{ m: 1 }}>
@@ -114,18 +107,7 @@ export default function Product({ product }) {
           </Stack>
         </CardActionArea>
         <CardActions sx={{ p: 0 }}>
-          <Button
-            sx={{
-              borderRadius: 0,
-              borderBottomLeftRadius: "12px",
-              borderBottomRightRadius: "12px",
-            }}
-            fullWidth
-            onClick={() => addToCart(product)}
-            variant="contained"
-          >
-            Add to cart
-          </Button>
+          <AddToCartButton product={product} />
         </CardActions>
       </Stack>
     </Card>

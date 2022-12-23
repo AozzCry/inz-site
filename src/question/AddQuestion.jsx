@@ -18,7 +18,7 @@ import { StyledInput } from "../components/styled";
 export default function AddQuestion({ productId, refetch }) {
   const { palette } = useTheme();
 
-  const { setSB } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const [text, setText] = useState("");
 
@@ -29,7 +29,7 @@ export default function AddQuestion({ productId, refetch }) {
     }).then(({ error, message }) => {
       if (!error) {
         refetch();
-        setSB(message);
+        notify(message);
       }
     });
   }
@@ -37,7 +37,7 @@ export default function AddQuestion({ productId, refetch }) {
     <Accordion
       sx={{
         mt: 1,
-        bgcolor: palette.primary.main,
+        bgcolor: palette.secondary.main,
         ".Mui-expanded": { bgcolor: palette.secondary.dark },
       }}
     >
@@ -51,36 +51,34 @@ export default function AddQuestion({ productId, refetch }) {
           bgcolor: palette.primary.dark,
         }}
       >
-        <form>
-          <Stack>
-            <StyledInput
-              name="question"
-              label="Your question"
-              variant="outlined"
-              multiline
-              rows={4}
-              InputProps={{
-                placeholder: "Write your question here...",
-              }}
-              onChange={(event) => {
-                setText(event.target.value);
-              }}
-            />
-            <Button
-              sx={{
-                mt: 1,
-                borderBottomLeftRadius: "12px",
-                borderBottomRightRadius: "12px",
-              }}
-              onClick={SubmitQuestion}
-              fullWidth
-              variant="contained"
-              color={"success"}
-            >
-              Submit
-            </Button>
-          </Stack>
-        </form>
+        <Stack component="form">
+          <StyledInput
+            name="question"
+            label="Your question"
+            variant="outlined"
+            multiline
+            rows={4}
+            InputProps={{
+              placeholder: "Write your question here...",
+            }}
+            onChange={(event) => {
+              setText(event.target.value);
+            }}
+          />
+          <Button
+            sx={{
+              mt: 1,
+              borderBottomLeftRadius: "12px",
+              borderBottomRightRadius: "12px",
+            }}
+            onClick={SubmitQuestion}
+            fullWidth
+            variant="contained"
+            color={"success"}
+          >
+            Submit
+          </Button>
+        </Stack>
       </AccordionDetails>
     </Accordion>
   );

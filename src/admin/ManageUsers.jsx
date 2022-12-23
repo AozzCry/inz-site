@@ -6,7 +6,7 @@ import { getFetch } from "../hooks/fetchHooks";
 import { Container, List, Divider, InputBase, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-import OneUser from "./OneUser";
+import ManageUser from "./ManageUser";
 
 import { StyledSearch } from "../components/styled";
 import ErrorPage from "../main/ErrorPage";
@@ -49,7 +49,7 @@ export default function ManageUsers() {
               user.email.includes(search.toLowerCase())
           )
           .map((user) => (
-            <OneUser key={user._id} user={user} refetch={refetch} />
+            <ManageUser key={user._id} user={user} refetch={refetch} />
           ))}
       </List>
     </Container>

@@ -21,10 +21,9 @@ import { StyledInput } from "../components/styled";
 export default function AddReview({ productId, refetch }) {
   const { palette } = useTheme();
 
-  const { setSB } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const [stars, setStars] = useState(5);
-
   const [text, setText] = useState("");
 
   function SubmitReview() {
@@ -35,7 +34,7 @@ export default function AddReview({ productId, refetch }) {
     }).then(({ error, message }) => {
       if (!error) {
         refetch();
-        setSB({ open: true, message: message });
+        notify(message);
       }
     });
   }
@@ -44,7 +43,7 @@ export default function AddReview({ productId, refetch }) {
     <Accordion
       sx={{
         mt: 1,
-        bgcolor: palette.primary.main,
+        bgcolor: palette.secondary.main,
         ".Mui-expanded": { bgcolor: palette.secondary.dark },
       }}
     >
@@ -58,51 +57,49 @@ export default function AddReview({ productId, refetch }) {
           p: 1,
         }}
       >
-        <form>
-          <Stack>
-            <StyledInput
-              name="review"
-              label="Your review"
-              variant="outlined"
-              multiline
-              rows={4}
-              InputProps={{
-                placeholder: "Write your review here...",
+        <Stack component={"form"}>
+          <StyledInput
+            name="review"
+            label="Your review"
+            variant="outlined"
+            multiline
+            rows={4}
+            InputProps={{
+              placeholder: "Write your review here...",
+            }}
+            onChange={(event) => {
+              setText(event.target.value);
+            }}
+          />
+          <Stack direction="row" sx={{ mt: 1 }}>
+            <Box
+              sx={{
+                borderBottomLeftRadius: 15,
+                border: 1,
+                p: 0.5,
+                mr: 1,
+                borderColor: palette.primary.main,
               }}
-              onChange={(event) => {
-                setText(event.target.value);
-              }}
-            />
-            <Stack direction="row" sx={{ mt: 1 }}>
-              <Box
-                sx={{
-                  borderBottomLeftRadius: 15,
-                  border: 1,
-                  p: 0.5,
-                  mr: 1,
-                  borderColor: palette.primary.main,
+            >
+              <Rating
+                value={stars}
+                onChange={(event, newValue) => {
+                  setStars(newValue);
                 }}
-              >
-                <Rating
-                  value={stars}
-                  onChange={(event, newValue) => {
-                    setStars(newValue);
-                  }}
-                  precision={0.5}
-                  emptyIcon={<StarIcon />}
-                />
-              </Box>
-              <Button
-                sx={{ width: 1, borderBottomRightRadius: 15 }}
-                onClick={SubmitReview}
-                variant="contained"
-                color="success"
-              >
-                Submit
-              </Button>
-            </Stack>
+                precision={0.5}
+                emptyIcon={<StarIcon />}
+              />
+            </Box>
+            <Button
+              sx={{ width: 1, borderBottomRightRadius: 15 }}
+              onClick={SubmitReview}
+              variant="contained"
+              color="success"
+            >
+              Submit
+            </Button>
           </Stack>
-        </form>
+        </Stack>
       </AccordionDetails>
     </Accordion>
   );

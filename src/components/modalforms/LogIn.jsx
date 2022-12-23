@@ -7,14 +7,16 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { Grid, Box, Typography, Button, Alert } from "@mui/material";
+import { Grid, Box, Typography, Button, Alert, Link } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { StyledModal, StyledInput } from "../styled";
 
-export default function LogIn({ close, setUserData }) {
+export default function LogIn({ close, setUserData, setOpenRegister }) {
+  const { notify } = useContext(Context);
+
   const [alert, setAlert] = useState(null);
-  const { notification } = useContext(Context);
+
   const loginValidationSchema = Yup.object().shape({
     email: Yup.string()
       .required("Email is required")
@@ -51,7 +53,7 @@ export default function LogIn({ close, setUserData }) {
           userId: data.userId,
         });
         setAlert(null);
-        notification(message);
+        notify(message);
         close();
       }
     });
@@ -60,10 +62,12 @@ export default function LogIn({ close, setUserData }) {
   return (
     <StyledModal component="main" maxWidth="xs">
       <Grid container>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Log in
-        </Typography>
-        <Grid item xs>
+        <Grid item sx={{ width: 0.2 }}>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Log in
+          </Typography>
+        </Grid>
+        <Grid item sx={{ width: 0.8 }}>
           <Grid container direction="row-reverse">
             <Button onClick={close}>
               <CloseIcon />
@@ -71,7 +75,6 @@ export default function LogIn({ close, setUserData }) {
           </Grid>
         </Grid>
       </Grid>
-
       <Box component="form">
         <StyledInput
           margin="normal"
@@ -106,6 +109,15 @@ export default function LogIn({ close, setUserData }) {
         >
           Submit
         </Button>
+        <Link
+          href="#"
+          onClick={() => {
+            setOpenRegister(true);
+            close();
+          }}
+        >
+          {"Don't have an account? Register here..."}
+        </Link>
       </Box>
     </StyledModal>
   );

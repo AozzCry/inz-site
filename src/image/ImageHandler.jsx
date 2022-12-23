@@ -6,8 +6,8 @@ import { Button, Input } from "@mui/material";
 import { patchFetch } from "../hooks/fetchHooks";
 import Context from "../utils/Context";
 
-export default function ImageHandler({ productId, imageId, setConfirmDialog }) {
-  const { setSB } = useContext(Context);
+export default function ImageHandler({ productId, imageId, refetch }) {
+  const { notify, confirm } = useContext(Context);
   function submitImage(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -26,20 +26,24 @@ export default function ImageHandler({ productId, imageId, setConfirmDialog }) {
           },
         })
         .then((res) => {
-          setSB({ open: true, message: res.data.message });
+          notify(res.data.message);
+          refetch();
         })
         .catch((err) => {
           console.error(err);
         });
     } else
-      return setSB({
-        open: true,
-        message: "Only jpg and png images are allowed. Max size 12MB",
-      });
+      return notify(
+        "Only jpg and png images are allowed. Max size 12MB",
+        "error"
+      );
   }
   function deleteImage() {
-    patchFetch("/image", { imageId: imageId }, ({ message, error }) => {
-      !error && setSB({ open: true, message: message });
+    patchFetch("/image", { imageId }, ({ message, error }) => {
+      if (!error) {
+        notify(message);
+        refetch();
+      }
     });
   }
   return (
@@ -57,11 +61,7 @@ export default function ImageHandler({ productId, imageId, setConfirmDialog }) {
       {imageId && (
         <Button
           onClick={() =>
-            setConfirmDialog({
-              open: true,
-              text: "Do you want to delete this image?",
-              afterConfirm: deleteImage,
-            })
+            confirm("Do you want to delete this image?", deleteImage)
           }
           sx={{ ml: 1 }}
           size="small"

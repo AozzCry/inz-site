@@ -138,7 +138,7 @@ export default function Products() {
               searchParams.category.map((category) => (
                 <Button
                   sx={{ ml: 1, mb: 0.25 }}
-                  key={category.name}
+                  key={category.name + "active"}
                   fullWidth
                   variant={"contained"}
                   onClick={() =>
@@ -165,7 +165,7 @@ export default function Products() {
                 .slice(0, 10)
                 .map((category, index) => (
                   <Button
-                    key={category._id}
+                    key={category.name}
                     variant={"outlined"}
                     onClick={() =>
                       setSearchParams({
@@ -266,6 +266,7 @@ export default function Products() {
           <Container disableGutters sx={{ display: "flex" }}>
             {!matchesPr && (
               <Button
+                title="Filter products"
                 onClick={() => setOpenDrawer(true)}
                 sx={{ m: 1 }}
                 variant="contained"

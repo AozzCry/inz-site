@@ -31,7 +31,7 @@ export default function AdminMenu() {
   return (
     <Stack
       direction={matchesMd ? "row" : "column"}
-      sx={{ bgcolor: palette.primary.dark, borderRadius: 30 }}
+      sx={{ bgcolor: palette.primary.dark }}
     >
       {matchesXs && (
         <Stack

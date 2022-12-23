@@ -25,7 +25,7 @@ export default function Cart() {
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesMd = useMediaQuery(breakpoints.up("md"));
 
-  const { notification, cart, setCart, userData } = useContext(Context);
+  const { cart, setCart, userData, confirm } = useContext(Context);
 
   return (
     <Container
@@ -39,11 +39,11 @@ export default function Cart() {
             borderColor: palette.action.delete,
             color: palette.action.delete,
           }}
+          title="Clear cart"
           variant="outlined"
-          onClick={() => {
-            setCart([]);
-            notification("Cart cleared.");
-          }}
+          onClick={() =>
+            confirm("Do you want to clear your cart?", () => setCart([]))
+          }
         >
           {matchesSm && "Clear cart"}
           <ClearAllIcon />
@@ -80,6 +80,8 @@ export default function Cart() {
             <CardActions>
               {userData.email ? (
                 <Button
+                  title="Order"
+                  sx={{ bgcolor: palette.action.positive }}
                   to={cart.length > 0 ? "../checkout" : "#"}
                   component={NavLink}
                   variant={"contained"}
@@ -88,7 +90,7 @@ export default function Cart() {
                   Order
                 </Button>
               ) : (
-                <Typography variant="h6" sx={{ m: 1 }}>
+                <Typography variant="body1" sx={{ m: 1 }}>
                   You must be logged in to order.
                 </Typography>
               )}

@@ -7,7 +7,7 @@ export default function Footer() {
       <Box sx={{ bgcolor: palette.secondary.main }}>
         <Typography variant="body2" align="center">
           {"Copyright © "}
-          <a color="inherit">Your Website</a> {new Date().getFullYear()}
+          <a>EMicro</a> {new Date().getFullYear()}
           {"."}
         </Typography>
       </Box>

@@ -23,15 +23,15 @@ import Answer from "./Answer";
 import { daysSince } from "../utils/functions";
 
 export default function Question({ question, refetch, user }) {
-  const { palette, breakpoints } = useTheme();
-  const { setSB } = useContext(Context);
+  const { palette } = useTheme();
+  const { notify } = useContext(Context);
 
   function ThumbsHandler(action) {
     patchFetch("question/" + action, { questionId: question._id }).then(
       ({ error, message }) => {
         if (!error) {
           refetch();
-          setSB(message);
+          notify(message);
         }
       }
     );
@@ -135,20 +135,22 @@ export default function Question({ question, refetch, user }) {
             sx={{
               mt: 1,
               width: 1,
-              bgcolor: palette.primary.main,
+              bgcolor: palette.secondary.main,
               ".Mui-expanded": { bgcolor: palette.secondary.dark },
             }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Show answers ({question.answers.length})</Typography>
+              <Typography variant="body1">
+                Show answers ({question.answers.length})
+              </Typography>
             </AccordionSummary>
             <AccordionDetails
               sx={{ m: 0.5, p: 1, bgcolor: palette.primary.dark }}
             >
-              {question.answers.map((answer, index) => (
+              {question.answers.map((answer) => (
                 <Answer
                   user={{ userId: user.userId, isAdmin: user.isAdmin }}
-                  key={index}
+                  key={answer._id}
                   answer={answer}
                   refetch={refetch}
                   questionId={question._id}

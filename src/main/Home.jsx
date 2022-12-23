@@ -1,12 +1,12 @@
 import { useQuery } from "react-query";
 import { getFetch } from "../hooks/fetchHooks";
 
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Stack } from "@mui/material";
 
 import ProductHome from "../product/ProductHome";
-import { Stack } from "@mui/system";
 import LoadingPage from "./LoadingPage";
 import ErrorPage from "./ErrorPage";
+
 export default function Home() {
   const {
     isLoading,
@@ -19,9 +19,7 @@ export default function Home() {
   });
 
   if (isLoading) return <LoadingPage what="products" />;
-
   if (isError) return <ErrorPage error={error.message} />;
-
   return (
     <Stack>
       <Typography sx={{ m: 1 }} variant="h5">
@@ -32,8 +30,8 @@ export default function Home() {
           disableGutters
           sx={{ pl: 1, display: "flex", flexWrap: "wrap" }}
         >
-          {homeProducts.randomFiveProducts.map((product, index) => (
-            <ProductHome key={index} product={product} />
+          {homeProducts.randomFiveProducts.map((product) => (
+            <ProductHome key={product._id} product={product} />
           ))}
         </Container>
       )}
@@ -46,8 +44,8 @@ export default function Home() {
             disableGutters
             sx={{ pl: 1, display: "flex", flexWrap: "wrap" }}
           >
-            {homeProducts.lastSeenProducts.map((product, index) => (
-              <ProductHome key={index} product={product} />
+            {homeProducts.lastSeenProducts.map((product) => (
+              <ProductHome key={product._id} product={product} />
             ))}
           </Container>
         </>

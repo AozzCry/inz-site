@@ -26,7 +26,7 @@ export default function ConfirmOrder({
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
 
-  const { notification, cart, setCart } = useContext(Context);
+  const { notify, cart, setCart, confirm } = useContext(Context);
 
   const sumPrice = cart
     .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
@@ -54,7 +54,7 @@ export default function ConfirmOrder({
     }).then(({ error, message }) => {
       if (!error) {
         setCart([]);
-        notification(message);
+        notify(message);
         setActiveStep((s) => s + 1);
       }
     });
@@ -183,7 +183,7 @@ export default function ConfirmOrder({
           <Button
             variant="contained"
             sx={{ height: 40, m: 1 }}
-            onClick={submitOrder}
+            onClick={() => confirm("Do you confirm order?", submitOrder)}
           >
             Confirm
           </Button>

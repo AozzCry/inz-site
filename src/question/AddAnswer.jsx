@@ -18,7 +18,7 @@ import { StyledInput } from "../components/styled";
 export default function AddAnswer({ questionId, refetch }) {
   const { palette } = useTheme();
 
-  const { setSB } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const [text, setText] = useState("");
 
@@ -29,7 +29,7 @@ export default function AddAnswer({ questionId, refetch }) {
     }).then(({ error, message }) => {
       if (!error) {
         refetch();
-        setSB(message);
+        notify(message);
       }
     });
   }
@@ -38,7 +38,7 @@ export default function AddAnswer({ questionId, refetch }) {
       sx={{
         mt: 1,
         width: 1,
-        bgcolor: palette.primary.main,
+        bgcolor: palette.secondary.main,
 
         ".Mui-expanded": { bgcolor: palette.secondary.dark },
       }}

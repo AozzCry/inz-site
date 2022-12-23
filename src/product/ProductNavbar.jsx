@@ -43,6 +43,7 @@ export default function ProductNavbar({
         }}
       >
         <Button
+          title="Back"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => navigate(-1)}
@@ -51,41 +52,46 @@ export default function ProductNavbar({
           {matchesSm && "Back"}
         </Button>
         <Button
+          title="Product"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={scrollToRef}
+          onClick={() => scrollToRef(mainRef)}
         >
           <ArrowUpwardIcon />
           {matchesSm && "Product"}
         </Button>
         <Button
+          title="Description"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={scrollToRef}
+          onClick={() => scrollToRef(descriptionRef)}
         >
           <DescriptionIcon />
           {matchesSm && "Description"}
         </Button>
         <Button
+          title="Specification"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={scrollToRef}
+          onClick={() => scrollToRef(specificationRef)}
         >
           <FormatListBulletedIcon />
           {matchesSm && "Specification"}
         </Button>
         <Button
+          title="Reviews"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={scrollToRef}
+          onClick={() => scrollToRef(reviewsRef)}
         >
           <ReviewsIcon />
           {matchesSm && "Reviews"}
         </Button>
         <Button
+          title="Questions"
           sx={{ minWidth: 50, flexGrow: 1 / 6 }}
           variant="outlined"
-          onClick={scrollToRef}
+          onClick={() => scrollToRef(questionsRef)}
         >
           <QuestionAnswerIcon />
           {matchesSm && "Questions"}

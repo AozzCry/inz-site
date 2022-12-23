@@ -1,11 +1,16 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+
+import { Button } from "@mui/material";
+
 import { StyledInput } from "../components/styled";
 
 export default function AddressForm({ address, setAddress, setActiveStep }) {
   const navigate = useNavigate();
+
   const [newAddress, setNewAddress] = useState(address);
+
   function saveAddress() {
     setAddress(newAddress);
     setActiveStep((s) => s + 1);

@@ -10,11 +10,14 @@ import { Container, Stepper, StepLabel, Typography, Step } from "@mui/material";
 import AddressForm from "./AddressForm";
 import PaymentForm from "./PaymentForm";
 import ConfirmOrder from "./ConfirmOrder";
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
 
 const steps = ["Shipping address", "Payment details", "Confirm your order"];
 
 export default function Checkout() {
   const { palette } = useTheme();
+
   const [address, setAddress] = useState(null);
   const [payment, setPayment] = useState({
     street: "",
@@ -26,12 +29,18 @@ export default function Checkout() {
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const { status, data: user } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data: user,
+  } = useQuery({
     queryKey: ["/user"],
     queryFn: getFetch,
   });
 
-  if (status !== "success") return "Loading...";
+  if (isLoading) return <LoadingPage what="checkout" />;
+  if (isError) return <ErrorPage error={error.message} />;
   return (
     <Container sx={{ bgcolor: palette.primary.dark }}>
       <Typography component="h1" variant="h4" align="center">
