@@ -11,8 +11,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 import { ContextProvider } from "./utils/Context.jsx";
 
-//axios.defaults.baseURL = "https://emicro-api.azurewebsites.net";
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "https://emicro-api.azurewebsites.net";
 const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
