@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "@mui/material";
 
@@ -26,8 +26,16 @@ import ProductDetails from "./product/ProductDetails.jsx";
 import ConfirmDialog from "./components/ConfirmDialog.jsx";
 import Notification from "./components/Notification.jsx";
 
+import ReactGA from "react-ga";
+ReactGA.initialize("G-FTZT9S8YSY");
+
 export default function App() {
   const { userData } = useContext(Context);
+
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
+
   return (
     <>
       <BrowserRouter>
