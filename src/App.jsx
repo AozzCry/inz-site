@@ -26,15 +26,11 @@ import ProductDetails from "./product/ProductDetails.jsx";
 import ConfirmDialog from "./components/ConfirmDialog.jsx";
 import Notification from "./components/Notification.jsx";
 
-import ReactGA from "react-ga";
+import ReactGA from "react-ga4";
 ReactGA.initialize("G-FTZT9S8YSY");
 
 export default function App() {
   const { userData } = useContext(Context);
-
-  useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  }, []);
 
   return (
     <>
