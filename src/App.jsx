@@ -54,7 +54,6 @@ export default function App() {
                 <Route path="orders" element={<ManageOrders />} />
               </Route>
             )}
-
             {userData.username && !userData.isAdmin && (
               <Route path="user" element={<UserMenu />}>
                 <Route path="account" element={<Account />} />

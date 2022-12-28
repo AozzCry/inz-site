@@ -44,7 +44,7 @@ export default function ProductNavbar({
       >
         <Button
           title="Back"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => navigate(-1)}
         >
@@ -53,7 +53,7 @@ export default function ProductNavbar({
         </Button>
         <Button
           title="Product"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => scrollToRef(mainRef)}
         >
@@ -62,7 +62,7 @@ export default function ProductNavbar({
         </Button>
         <Button
           title="Description"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => scrollToRef(descriptionRef)}
         >
@@ -71,7 +71,7 @@ export default function ProductNavbar({
         </Button>
         <Button
           title="Specification"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => scrollToRef(specificationRef)}
         >
@@ -80,7 +80,7 @@ export default function ProductNavbar({
         </Button>
         <Button
           title="Reviews"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => scrollToRef(reviewsRef)}
         >
@@ -89,7 +89,7 @@ export default function ProductNavbar({
         </Button>
         <Button
           title="Questions"
-          sx={{ minWidth: 50, flexGrow: 1 / 6 }}
+          sx={{ minWidth: 40, flexGrow: 1 / 6 }}
           variant="outlined"
           onClick={() => scrollToRef(questionsRef)}
         >

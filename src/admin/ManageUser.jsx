@@ -23,16 +23,16 @@ export default function ManageUser({ user, refetch }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
 
-  function banUserSubmit(id) {
-    patchFetch("/user/banbyid", { id }).then(({ error }) => {
+  function banUserSubmit() {
+    patchFetch("/user/banbyid", { id: user._id }).then(({ error }) => {
       if (!error) {
         refetch();
         notify("User banned");
       }
     });
   }
-  function deleteUserSubmit(id) {
-    patchFetch("/user/deletebyid", { id }).then(({ error }) => {
+  function deleteUserSubmit() {
+    patchFetch("/user/deletebyid", { id: user._id }).then(({ error }) => {
       if (!error) {
         refetch();
         setAnchorEl(false);
@@ -80,7 +80,7 @@ export default function ManageUser({ user, refetch }) {
             variant="outlined"
             edge={"end"}
             color="warning"
-            onClick={() => banUserSubmit(user._id)}
+            onClick={banUserSubmit}
           >
             Ban
           </Button>
@@ -89,7 +89,11 @@ export default function ManageUser({ user, refetch }) {
             variant="outlined"
             edge={"end"}
             color="error"
-            onClick={() => deleteUserSubmit(user._id)}
+            onClick={() =>
+              confirm("Do you want to delete this user?", () =>
+                deleteUserSubmit()
+              )
+            }
           >
             Remove
           </Button>
@@ -129,18 +133,17 @@ export default function ManageUser({ user, refetch }) {
               title="Ban user"
               variant="contained"
               edge={"end"}
-              onClick={() => banUserSubmit(anchorEl.value)}
+              onClick={banUserSubmit}
             >
               Ban
             </MenuItem>
             <MenuItem
-              sx={{ bgcolor: palette.action.negative }}
               title="Delete user"
               variant="contained"
               edge={"end"}
               onClick={() =>
                 confirm("Do you want to delete this user?", () =>
-                  deleteUserSubmit(anchorEl.value)
+                  deleteUserSubmit()
                 )
               }
             >

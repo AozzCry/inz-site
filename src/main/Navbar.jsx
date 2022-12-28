@@ -136,7 +136,7 @@ export default function Navbar() {
             </Button>
           </Box>
           {matchesMd &&
-            location.pathname !== "/product/" &&
+            location.pathname !== "/product" &&
             !location.pathname.includes("admin") && (
               <StyledSearch>
                 <InputBase

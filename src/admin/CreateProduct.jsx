@@ -56,7 +56,8 @@ export default function CreateProduct() {
       "Long description must not exceed 4000 characters."
     ),
     quantity: Yup.number()
-      .typeError("Quantity must be a number.")
+      .intiger()
+      .typeError("Quantity must be an intiger.")
       .min(0, "Quantity can't be negative.")
       .nullable(true)
       .transform((_, val) => (val ? Number(val) : null)),
