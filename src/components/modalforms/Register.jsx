@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { StyledModal, StyledInput } from "../styled";
 
 export default function Register({ close, setOpenLogIn }) {
-  const { notification } = useContext(Context);
+  const { notify } = useContext(Context);
 
   const [alert, setAlert] = useState(null);
 
@@ -67,7 +67,7 @@ export default function Register({ close, setOpenLogIn }) {
         setAlert(error);
       } else {
         setAlert(null);
-        notification(message);
+        notify(message);
         close();
       }
     });

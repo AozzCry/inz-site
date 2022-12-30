@@ -38,6 +38,7 @@ export default function Navbar() {
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesPr = useMediaQuery(breakpoints.up("pr"));
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -247,13 +248,13 @@ export default function Navbar() {
                           mr: 1,
                         }}
                       >
-                        {matchesMd ? "Log in" : <LoginIcon />}
+                        {matchesPr ? "Log in" : <LoginIcon />}
                       </Button>
                       <Button
                         onClick={() => setOpenRegister(true)}
                         variant="contained"
                       >
-                        {matchesMd ? "Register" : <AppRegistrationIcon />}
+                        {matchesPr ? "Register" : <AppRegistrationIcon />}
                       </Button>
                     </>
                   ) : (
