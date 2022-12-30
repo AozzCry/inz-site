@@ -15,7 +15,6 @@ import {
   useMediaQuery,
   useTheme,
   Container,
-  Tooltip,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
@@ -64,7 +63,7 @@ export default function Products() {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight={1}
+          sx={{ my: 2 }}
         >
           <Typography variant="h6" textAlign="center">
             No products found
@@ -138,7 +137,7 @@ export default function Products() {
               searchParams.category.map((category) => (
                 <Button
                   sx={{ ml: 1, mb: 0.25 }}
-                  key={category.name + "active"}
+                  key={category + "active"}
                   fullWidth
                   variant={"contained"}
                   onClick={() =>
@@ -150,9 +149,7 @@ export default function Products() {
                     })
                   }
                 >
-                  <Tooltip title={category}>
-                    <Typography>{category}</Typography>
-                  </Tooltip>
+                  <Typography>{category}</Typography>
                 </Button>
               ))}
             {categories &&
@@ -163,7 +160,7 @@ export default function Products() {
                     !searchParams.category.includes(c.name)
                 )
                 .slice(0, 10)
-                .map((category, index) => (
+                .map((category) => (
                   <Button
                     key={category.name}
                     variant={"outlined"}
@@ -175,9 +172,7 @@ export default function Products() {
                     }
                     sx={{ mb: 0.25, bgcolor: palette.primary.dark }}
                   >
-                    <Tooltip title={category.name}>
-                      <Typography>{category.name.slice(0, 10)}</Typography>
-                    </Tooltip>
+                    <Typography>{category.name.slice(0, 10)}</Typography>
                   </Button>
                 ))}
           </Stack>
@@ -217,7 +212,7 @@ export default function Products() {
               {searchParams.category &&
                 searchParams.category.map((category) => (
                   <Button
-                    key={category._id + "active"}
+                    key={category + "active"}
                     fullWidth
                     variant={"contained"}
                     onClick={() =>
@@ -229,9 +224,7 @@ export default function Products() {
                       })
                     }
                   >
-                    <Tooltip title={category}>
-                      <Typography>{category.slice(0, 10)}</Typography>
-                    </Tooltip>
+                    <Typography>{category.slice(0, 10)}</Typography>
                   </Button>
                 ))}
               {categories &&
@@ -244,7 +237,7 @@ export default function Products() {
                   .slice(0, 10)
                   .map((category) => (
                     <Button
-                      key={category._id}
+                      key={category._id + "notactive"}
                       variant={"outlined"}
                       onClick={() =>
                         setSearchParams({
@@ -254,9 +247,7 @@ export default function Products() {
                       }
                       sx={{ color: palette.text.primary }}
                     >
-                      <Tooltip title={category.name}>
-                        <Typography>{category.name.slice(0, 10)}</Typography>
-                      </Tooltip>
+                      <Typography>{category.name.slice(0, 10)}</Typography>
                     </Button>
                   ))}
             </Stack>

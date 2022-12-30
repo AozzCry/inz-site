@@ -11,7 +11,6 @@ export default function ImageHandler({ productId, imageId, refetch }) {
   function submitImage(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    console.log(formData.get("image").type);
     if (
       ["image/jpg", "image/png", "image/jpeg"].includes(
         formData.get("image").type

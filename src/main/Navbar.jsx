@@ -166,6 +166,12 @@ export default function Navbar() {
                   }}
                   badgeContent={cart.reduce((sum, ci) => sum + ci.count, 0)}
                   color="secondary"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      color: palette.text.contrast,
+                      backgroundColor: palette.primary.light,
+                    },
+                  }}
                   invisible={cart.count < 0}
                 >
                   <ShoppingCartIcon />
@@ -197,7 +203,7 @@ export default function Navbar() {
                       {userData.isAdmin ? (
                         <MenuItem
                           dense={true}
-                          sx={{ bgcolor: palette.primary.main }}
+                          sx={{ bgcolor: palette.primary.dark, py: 2 }}
                           component={NavLink}
                           to="/admin"
                           onClick={() => {
@@ -208,7 +214,7 @@ export default function Navbar() {
                         </MenuItem>
                       ) : (
                         <MenuItem
-                          sx={{ bgcolor: palette.primary.main }}
+                          sx={{ bgcolor: palette.primary.dark, py: 2 }}
                           component={NavLink}
                           to="/user"
                           onClick={() => {
@@ -219,7 +225,7 @@ export default function Navbar() {
                         </MenuItem>
                       )}
                       <MenuItem
-                        sx={{ bgcolor: palette.primary.main }}
+                        sx={{ bgcolor: palette.primary.dark }}
                         onClick={() => {
                           logoutSubmit();
                           setAnchorEl(null);
@@ -260,24 +266,23 @@ export default function Navbar() {
                         <AccountCircleIcon />
                       </Button>
                       <Menu
-                        sx={{ ul: { bgcolor: palette.primary.dark } }}
+                        sx={{ ul: { bgcolor: palette.primary.dark, p: 0 } }}
                         anchorEl={anchorElLog}
                         keepMounted
                         open={Boolean(anchorElLog)}
                         onClose={() => setAnchorElLog(false)}
                       >
-                        <Button
+                        <MenuItem
                           onClick={() => {
                             setOpenLogIn(true);
                             setAnchorElLog(false);
                           }}
-                          sx={{ mr: 1 }}
                           variant="contained"
                         >
                           Log in
                           <LoginIcon />
-                        </Button>
-                        <Button
+                        </MenuItem>
+                        <MenuItem
                           onClick={() => {
                             setOpenRegister(true);
                             setAnchorElLog(false);
@@ -285,7 +290,7 @@ export default function Navbar() {
                           variant="contained"
                         >
                           Register <AppRegistrationIcon />
-                        </Button>
+                        </MenuItem>
                       </Menu>
                     </>
                   )}

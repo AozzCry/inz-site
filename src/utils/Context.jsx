@@ -3,6 +3,7 @@ import { createContext, useEffect, useMemo, useState } from "react";
 const Context = createContext();
 
 export const ContextProvider = (props) => {
+  const [theme, setTheme] = useState(true);
   const [snackBar, setSnackBar] = useState({
     open: false,
     message: "",
@@ -41,6 +42,9 @@ export const ContextProvider = (props) => {
 
   const value = useMemo(
     () => ({
+      theme,
+      setTheme,
+
       userData,
       setUserData,
 
@@ -55,7 +59,7 @@ export const ContextProvider = (props) => {
       setConfirmDialog,
       confirm,
     }),
-    [userData, snackBar, cart, confirmDialog]
+    [theme, userData, cart, snackBar, confirmDialog]
   );
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 };

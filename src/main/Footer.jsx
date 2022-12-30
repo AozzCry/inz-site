@@ -1,14 +1,22 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Button, Typography, useTheme, Box } from "@mui/material";
+import { useContext } from "react";
+import Context from "../utils/Context";
 
 export default function Footer() {
-  const { palette } = useTheme();
+  const { setTheme } = useContext(Context);
   return (
     <footer>
-      <Box sx={{ bgcolor: palette.secondary.main }}>
+      <Box sx={{ bgcolor: useTheme().palette.secondary.dark }}>
         <Typography variant="body2" align="center">
-          {"Copyright © "}
-          <a>EMicro</a> {new Date().getFullYear()}
-          {"."}
+          Copyright © EMicro 2022
+          <Button
+            sx={{ ml: 1, py: 0, my: 0.5 }}
+            variant="outlined"
+            size="small"
+            onClick={() => setTheme((prev) => !prev)}
+          >
+            Change theme
+          </Button>
         </Typography>
       </Box>
     </footer>

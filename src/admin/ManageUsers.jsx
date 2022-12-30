@@ -41,7 +41,7 @@ export default function ManageUsers() {
         <SearchIcon />
       </StyledSearch>
       <Divider />
-      <List sx={{ borderRadius: "10px", bgcolor: palette.primary.main }}>
+      <List sx={{ borderRadius: "10px", bgcolor: palette.primary.dark }}>
         {users
           .filter(
             (user) =>

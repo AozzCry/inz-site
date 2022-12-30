@@ -1,10 +1,12 @@
 import { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Container, ThemeProvider } from "@mui/material";
+import { lightTheme, darkTheme } from "./utils/themes.jsx";
 
 import Home from "./main/Home.jsx";
 import Navbar from "./main/Navbar.jsx";
 import NotFoundPage from "./main/NotFoundPage.jsx";
+import Footer from "./main/Footer.jsx";
 
 import Products from "./product/Products.jsx";
 import Cart from "./product/Cart.jsx";
@@ -26,14 +28,11 @@ import ProductDetails from "./product/ProductDetails.jsx";
 import ConfirmDialog from "./components/ConfirmDialog.jsx";
 import Notification from "./components/Notification.jsx";
 
-import ReactGA from "react-ga4";
-ReactGA.initialize("G-FTZT9S8YSY");
-
 export default function App() {
-  const { userData } = useContext(Context);
+  const { userData, theme } = useContext(Context);
 
   return (
-    <>
+    <ThemeProvider theme={theme ? lightTheme : darkTheme}>
       <BrowserRouter>
         <Container disableGutters sx={{ minHeight: "100vh" }}>
           <Navbar />
@@ -60,13 +59,13 @@ export default function App() {
                 <Route path="orders" element={<Orders />} />
               </Route>
             )}
-
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          <Footer />
         </Container>
       </BrowserRouter>
       <ConfirmDialog />
       <Notification />
-    </>
+    </ThemeProvider>
   );
 }

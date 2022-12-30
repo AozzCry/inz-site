@@ -44,9 +44,10 @@ export default function ManageUser({ user, refetch }) {
   return (
     <ListItem
       sx={{
+        border: 1,
         borderRadius: "15px",
         bgcolor: palette.secondary.dark,
-        m: 1,
+        my: 1,
       }}
       key={user._id}
     >

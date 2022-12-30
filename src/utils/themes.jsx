@@ -49,3 +49,63 @@ export const darkTheme = createTheme({
     },
   },
 });
+
+export const lightTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#3D83b7",
+      light: "#14eFbC",
+      dark: "#ffffff",
+    },
+    secondary: {
+      main: "#ffffff",
+      light: "#b8e16c",
+      dark: "#ffffff",
+    },
+    text: {
+      primary: "#000000",
+      secondary: "#000000",
+      contrast: "#000000",
+    },
+    action: {
+      delete: "#fa4545",
+      positive: "#008f51",
+      negative: "#55ccee",
+      disabledBackground: "#a2a2a2",
+      disabled: "#000000",
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 400,
+      sm: 600,
+      md: 900,
+      pr: 1100,
+    },
+  },
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#ffffff",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            backgroundColor: "#3D4367",
+            color: "#ffffff",
+          },
+        },
+      },
+    },
+  },
+
+  typography: {
+    allVariants: {
+      color: "#000000",
+    },
+  },
+});

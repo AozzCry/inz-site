@@ -45,7 +45,7 @@ export default function Cart() {
             confirm("Do you want to clear your cart?", () => setCart([]))
           }
         >
-          {matchesSm && "Clear cart"}
+          Clear cart
           <ClearAllIcon />
         </Button>
         <Typography variant="h4">

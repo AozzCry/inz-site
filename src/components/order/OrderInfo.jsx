@@ -14,7 +14,17 @@ export default function OrderInfo({ address, userInfo }) {
 
   return (
     <Stack direction="row">
-      <Box sx={{ width: 1, border: 1, p: 1, borderRadius: 3, my: 1, mr: 0.5 }}>
+      <Box
+        sx={{
+          width: 1,
+          border: 1,
+          p: 1,
+          borderRadius: 3,
+          ml: 1,
+          my: 1,
+          mr: 0.5,
+        }}
+      >
         <Typography variant="h6" sx={{ mb: 1 }}>
           Delivery address:
         </Typography>
@@ -33,7 +43,17 @@ export default function OrderInfo({ address, userInfo }) {
           </ListItem>
         </List>
       </Box>
-      <Box sx={{ width: 1, border: 1, p: 1, borderRadius: 3, my: 1, ml: 0.5 }}>
+      <Box
+        sx={{
+          width: 1,
+          border: 1,
+          p: 1,
+          borderRadius: 3,
+          mr: 1,
+          my: 1,
+          ml: 0.5,
+        }}
+      >
         <Typography variant="h6" sx={{ mb: 1 }}>
           Recipient details:
         </Typography>

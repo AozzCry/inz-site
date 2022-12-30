@@ -46,7 +46,14 @@ export default function CreateProduct() {
     price: Yup.number()
       .typeError("Price must be a number.")
       .required("Price is required.")
-      .min(0.01, "Price must be bigger than 0."),
+      .min(0.01, "Price must be bigger than 0.")
+      .test(
+        "has-two-decimal-places",
+        "Price must have exactly two decimal places",
+        (value) => {
+          return /^\d+\.\d{2}$/.test(value);
+        }
+      ),
     shortDescription: Yup.string().max(
       63,
       "Short description must not exceed 63 characters."
@@ -56,8 +63,8 @@ export default function CreateProduct() {
       "Long description must not exceed 4000 characters."
     ),
     quantity: Yup.number()
-      .intiger()
-      .typeError("Quantity must be an intiger.")
+      .typeError("Quantity must be a number.")
+      .integer("Quantity must be an intiger.")
       .min(0, "Quantity can't be negative.")
       .nullable(true)
       .transform((_, val) => (val ? Number(val) : null)),

@@ -138,7 +138,14 @@ export default function ManageCategories() {
           <SearchIcon />
         </StyledSearch>
       )}
-      <List sx={{ mt: 2, borderRadius: "10px", bgcolor: palette.primary.main }}>
+      <List
+        sx={{
+          mt: 2,
+
+          borderRadius: "10px",
+          bgcolor: palette.primary.dark,
+        }}
+      >
         {categories
           .filter((c) => c.name.toLowerCase().includes(search.trim()))
           .map((category) => {
@@ -146,6 +153,7 @@ export default function ManageCategories() {
               <ListItem
                 key={category._id}
                 sx={{
+                  border: 1,
                   borderRadius: "15px",
                   bgcolor: palette.secondary.dark,
                   m: 1,
