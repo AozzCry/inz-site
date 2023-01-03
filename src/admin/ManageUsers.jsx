@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 
-import { getFetch } from "../hooks/fetchHooks";
-
-import { Container, List, Divider, InputBase, useTheme } from "@mui/material";
+import { Container, List, Divider, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 import ManageUser from "./ManageUser";
@@ -13,8 +11,6 @@ import ErrorPage from "../main/ErrorPage";
 import LoadingPage from "../main/LoadingPage";
 
 export default function ManageUsers() {
-  const { palette } = useTheme();
-
   const [search, setSearch] = useState("");
 
   const {
@@ -25,7 +21,6 @@ export default function ManageUsers() {
     refetch,
   } = useQuery({
     queryKey: ["/user/getall"],
-    queryFn: getFetch,
   });
 
   if (isLoading) return <LoadingPage what={"user"} />;
@@ -34,19 +29,21 @@ export default function ManageUsers() {
     <Container disableGutters sx={{ my: 1, px: 1 }}>
       <StyledSearch>
         <InputBase
-          sx={{ width: 1, input: { color: palette.text.contrast } }}
+          sx={{ width: 1, input: { color: "text.contrast" } }}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Find user..."
         />
         <SearchIcon />
       </StyledSearch>
       <Divider />
-      <List sx={{ borderRadius: "10px", bgcolor: palette.primary.dark }}>
+      <List sx={{ borderRadius: "10px", bgcolor: "primary.dark" }}>
         {users
           .filter(
             (user) =>
-              user.username.toLowerCase().includes(search) ||
-              user.email.includes(search.toLowerCase())
+              user.username
+                .toLowerCase()
+                .includes(search.trim().toLowerCase()) ||
+              user.email.includes(search.trim().toLowerCase())
           )
           .map((user) => (
             <ManageUser key={user._id} user={user} refetch={refetch} />

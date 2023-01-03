@@ -3,7 +3,7 @@ import { createContext, useEffect, useMemo, useState } from "react";
 const Context = createContext();
 
 export const ContextProvider = (props) => {
-  const [theme, setTheme] = useState(true);
+  const [theme, setTheme] = useState(false);
   const [snackBar, setSnackBar] = useState({
     open: false,
     message: "",

@@ -1,7 +1,6 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Context from "../utils/Context";
-
-import { postFetch } from "../hooks/fetchHooks";
+import fetch from "../hooks/fetchHooks";
 
 import {
   Typography,
@@ -15,6 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import { Link } from "react-router-dom";
 
 export default function ConfirmOrder({
   setActiveStep,
@@ -22,42 +22,47 @@ export default function ConfirmOrder({
   payment,
   user,
 }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesXs = useMediaQuery(useTheme().breakpoints.up("xs"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const { notify, cart, setCart, confirm } = useContext(Context);
+  const [errorList, setErrorList] = useState([]);
 
   const sumPrice = cart
     .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
     .toFixed(2);
 
   function submitOrder() {
-    postFetch("/order/create", {
-      products: cart.map((ci) => {
-        return {
-          productName: ci.product.name,
-          productPrice: ci.product.price,
-          productId: ci.product._id,
-          count: ci.count,
-        };
-      }),
-      sumPrice: sumPrice,
-      userId: user._id,
-      userInfo: {
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-      },
-      address: address,
-    }).then(({ error, message }) => {
-      if (!error) {
-        setCart([]);
-        notify(message);
-        setActiveStep((s) => s + 1);
-      }
-    });
+    fetch
+      .post("/order/create", {
+        products: cart.map((ci) => {
+          return {
+            productName: ci.product.name,
+            productPrice: ci.product.price,
+            productNameLink: ci.product.nameLink,
+            productId: ci.product._id,
+            count: ci.count,
+          };
+        }),
+        sumPrice: sumPrice,
+        userId: user._id,
+        userInfo: {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          username: user.username,
+          email: user.email,
+        },
+        address: address,
+      })
+      .then(({ error, message }) => {
+        if (error && error.length > 0) {
+          setErrorList(error);
+        } else {
+          setCart([]);
+          notify(message);
+          setActiveStep((s) => s + 1);
+        }
+      });
   }
   return (
     <>
@@ -68,7 +73,7 @@ export default function ConfirmOrder({
         {cart.map(({ product, count }) => (
           <ListItem
             key={product._id}
-            sx={{ p: 1, bgcolor: palette.secondary.dark, borderRadius: 3 }}
+            sx={{ p: 1, bgcolor: "secondary.dark", borderRadius: 3 }}
           >
             <ListItemText
               primary={product.name}
@@ -81,7 +86,7 @@ export default function ConfirmOrder({
         ))}
 
         <ListItem
-          sx={{ py: 1, px: 0, borderTop: 1, borderColor: palette.primary.main }}
+          sx={{ py: 1, px: 0, borderTop: 1, borderColor: "primary.main" }}
         >
           <ListItemText primary="Total" />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
@@ -94,11 +99,11 @@ export default function ConfirmOrder({
           <Box
             sx={{
               flexGrow: 1,
-              color: palette.text.primary,
+              color: "text.primary",
               border: 1,
               p: 1,
               borderRadius: 3,
-              borderColor: palette.primary.main,
+              borderColor: "primary.main",
             }}
           >
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -114,13 +119,13 @@ export default function ConfirmOrder({
           <Box
             sx={{
               flexGrow: 1,
-              color: palette.text.primary,
+              color: "text.primary",
               border: 1,
               p: 1,
               ml: matchesXs ? 1 : 0,
               mt: matchesXs ? 0 : 1,
               borderRadius: 3,
-              borderColor: palette.primary.main,
+              borderColor: "primary.main",
             }}
           >
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -146,7 +151,7 @@ export default function ConfirmOrder({
               p: 1,
               borderRadius: 4,
               border: 1,
-              borderColor: palette.primary.main,
+              borderColor: "primary.main",
             }}
           >
             <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
@@ -189,6 +194,20 @@ export default function ConfirmOrder({
           </Button>
         </Stack>
       </Grid>
+      <Stack sx={{ p: 1 }}>
+        {errorList &&
+          errorList.map((e) => (
+            <Button
+              component={Link}
+              to="../cart"
+              variant="outlined"
+              color="error"
+              key={e}
+            >
+              {e}
+            </Button>
+          ))}
+      </Stack>
     </>
   );
 }

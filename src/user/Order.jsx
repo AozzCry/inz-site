@@ -1,5 +1,3 @@
-import { patchFetch } from "../hooks/fetchHooks";
-
 import {
   ListItemText,
   Divider,
@@ -18,31 +16,19 @@ import Context from "../utils/Context";
 
 import OrderTable from "../components/order/OrderTable";
 import OrderInfo from "../components/order/OrderInfo";
+import { updateOrderStatus } from "../utils/functions";
 
 export default function ManageOrder({ order, refetch }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
-  const { notify } = useContext(Context);
-
-  function updateOrderStatus(status, successMessage) {
-    patchFetch("/order/status", { orderId: order._id, status: status }).then(
-      ({ error }) => {
-        if (!error) {
-          refetch();
-          notify(successMessage);
-        }
-      }
-    );
-  }
+  const { notify, confirm } = useContext(Context);
 
   return (
-    <Accordion sx={{ bgcolor: palette.secondary.dark, m: 1 }} key={order._id}>
+    <Accordion sx={{ bgcolor: "secondary.dark", m: 1 }} key={order._id}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: palette.primary.main }} />}
+        expandIcon={<ExpandMoreIcon sx={{ color: "primary.main" }} />}
       >
-        <Stack sx={{ width: 1 }} direction={matchesXs ? "row" : "column"}>
+        <Stack sx={{ width: 1 }} direction={matchesSm ? "row" : "column"}>
           <ListItemText
             primary={new Date(order.orderDate).toLocaleDateString("pl-PL")}
             secondary={order._id}
@@ -54,7 +40,7 @@ export default function ManageOrder({ order, refetch }) {
         </Stack>
       </AccordionSummary>
 
-      <AccordionDetails sx={{ bgcolor: palette.primary.dark }}>
+      <AccordionDetails sx={{ bgcolor: "primary.dark" }}>
         <OrderInfo address={order.address} userInfo={order.userInfo} />
         <Stack direction={matchesSm ? "row" : "column"}>
           <Stack
@@ -67,9 +53,14 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus(
-                  "awaiting fulfillment",
-                  "Order is awaiting fulfillment."
+                confirm("Do you want to pay for this order?", () =>
+                  updateOrderStatus(
+                    order._id,
+                    "awaiting fulfillment",
+                    refetch,
+                    notify,
+                    "Order is awaiting fulfillment."
+                  )
                 )
               }
               disabled={order.status !== "awaiting payment"}
@@ -82,7 +73,15 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("completed", "Order has been completed.")
+                confirm("Do you want to complete this order?", () =>
+                  updateOrderStatus(
+                    order._id,
+                    "completed",
+                    refetch,
+                    notify,
+                    "Order has been completed."
+                  )
+                )
               }
               disabled={order.status !== "delivering"}
             >
@@ -94,7 +93,15 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("cancelled", "Order has been cancelled.")
+                confirm("Do you want to cancel this order?", () =>
+                  updateOrderStatus(
+                    order._id,
+                    "cancelled",
+                    refetch,
+                    notify,
+                    "Order has been cancelled."
+                  )
+                )
               }
               disabled={
                 order.status === "declined" ||

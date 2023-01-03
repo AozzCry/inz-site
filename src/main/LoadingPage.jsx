@@ -1,5 +1,4 @@
-import { CircularProgress, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { CircularProgress, Typography, Box } from "@mui/material";
 
 export default function LoadingPage({ what = "" }) {
   return (

@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { patchFetch } from "../hooks/fetchHooks";
 
 import {
   ListItemText,
@@ -17,46 +16,24 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Context from "../utils/Context";
 import OrderTable from "../components/order/OrderTable";
 import OrderInfo from "../components/order/OrderInfo";
+import { deleteDocument, updateOrderStatus } from "../utils/functions";
 
 export default function ManageOrder({ order, refetch }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const { notify, confirm } = useContext(Context);
-
-  function updateOrderStatus(status, successMessage) {
-    patchFetch("/order/status", { orderId: order._id, status: status }).then(
-      ({ error }) => {
-        if (!error) {
-          refetch();
-          notify(successMessage);
-        }
-      }
-    );
-  }
-
-  function deleteOrder() {
-    patchFetch("/order/delete", { orderId: order._id }).then(
-      ({ error, message }) => {
-        if (!error) {
-          refetch();
-          notify(message);
-        }
-      }
-    );
-  }
 
   return (
     <Accordion
       sx={{
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
         m: 1,
-        ".Mui-expanded": { bgcolor: palette.secondary.dark },
+        ".Mui-expanded": { bgcolor: "secondary.dark" },
       }}
       key={order._id}
     >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: palette.primary.main }} />}
+        expandIcon={<ExpandMoreIcon sx={{ color: "primary.main" }} />}
       >
         <Stack sx={{ width: 1 }} direction={matchesSm ? "row" : "column"}>
           <ListItemText
@@ -70,7 +47,7 @@ export default function ManageOrder({ order, refetch }) {
         </Stack>
       </AccordionSummary>
       <OrderInfo address={order.address} userInfo={order.userInfo} />
-      <AccordionDetails sx={{ bgcolor: palette.primary.dark }}>
+      <AccordionDetails sx={{ bgcolor: "primary.dark" }}>
         <Stack direction={matchesSm ? "row" : "column"}>
           <Stack
             direction={!matchesSm ? "row" : "column"}
@@ -82,7 +59,15 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("delivering", "Order is delivering.")
+                confirm("Do you want fulfill this order?", () =>
+                  updateOrderStatus(
+                    order._id,
+                    "delivering",
+                    refetch,
+                    notify,
+                    "Order is delivering."
+                  )
+                )
               }
               disabled={order.status !== "awaiting fulfillment"}
             >
@@ -94,7 +79,20 @@ export default function ManageOrder({ order, refetch }) {
               variant="contained"
               edge={"end"}
               onClick={() =>
-                updateOrderStatus("declined", "Order has been declined.")
+                confirm("Do you want decline this order?", () =>
+                  updateOrderStatus(
+                    order._id,
+                    "declined",
+                    refetch,
+                    notify,
+                    "Order has been declined."
+                  )
+                )
+              }
+              disabled={
+                order.status !== "declined" ||
+                order.status !== "cancelled" ||
+                order.status !== "completed"
               }
             >
               Decline
@@ -102,13 +100,13 @@ export default function ManageOrder({ order, refetch }) {
             <Button
               sx={{ m: 1, borderRadius: 4 }}
               size="medium"
-              variant="contained"
+              variant="outlined"
+              color="error"
               edge={"end"}
               onClick={() =>
-                confirm("Do you want to delete this order?", deleteOrder)
-              }
-              disabled={
-                order.status !== "declined" || order.status !== "cancelled"
+                confirm("Do you want to delete this order?", () =>
+                  deleteDocument("order", order._id, refetch, notify)
+                )
               }
             >
               Delete

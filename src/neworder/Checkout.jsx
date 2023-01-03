@@ -1,9 +1,6 @@
 import { useState } from "react";
 
-import { getFetch } from "../hooks/fetchHooks";
 import { useQuery } from "react-query";
-
-import { useTheme } from "@emotion/react";
 
 import { Container, Stepper, StepLabel, Typography, Step } from "@mui/material";
 
@@ -16,8 +13,6 @@ import ErrorPage from "../main/ErrorPage";
 const steps = ["Shipping address", "Payment details", "Confirm your order"];
 
 export default function Checkout() {
-  const { palette } = useTheme();
-
   const [address, setAddress] = useState(null);
   const [payment, setPayment] = useState({
     street: "",
@@ -36,13 +31,12 @@ export default function Checkout() {
     data: user,
   } = useQuery({
     queryKey: ["/user"],
-    queryFn: getFetch,
   });
 
   if (isLoading) return <LoadingPage what="checkout" />;
   if (isError) return <ErrorPage error={error.message} />;
   return (
-    <Container sx={{ bgcolor: palette.primary.dark }}>
+    <Container sx={{ bgcolor: "primary.dark" }}>
       <Typography component="h1" variant="h4" align="center">
         Checkout
       </Typography>
@@ -77,7 +71,7 @@ export default function Checkout() {
           />
         )}
         {activeStep === 3 && (
-          <Typography variant="h3" textAlign={"center"} sx={{ m: 2 }}>
+          <Typography variant="h3" textAlign={"center"} sx={{ p: 10 }}>
             Thank you for purchase!
           </Typography>
         )}

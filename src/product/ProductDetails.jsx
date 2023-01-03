@@ -1,9 +1,7 @@
 import { useContext, useRef } from "react";
 import { useQuery } from "react-query";
 
-import { getFetch, patchFetch } from "../hooks/fetchHooks";
-
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Context from "../utils/Context";
 
@@ -22,10 +20,10 @@ import {
   TableRow,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 
-import { useTheme } from "@emotion/react";
 import AdditionalInfo from "./AdditionalInfo";
 import Review from "../review/Review";
 import AddReview from "../review/AddReview";
@@ -37,12 +35,13 @@ import LoadingPage from "../main/LoadingPage";
 import ErrorPage from "../main/ErrorPage";
 import AddToCartButton from "../components/AddToCartButton";
 
+import { deleteDocument } from "../utils/functions";
+
 export default function ProductDetails() {
   const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("md"));
-
+  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesXs = useMediaQuery(breakpoints.up("xs"));
   const navigate = useNavigate();
-
   const { userData, notify, confirm } = useContext(Context);
 
   const mainRef = useRef(null);
@@ -50,20 +49,9 @@ export default function ProductDetails() {
   const specificationRef = useRef(null);
   const reviewsRef = useRef(null);
   const questionsRef = useRef(null);
-
   const { isLoading, isError, error, data, refetch } = useQuery({
     queryKey: [window.location.pathname],
-    queryFn: getFetch,
   });
-
-  function deleteProduct() {
-    patchFetch("/product/delete", { productId: data.product._id }).then(
-      ({ message }) => {
-        notify(message);
-        navigate("-1");
-      }
-    );
-  }
 
   if (isLoading) return <LoadingPage what="product" />;
   if (isError) return <ErrorPage error={error.message} />;
@@ -115,16 +103,14 @@ export default function ProductDetails() {
               <CardContent sx={{ m: 0.25, border: 1, borderRadius: 5 }}>
                 {data.product.categories.map((category) => (
                   <Button
+                    component={Link}
                     key={category}
                     sx={{ mr: 1, mb: 1, color: palette.text.primary }}
                     variant="outlined"
-                    onClick={() => {
-                      navigate("/product", {
-                        state: {
-                          name: "",
-                          category: category ? [category] : [],
-                        },
-                      });
+                    to="/product"
+                    state={{
+                      name: "",
+                      category: category ? [category] : [],
                     }}
                   >
                     {category}
@@ -133,6 +119,41 @@ export default function ProductDetails() {
                 <Typography sx={{ borderBottom: 1 }} gutterBottom variant="h6">
                   {data.product.name}
                 </Typography>
+                {userData.isAdmin && (
+                  <>
+                    <Button
+                      component={Link}
+                      to={"../../admin/productform"}
+                      state={{ product: data.product }}
+                      sx={{ p: 0.5, mb: 0.5, ml: matchesXs ? 0.5 : 0 }}
+                      size="small"
+                      variant="outlined"
+                      color="warning"
+                    >
+                      Update product
+                    </Button>
+                    <Button
+                      sx={{ p: 0.5, mb: 0.5 }}
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() =>
+                        confirm(
+                          "Are you sure you want to delete this product?",
+                          () =>
+                            deleteDocument(
+                              "product",
+                              data.product._id,
+                              () => navigate(-1),
+                              notify
+                            )
+                        )
+                      }
+                    >
+                      Delete product
+                    </Button>
+                  </>
+                )}
                 <Typography variant="body2" color="text.secondary">
                   {data.product.shortDescription}
                 </Typography>
@@ -192,22 +213,6 @@ export default function ProductDetails() {
               <Stack sx={{ p: 1 }}>
                 <Typography variant="h5" sx={{ m: 1 }}>
                   Price: {data.product.price.toFixed(2)}PLN
-                  {userData.isAdmin && (
-                    <Button
-                      sx={{ ml: 1, p: 0.5 }}
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      onClick={() =>
-                        confirm(
-                          "Are you sure you want to delete this product?",
-                          deleteProduct
-                        )
-                      }
-                    >
-                      Delete product
-                    </Button>
-                  )}
                 </Typography>
                 <Paper
                   sx={{
@@ -285,7 +290,10 @@ export default function ProductDetails() {
           )}
           {data.reviews.map((review) => (
             <Review
-              user={{ isAdmin: userData.isAdmin, userId: userData.userId }}
+              user={{
+                isAdmin: userData.isAdmin,
+                userId: userData.userId,
+              }}
               key={review._id}
               review={review}
               refetch={refetch}

@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { postFetch } from "../hooks/fetchHooks";
+import fetch from "../hooks/fetchHooks";
 import Context from "../utils/Context";
 
 import {
@@ -9,36 +9,35 @@ import {
   Button,
   Stack,
   Typography,
-  useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { StyledInput } from "../components/styled";
 
 export default function AddQuestion({ productId, refetch }) {
-  const { palette } = useTheme();
-
   const { notify } = useContext(Context);
 
   const [text, setText] = useState("");
 
   function SubmitQuestion() {
-    postFetch("question/create", {
-      text: text,
-      productId: productId,
-    }).then(({ error, message }) => {
-      if (!error) {
-        refetch();
-        notify(message);
-      }
-    });
+    fetch
+      .post("question/create", {
+        text: text,
+        productId: productId,
+      })
+      .then(({ error, message }) => {
+        if (!error) {
+          refetch();
+          notify(message);
+        }
+      });
   }
   return (
     <Accordion
       sx={{
         mt: 1,
-        bgcolor: palette.secondary.main,
-        ".Mui-expanded": { bgcolor: palette.secondary.dark },
+        bgcolor: "secondary.main",
+        ".Mui-expanded": { bgcolor: "secondary.dark" },
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -48,7 +47,7 @@ export default function AddQuestion({ productId, refetch }) {
         sx={{
           p: 1,
           m: 0.5,
-          bgcolor: palette.primary.dark,
+          bgcolor: "primary.dark",
         }}
       >
         <Stack component="form">

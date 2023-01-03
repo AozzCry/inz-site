@@ -1,24 +1,17 @@
 import { useContext } from "react";
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  useTheme,
-} from "@mui/material/";
+import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material/";
 
 import Context from "../utils/Context";
 
 export default function ConfirmDialog() {
-  const { palette } = useTheme();
   const { confirmDialog, setConfirmDialog } = useContext(Context);
 
   return (
     <div>
       <Dialog
         transitionDuration={0}
-        PaperProps={{ sx: { bgcolor: palette.primary.dark } }}
+        PaperProps={{ sx: { bgcolor: "primary.dark" } }}
         open={confirmDialog.open}
         onClose={() =>
           setConfirmDialog({ open: false, text: "", afterConfirm: null })
@@ -39,7 +32,7 @@ export default function ConfirmDialog() {
           </Button>
           <Button
             variant="outlined"
-            color="error"
+            color="success"
             fullWidth
             onClick={() => {
               confirmDialog.afterConfirm();

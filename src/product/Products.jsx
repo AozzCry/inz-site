@@ -1,8 +1,5 @@
-import { useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { getFetch } from "../hooks/fetchHooks";
-
 import { useLocation } from "react-router-dom";
 
 import {
@@ -15,6 +12,7 @@ import {
   useMediaQuery,
   useTheme,
   Container,
+  Box,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
@@ -22,11 +20,10 @@ import { StyledSearch } from "../components/styled";
 import Product from "./Product";
 import LoadingPage from "../main/LoadingPage";
 import ErrorPage from "../main/ErrorPage";
-import { Box } from "@mui/system";
+import { debounce } from "lodash";
 
 export default function Products() {
-  const { palette, breakpoints } = useTheme();
-  const matchesPr = useMediaQuery(breakpoints.up("pr"));
+  const matchesPr = useMediaQuery(useTheme().breakpoints.up("pr"));
 
   const location = useLocation();
 
@@ -45,14 +42,23 @@ export default function Products() {
     data: products,
   } = useQuery({
     queryKey: ["/product", searchParams],
-    queryFn: getFetch,
-    enabled: searchParams.category.length > 0 || searchParams.name.length > 2,
   });
 
   const { data: categories } = useQuery({
     queryKey: ["/category"],
-    queryFn: getFetch,
   });
+
+  const debouncedSet = useRef(
+    debounce((e) => {
+      setSearchParams((s) => {
+        return { category: s.category, name: e };
+      });
+    }, 500)
+  ).current;
+
+  useEffect(() => {
+    return () => debouncedSet.cancel();
+  }, [debouncedSet]);
 
   function productDisplay() {
     if (isLoading) return <LoadingPage what="products" />;
@@ -68,8 +74,9 @@ export default function Products() {
           <Typography variant="h6" textAlign="center">
             No products found
             {searchParams.name && " for search: " + searchParams.name}
-            {searchParams.category.length &&
-              " in category: " + searchParams.category}
+            {searchParams.category.length
+              ? " in category: " + searchParams.category
+              : ""}
           </Typography>
         </Box>
       );
@@ -103,7 +110,7 @@ export default function Products() {
     <>
       <Stack direction={"row"}>
         {matchesPr ? (
-          <Stack sx={{ bgcolor: palette.primary.dark }}>
+          <Stack sx={{ bgcolor: "primary.dark" }}>
             <Typography align="center" variant="body1" sx={{ m: 0.25 }}>
               Price range
             </Typography>
@@ -128,7 +135,7 @@ export default function Products() {
               />
             </Stack>
             <TextField
-              sx={{ my: 0.25, bgcolor: palette.primary.dark }}
+              sx={{ my: 0.25, bgcolor: "primary.dark" }}
               fullWidth
               placeholder="Categories…"
               onChange={(e) => setSearchCategories(e.target.value)}
@@ -170,7 +177,7 @@ export default function Products() {
                         name: searchParams.name,
                       })
                     }
-                    sx={{ mb: 0.25, bgcolor: palette.primary.dark }}
+                    sx={{ mb: 0.25, bgcolor: "primary.dark" }}
                   >
                     <Typography>{category.name.slice(0, 10)}</Typography>
                   </Button>
@@ -180,13 +187,13 @@ export default function Products() {
           <Drawer
             PaperProps={{
               sx: {
-                bgcolor: palette.secondary.dark,
+                bgcolor: "secondary.dark",
               },
             }}
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
           >
-            <Stack sx={{ bgcolor: palette.primary.dark }}>
+            <Stack sx={{ bgcolor: "primary.dark" }}>
               <Typography align="center" variant="body1" sx={{ m: 0.25 }}>
                 Price range
               </Typography>
@@ -204,7 +211,7 @@ export default function Products() {
               </Stack>
 
               <TextField
-                sx={{ my: 0.25, bgcolor: palette.primary.dark, borderTop: 1 }}
+                sx={{ my: 0.25, bgcolor: "primary.dark", borderTop: 1 }}
                 fullWidth
                 placeholder="Categories…"
                 onChange={(e) => setSearchCategories(e.target.value)}
@@ -245,7 +252,7 @@ export default function Products() {
                           name: searchParams.name,
                         })
                       }
-                      sx={{ color: palette.text.primary }}
+                      sx={{ color: "text.primary" }}
                     >
                       <Typography>{category.name.slice(0, 10)}</Typography>
                     </Button>
@@ -268,14 +275,14 @@ export default function Products() {
             <Container sx={{ flexGrow: 1 }} disableGutters>
               <StyledSearch>
                 <Input
-                  sx={{ input: { color: palette.text.contrast } }}
+                  sx={{ input: { color: "text.contrast" } }}
                   fullWidth
                   disableUnderline={true}
                   startAdornment={
                     <Typography
                       sx={{
                         mr: 1,
-                        color: palette.text.contrast,
+                        color: "text.contrast",
                       }}
                     >
                       {searchParams.category.length > 0 &&
@@ -286,11 +293,7 @@ export default function Products() {
                   placeholder={
                     searchParams.name === "" ? "Search products…" : ""
                   }
-                  onChange={(e) =>
-                    setSearchParams((s) => {
-                      return { category: s.category, name: e.target.value };
-                    })
-                  }
+                  onChange={(e) => debouncedSet(e.target.value)}
                 />
               </StyledSearch>
             </Container>

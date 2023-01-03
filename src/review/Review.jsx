@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { patchFetch } from "../hooks/fetchHooks";
+import Context from "../utils/Context";
 
 import {
   Rating,
@@ -16,47 +16,27 @@ import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDwonAltIcon from "@mui/icons-material/ThumbDownAlt";
 
-import Context from "../utils/Context";
-import { daysSince } from "../utils/functions";
+import {
+  banUserById,
+  daysSince,
+  deleteDocument,
+  reactionSubmit,
+} from "../utils/functions";
 
 export default function Review({ review, refetch, user }) {
-  const { palette, breakpoints } = useTheme();
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
-  const { notify } = useContext(Context);
-
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
-  function reactionHandler(action) {
-    patchFetch("review/" + action, { reviewId: review._id }).then(
-      ({ error, message }) => {
-        if (!error) {
-          refetch();
-          notify(message);
-        }
-      }
-    );
-  }
-
-  function banUserSubmit() {
-    patchFetch("/user/banbyid", { id: review.userId }).then(({ error }) => {
-      !error && refetch();
-    });
-  }
-
-  function deleteReviewSubmit() {
-    patchFetch("/review/delete", { id: review._id }).then(({ error }) => {
-      !error && refetch();
-    });
-  }
+  const { notify, confirm } = useContext(Context);
 
   return (
     <Stack
       sx={{
         borderRadius: 5,
         border: 1,
-        borderColor: palette.primary.main,
+        borderColor: "primary.main",
         m: 1,
         p: 1,
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
       }}
     >
       <Stack direction={matchesSm ? "row" : "column"} sx={{ mb: 1 }}>
@@ -76,7 +56,7 @@ export default function Review({ review, refetch, user }) {
           />
         ) : (
           <Chip
-            sx={{ mt: 0.4, borderColor: palette.secondary.main }}
+            sx={{ mt: 0.4, borderColor: "secondary.main" }}
             color="warning"
             label="Purchase not confirmed"
             icon={<CloseIcon />}
@@ -85,7 +65,11 @@ export default function Review({ review, refetch, user }) {
         )}
         {(user.isAdmin || user.userId === review.userId) && (
           <Button
-            onClick={deleteReviewSubmit}
+            onClick={() =>
+              confirm("Do you want to delete this review?", () =>
+                deleteDocument("review", review._id, refetch, notify)
+              )
+            }
             size="small"
             sx={{ ml: 1 }}
             variant="outlined"
@@ -100,14 +84,18 @@ export default function Review({ review, refetch, user }) {
       </Typography>
       <Stack
         direction="row"
-        sx={{ m: 1, borderTop: 1, borderColor: palette.primary.main }}
+        sx={{ m: 1, borderTop: 1, borderColor: "primary.main" }}
       >
         <Typography variant="h5">{review.userUsername}</Typography>
         {user.isAdmin && (
           <Button
-            onClick={banUserSubmit}
+            onClick={() =>
+              confirm("Do you want to ban this user?", () =>
+                banUserById(review.userId, refetch, notify)
+              )
+            }
             size="small"
-            sx={{ ml: 1, mt: 0.2 }}
+            sx={{ ml: 1, mt: 0.5, p: 0 }}
             variant="outlined"
             color="error"
           >
@@ -122,7 +110,9 @@ export default function Review({ review, refetch, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5 }}
-          onClick={() => reactionHandler("like")}
+          onClick={() =>
+            reactionSubmit("/review/like", review._id, refetch, notify)
+          }
           variant="outlined"
           label={review.usersThatLiked.length}
           color="success"
@@ -131,7 +121,9 @@ export default function Review({ review, refetch, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5, ml: 1 }}
-          onClick={() => reactionHandler("dislike")}
+          onClick={() =>
+            reactionSubmit("/review/dislike", review._id, refetch, notify)
+          }
           variant="outlined"
           label={review.usersThatDisliked.length}
           color="error"

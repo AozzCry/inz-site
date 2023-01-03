@@ -18,9 +18,7 @@ import StarIcon from "@mui/icons-material/Star";
 import AddToCartButton from "../components/AddToCartButton";
 
 export default function Product({ product }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesMd = useMediaQuery(breakpoints.up("md"));
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const navigate = useNavigate();
 
@@ -28,11 +26,11 @@ export default function Product({ product }) {
     <Card
       raised
       sx={{
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
         p: 1,
         mr: 1,
         mb: 1,
-        flexGrow: matchesMd ? 1 / 2 : 1,
+        flexGrow: 1,
         borderRadius: 4,
       }}
     >
@@ -56,7 +54,7 @@ export default function Product({ product }) {
               alt="product image"
               sx={{
                 objectFit: "contain",
-                bgcolor: palette.secondary.dark,
+                bgcolor: "secondary.dark",
               }}
               height={matchesSm ? 300 : 250}
               width={matchesSm ? 300 : 250}
@@ -75,7 +73,7 @@ export default function Product({ product }) {
                   borderTopRightRadius: "12px",
                   p: 0.5,
                   mr: 0.5,
-                  borderColor: palette.primary.main,
+                  borderColor: "primary.main",
                 }}
               >
                 <Rating
@@ -96,7 +94,7 @@ export default function Product({ product }) {
                   width: 1,
                   border: 1,
                   textAlign: "right",
-                  borderColor: palette.primary.main,
+                  borderColor: "primary.main",
                   borderTopLeftRadius: "12px",
                   borderTopRightRadius: "12px",
                 }}

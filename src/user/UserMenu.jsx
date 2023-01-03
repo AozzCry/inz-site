@@ -2,9 +2,8 @@ import { Button, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { NavLink, Outlet } from "react-router-dom";
 
 export default function UserMenu() {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
+  const matchesXs = useMediaQuery(useTheme().breakpoints.up("xs"));
 
   return (
     <Stack direction={matchesSm ? "row" : "column"}>
@@ -15,8 +14,8 @@ export default function UserMenu() {
           component={NavLink}
           to="/user/account"
           style={({ isActive }) => ({
-            backgroundColor: isActive && palette.primary.light,
-            color: isActive && palette.primary.dark,
+            backgroundColor: isActive && "primary.light",
+            color: isActive && "primary.dark",
           })}
         >
           Account
@@ -27,8 +26,8 @@ export default function UserMenu() {
           component={NavLink}
           to="/user/orders"
           style={({ isActive }) => ({
-            backgroundColor: isActive && palette.primary.light,
-            color: isActive && palette.primary.dark,
+            backgroundColor: isActive && "primary.light",
+            color: isActive && "primary.dark",
           })}
         >
           Orders

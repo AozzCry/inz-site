@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
-import { postFetch } from "../hooks/fetchHooks";
+import fetch from "../hooks/fetchHooks";
 
 import {
   AppBar,
@@ -58,7 +58,7 @@ export default function Navbar() {
   const [search, setSearch] = useState(null);
 
   function logoutSubmit() {
-    postFetch("/auth/logout").then(({ error, message }) => {
+    fetch.post("/auth/logout").then(({ error, message }) => {
       if (!error) {
         notify(message);
         setUserData({

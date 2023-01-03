@@ -1,37 +1,39 @@
+import { useState } from "react";
+
 import { NavLink, Outlet } from "react-router-dom";
+
 import {
   Stack,
   Button,
   BottomNavigation,
   BottomNavigationAction,
+  useTheme,
+  Box,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
 import GroupIcon from "@mui/icons-material/Group";
 import CategoryIcon from "@mui/icons-material/Category";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import { useTheme } from "@mui/material/styles";
-import { useState } from "react";
-import { Box } from "@mui/system";
 
 export default function AdminMenu() {
-  const { palette, breakpoints } = useTheme();
-  const matchesMd = useMediaQuery(breakpoints.up("md"));
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesMd = useMediaQuery(useTheme().breakpoints.up("md"));
+  const matchesXs = useMediaQuery(useTheme().breakpoints.up("xs"));
 
   const [value, setValue] = useState(0);
 
   const onAcive = (isActive) => {
     return {
-      backgroundColor: isActive && palette.primary.light,
-      color: isActive && palette.primary.dark,
+      backgroundColor: isActive && "primary.light",
+      color: isActive && "primary.dark",
     };
   };
 
   return (
     <Stack
       direction={matchesMd ? "row" : "column"}
-      sx={{ bgcolor: palette.primary.dark, border: 1 }}
+      sx={{ bgcolor: "primary.dark", border: 1 }}
     >
       {matchesXs && (
         <Stack
@@ -51,7 +53,7 @@ export default function AdminMenu() {
             sx={{ m: 0.5, flexGrow: matchesMd ? 0 : 1 }}
             variant="contained"
             component={NavLink}
-            to={"/admin/createproduct"}
+            to={"/admin/productform"}
             style={({ isActive }) => onAcive(isActive)}
           >
             Product
@@ -76,16 +78,14 @@ export default function AdminMenu() {
           </Button>
         </Stack>
       )}
-      <Box
-        sx={{ width: 1, borderBottom: 4, borderColor: palette.primary.dark }}
-      >
+      <Box sx={{ width: 1, borderBottom: 4, borderColor: "primary.dark" }}>
         <Outlet />
       </Box>
 
       {!matchesXs && (
         <BottomNavigation
           sx={{
-            bgcolor: palette.primary.dark,
+            bgcolor: "primary.dark",
             position: "fixed",
             bottom: 0,
             width: 1,

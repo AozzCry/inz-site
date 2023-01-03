@@ -21,23 +21,22 @@ import Context from "../utils/Context";
 import CartProduct from "./CartProduct";
 
 export default function Cart() {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
-  const matchesMd = useMediaQuery(breakpoints.up("md"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
+  const matchesMd = useMediaQuery(useTheme().breakpoints.up("md"));
 
   const { cart, setCart, userData, confirm } = useContext(Context);
 
   return (
     <Container
       disableGutters={!matchesSm ? true : false}
-      sx={{ pt: 1, bgcolor: palette.primary.dark }}
+      sx={{ pt: 1, bgcolor: "primary.dark" }}
     >
       <Stack direction="row">
         <Button
           sx={{
             mx: 1,
-            borderColor: palette.action.delete,
-            color: palette.action.delete,
+            borderColor: "action.delete",
+            color: "action.delete",
           }}
           title="Clear cart"
           variant="outlined"
@@ -66,7 +65,7 @@ export default function Cart() {
             })}
         </List>
         <Box sx={{ width: 1 }}>
-          <Card sx={{ bgcolor: palette.secondary.dark, m: 1 }}>
+          <Card sx={{ bgcolor: "secondary.dark", m: 1 }}>
             <CardContent>
               <Typography sx={{ fontSize: 14 }} gutterBottom>
                 Sum of order:
@@ -81,7 +80,8 @@ export default function Cart() {
               {userData.email ? (
                 <Button
                   title="Order"
-                  sx={{ bgcolor: palette.action.positive }}
+                  fullWidth
+                  sx={{ bgcolor: "action.positive" }}
                   to={cart.length > 0 ? "../checkout" : "#"}
                   component={NavLink}
                   variant={"contained"}

@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import Context from "../../utils/Context";
-
-import { postFetch } from "../../hooks/fetchHooks";
+import fetch from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -39,24 +38,26 @@ export default function LogIn({ close, setUserData, setOpenRegister }) {
   });
 
   function loginSubmit(values) {
-    postFetch("auth/login", {
-      email: values.email,
-      password: values.password,
-    }).then(({ error, message, data }) => {
-      if (error) {
-        setAlert(error);
-      } else {
-        setUserData({
-          username: data.username,
-          email: data.email,
-          isAdmin: data.isAdmin,
-          userId: data.userId,
-        });
-        setAlert(null);
-        notify(message);
-        close();
-      }
-    });
+    fetch
+      .post("auth/login", {
+        email: values.email,
+        password: values.password,
+      })
+      .then(({ error, message, data }) => {
+        if (error) {
+          setAlert(error);
+        } else {
+          setUserData({
+            username: data.username,
+            email: data.email,
+            isAdmin: data.isAdmin,
+            userId: data.userId,
+          });
+          setAlert(null);
+          notify(message);
+          close();
+        }
+      });
   }
 
   return (

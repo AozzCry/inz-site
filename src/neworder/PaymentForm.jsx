@@ -1,5 +1,7 @@
-import { Button, Grid } from "@mui/material";
 import { useState } from "react";
+
+import { Button, Grid } from "@mui/material";
+
 import { StyledInput } from "../components/styled";
 
 export default function PaymentForm({ setActiveStep, payment, setPayment }) {
@@ -66,12 +68,16 @@ export default function PaymentForm({ setActiveStep, payment, setPayment }) {
       </Grid>
       <Button
         variant="outlined"
-        sx={{ m: 1 }}
+        sx={{ my: 1, width: 0.5 }}
         onClick={() => setActiveStep((s) => s - 1)}
       >
         Back
       </Button>
-      <Button variant="contained" sx={{ m: 1 }} onClick={savePayment}>
+      <Button
+        variant="contained"
+        sx={{ my: 1, width: 0.5 }}
+        onClick={savePayment}
+      >
         Next
       </Button>
     </>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { getFetch, patchFetch, postFetch } from "../hooks/fetchHooks";
+import fetch from "../hooks/fetchHooks";
 
 import {
   Button,
@@ -27,10 +27,10 @@ import LoadingPage from "../main/LoadingPage";
 import ErrorPage from "../main/ErrorPage";
 
 import Context from "../utils/Context";
+import { deleteDocument } from "../utils/functions";
 
 export default function ManageCategories() {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const { notify, confirm } = useContext(Context);
 
@@ -44,7 +44,6 @@ export default function ManageCategories() {
     refetch,
   } = useQuery({
     queryKey: ["/category"],
-    queryFn: getFetch,
   });
 
   const [alert, setAlert] = useState(null);
@@ -66,22 +65,13 @@ export default function ManageCategories() {
   });
 
   function createCategory(values) {
-    postFetch("category/create", { name: values.name }).then(({ error }) => {
+    fetch.post("category/create", { name: values.name }).then(({ error }) => {
       if (error) setAlert(error);
       else {
         setAlert(null);
         refetch();
         reset({ name: "" });
         notify("Category created successfully");
-      }
-    });
-  }
-
-  function deleteCategory(name) {
-    patchFetch("category/delete", { name: name }).then(({ error }) => {
-      if (!error) {
-        refetch();
-        notify("Category deleted successfully");
       }
     });
   }
@@ -95,7 +85,7 @@ export default function ManageCategories() {
           <Box sx={{ width: 1, mt: 2 }}>
             <StyledSearch>
               <InputBase
-                sx={{ width: 1, input: { color: palette.text.contrast } }}
+                sx={{ width: 1, input: { color: "text.contrast" } }}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Find category..."
               />
@@ -131,7 +121,7 @@ export default function ManageCategories() {
       {!matchesSm && (
         <StyledSearch>
           <InputBase
-            sx={{ width: 1, input: { color: palette.text.contrast } }}
+            sx={{ width: 1, input: { color: "text.contrast" } }}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Find category..."
           />
@@ -143,11 +133,13 @@ export default function ManageCategories() {
           mt: 2,
 
           borderRadius: "10px",
-          bgcolor: palette.primary.dark,
+          bgcolor: "primary.dark",
         }}
       >
         {categories
-          .filter((c) => c.name.toLowerCase().includes(search.trim()))
+          .filter((c) =>
+            c.name.toLowerCase().includes(search.trim().toLowerCase())
+          )
           .map((category) => {
             return (
               <ListItem
@@ -155,7 +147,7 @@ export default function ManageCategories() {
                 sx={{
                   border: 1,
                   borderRadius: "15px",
-                  bgcolor: palette.secondary.dark,
+                  bgcolor: "secondary.dark",
                   m: 1,
                 }}
               >
@@ -168,7 +160,7 @@ export default function ManageCategories() {
                   title="Delete category"
                   onClick={() =>
                     confirm("Do you want to delete this category?", () =>
-                      deleteCategory(category.name)
+                      deleteDocument("category", category.name, refetch, notify)
                     )
                   }
                   variant="outlined"

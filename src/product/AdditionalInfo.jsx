@@ -7,13 +7,12 @@ import {
   Stack,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { useTheme } from "@emotion/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function AdditionalInfo() {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const [expanded, setExpanded] = useState(matchesSm ? "panel1" : "");
 
@@ -22,9 +21,7 @@ export default function AdditionalInfo() {
   };
 
   return (
-    <Stack
-      sx={{ my: 1, div: { bgcolor: palette.secondary.main, borderRadius: 6 } }}
-    >
+    <Stack sx={{ my: 1, div: { bgcolor: "secondary.main", borderRadius: 6 } }}>
       <Accordion
         expanded={expanded === "panel1"}
         onChange={handleChange("panel1")}

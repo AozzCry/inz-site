@@ -19,7 +19,7 @@ import { useTheme } from "@emotion/react";
 import AddToCartButton from "../components/AddToCartButton";
 
 export default function Product({ product }) {
-  const { palette, breakpoints } = useTheme();
+  const { breakpoints } = useTheme();
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
@@ -30,7 +30,7 @@ export default function Product({ product }) {
     <Card
       raised
       sx={{
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
         p: 1,
         mb: 1,
         mr: matchesMd ? 1 : 0,
@@ -96,7 +96,7 @@ export default function Product({ product }) {
             </CardContent>
           </Stack>
         </CardActionArea>
-        <CardActions sx={{ bgcolor: palette.secondary.dark }}>
+        <CardActions sx={{ bgcolor: "secondary.dark" }}>
           <Stack
             sx={{ width: 1 }}
             direction={matchesMd || !matchesXs ? "column" : "row"}

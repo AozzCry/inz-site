@@ -9,8 +9,7 @@ import {
 } from "@mui/material";
 
 export default function OrderInfo({ address, userInfo }) {
-  const { breakpoints } = useTheme();
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesXs = useMediaQuery(useTheme().breakpoints.up("xs"));
 
   return (
     <Stack direction="row">

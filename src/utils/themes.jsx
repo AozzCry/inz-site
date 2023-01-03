@@ -41,6 +41,19 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        outlined: {
+          borderWidth: 2,
+        },
+        root: {
+          "&:hover": {
+            backgroundColor: "#1D3327",
+            borderWidth: 2,
+          },
+        },
+      },
+    },
   },
 
   typography: {
@@ -93,16 +106,20 @@ export const lightTheme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
+        outlined: {
+          color: "#000000",
+          borderWidth: 2,
+        },
         root: {
           "&:hover": {
             backgroundColor: "#3D4367",
             color: "#ffffff",
+            borderWidth: 2,
           },
         },
       },
     },
   },
-
   typography: {
     allVariants: {
       color: "#000000",

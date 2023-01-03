@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import { patchFetch } from "../hooks/fetchHooks";
 
 import { NavLink } from "react-router-dom";
 
@@ -13,9 +12,9 @@ import {
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Context from "../utils/Context";
+import { banUserById, deleteDocument } from "../utils/functions";
 
 export default function ManageUser({ user, refetch }) {
-  const { palette } = useTheme();
   const matches = useMediaQuery(useTheme().breakpoints.up("md"));
 
   const { notify, confirm } = useContext(Context);
@@ -23,41 +22,23 @@ export default function ManageUser({ user, refetch }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
 
-  function banUserSubmit() {
-    patchFetch("/user/banbyid", { id: user._id }).then(({ error }) => {
-      if (!error) {
-        refetch();
-        notify("User banned");
-      }
-    });
-  }
-  function deleteUserSubmit() {
-    patchFetch("/user/deletebyid", { id: user._id }).then(({ error }) => {
-      if (!error) {
-        refetch();
-        setAnchorEl(false);
-        notify("User deleted");
-      }
-    });
-  }
-
   return (
     <ListItem
       sx={{
         border: 1,
         borderRadius: "15px",
-        bgcolor: palette.secondary.dark,
+        bgcolor: "secondary.dark",
         my: 1,
       }}
       key={user._id}
     >
       <ListItemText
-        primaryTypographyProps={{ color: palette.text.primary }}
+        primaryTypographyProps={{ color: "text.primary" }}
         primary={user.username}
         secondary={user.email}
       />
       <ListItemText
-        primaryTypographyProps={{ color: palette.text.primary }}
+        primaryTypographyProps={{ color: "text.primary" }}
         primary={user.isBanned && "Banned"}
         secondary={user.isAdmin && "Admin"}
       />
@@ -81,9 +62,16 @@ export default function ManageUser({ user, refetch }) {
             variant="outlined"
             edge={"end"}
             color="warning"
-            onClick={banUserSubmit}
+            onClick={() =>
+              confirm(
+                "Do you want to " +
+                  (user.isBanned ? "unban" : "ban") +
+                  " this user?",
+                () => banUserById(user._id, refetch, notify)
+              )
+            }
           >
-            Ban
+            {user.isBanned ? "Unban" : "Ban"}
           </Button>
           <Button
             title="Delete user"
@@ -92,7 +80,7 @@ export default function ManageUser({ user, refetch }) {
             color="error"
             onClick={() =>
               confirm("Do you want to delete this user?", () =>
-                deleteUserSubmit()
+                deleteDocument("user", user._id, refetch, notify)
               )
             }
           >
@@ -112,7 +100,7 @@ export default function ManageUser({ user, refetch }) {
           <Menu
             sx={{
               ul: {
-                backgroundColor: palette.secondary.dark,
+                backgroundColor: "secondary.dark",
                 p: 0,
               },
             }}
@@ -134,7 +122,12 @@ export default function ManageUser({ user, refetch }) {
               title="Ban user"
               variant="contained"
               edge={"end"}
-              onClick={banUserSubmit}
+              onClick={() =>
+                confirm(
+                  "Do you want to ban this user?",
+                  banUserById(user._id, refetch, notify)
+                )
+              }
             >
               Ban
             </MenuItem>
@@ -144,7 +137,7 @@ export default function ManageUser({ user, refetch }) {
               edge={"end"}
               onClick={() =>
                 confirm("Do you want to delete this user?", () =>
-                  deleteUserSubmit()
+                  deleteDocument("/user/" + user._id, refetch, notify)
                 )
               }
             >

@@ -17,8 +17,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function CartProduct({ product, index }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const { notify, cart, setCart } = useContext(Context);
 
@@ -49,7 +48,7 @@ export default function CartProduct({ product, index }) {
         p: 1,
         border: 1,
         borderRadius: 3,
-        borderColor: palette.primary.main,
+        borderColor: "primary.main",
         display: "flex",
         flexWrap: "wrap",
       }}
@@ -64,11 +63,11 @@ export default function CartProduct({ product, index }) {
         sx={{
           mr: 1,
           border: 2,
-          borderColor: palette.action.delete,
+          borderColor: "action.delete",
         }}
         onClick={onDelete}
       >
-        <DeleteIcon sx={{ color: palette.action.delete }} />
+        <DeleteIcon sx={{ color: "action.delete" }} />
       </IconButton>
       {matchesSm && (
         <ListItemText
@@ -84,16 +83,16 @@ export default function CartProduct({ product, index }) {
           sx={{
             mx: 1,
             border: 2,
-            borderColor: palette.action.negative,
+            borderColor: "action.negative",
             "&.Mui-disabled": {
-              borderColor: palette.action.disabled,
+              borderColor: "action.disabled",
             },
           }}
           size="small"
           disabled={cart[index].count > 1 ? false : true}
           onClick={onSub}
         >
-          <ArrowBackIosNewIcon sx={{ color: palette.action.negative }} />
+          <ArrowBackIosNewIcon sx={{ color: "action.negative" }} />
         </IconButton>
         <Typography sx={{ fontSize: "1.5em" }} color="text.primary">
           {cart[index].count}
@@ -103,9 +102,9 @@ export default function CartProduct({ product, index }) {
           sx={{
             mx: 1,
             border: 2,
-            borderColor: palette.action.positive,
+            borderColor: "action.positive",
             "&.Mui-disabled": {
-              borderColor: palette.action.disabled,
+              borderColor: "action.disabled",
             },
           }}
           size="small"
@@ -114,7 +113,7 @@ export default function CartProduct({ product, index }) {
           }
           onClick={onAdd}
         >
-          <ArrowForwardIosIcon sx={{ color: palette.action.positive }} />
+          <ArrowForwardIosIcon sx={{ color: "action.positive" }} />
         </IconButton>
       </Stack>
     </ListItem>

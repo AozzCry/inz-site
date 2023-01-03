@@ -1,5 +1,4 @@
 import { useQuery } from "react-query";
-import { getFetch } from "../hooks/fetchHooks";
 
 import { Container, Typography, Stack } from "@mui/material";
 
@@ -15,7 +14,6 @@ export default function Home() {
     data: homeProducts,
   } = useQuery({
     queryKey: ["/product/home"],
-    queryFn: getFetch,
   });
 
   if (isLoading) return <LoadingPage what="products" />;

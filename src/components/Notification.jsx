@@ -3,10 +3,8 @@ import { useContext } from "react";
 import { Alert, Snackbar } from "@mui/material";
 
 import Context from "../utils/Context";
-import { useTheme } from "@emotion/react";
 
 export default function Notification() {
-  const { palette } = useTheme();
   const { snackBar, setSnackBar } = useContext(Context);
 
   return (
@@ -18,7 +16,7 @@ export default function Notification() {
       autoHideDuration={3000}
     >
       <Alert
-        sx={{ bgcolor: palette.primary.dark, color: palette.text.primary }}
+        sx={{ bgcolor: "primary.dark", color: "text.primary" }}
         severity={snackBar.severity}
       >
         {snackBar.message}

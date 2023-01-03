@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "react-query";
+import Context from "../utils/Context.jsx";
 
-import { getFetch } from "../hooks/fetchHooks.jsx";
-
-import { Button, List, ListItem, Modal, useTheme } from "@mui/material";
+import { Button, List, ListItem, Modal, Typography } from "@mui/material";
 
 import AddAddress from "../components/modalforms/AddAddress.jsx";
 import UpdateUser from "../components/modalforms/UpdateUser.jsx";
 import LoadingPage from "../main/LoadingPage.jsx";
 import ErrorPage from "../main/ErrorPage.jsx";
+import { deleteDocument } from "../utils/functions.jsx";
 
 export default function Account() {
-  const { palette } = useTheme();
+  const { notify, confirm } = useContext(Context);
   const [openAddAddress, setOpenAddAddress] = useState(false);
   const [openUpdateUser, setOpenUpdateUser] = useState(false);
 
@@ -23,7 +23,6 @@ export default function Account() {
     refetch,
   } = useQuery({
     queryKey: ["/user"],
-    queryFn: getFetch,
   });
 
   if (isLoading) return <LoadingPage what="user" />;
@@ -32,52 +31,72 @@ export default function Account() {
     <>
       <List
         sx={{
-          bgcolor: palette.secondary.dark,
-          color: palette.text.primary,
+          bgcolor: "secondary.dark",
+          color: "text.primary",
           m: 1,
           borderRadius: 4,
           border: 1,
-          borderColor: palette.primary.main,
+          borderColor: "primary.main",
           p: 2,
         }}
       >
+        <Typography variant="h5">Account information:</Typography>
         <ListItem>First name: {user.firstname}</ListItem>
         <ListItem>Last name: {user.lastname}</ListItem>
         <ListItem>Username: {user.username}</ListItem>
-        <ListItem sx={{ borderBottom: 1 }}>Email: {user.email}</ListItem>
+        <ListItem>Email: {user.email}</ListItem>
         <Button
           sx={{ my: 1 }}
+          fullWidth
           onClick={() => setOpenUpdateUser(true)}
           variant="contained"
         >
           Modify account
         </Button>
-        {!user.isAdmin && (
-          <ListItem sx={{ mt: 1 }}>
-            Address:
-            {user.address ? (
-              <List>
-                <ListItem>Street: {user.address.street}</ListItem>
-                <ListItem>Street number: {user.address.streetNr}</ListItem>
-                <ListItem>City: {user.address.city}</ListItem>
-                <ListItem>Postal code: {user.address.postalCode}</ListItem>
-                <Button
-                  onClick={() => setOpenAddAddress(true)}
-                  variant="contained"
-                >
-                  Change address
-                </Button>
-              </List>
-            ) : (
+        <Typography variant="h5" sx={{ borderTop: 1, mt: 2 }}>
+          Address:
+        </Typography>
+        <ListItem sx={{ p: 0 }}>
+          {user.address ? (
+            <List>
+              <ListItem>Street: {user.address.street}</ListItem>
+              <ListItem>Street number: {user.address.streetNr}</ListItem>
+              <ListItem>City: {user.address.city}</ListItem>
+              <ListItem>Postal code: {user.address.postalCode}</ListItem>
               <Button
                 onClick={() => setOpenAddAddress(true)}
                 variant="contained"
               >
-                Add address
+                Change address
               </Button>
-            )}
-          </ListItem>
-        )}
+            </List>
+          ) : (
+            <Button onClick={() => setOpenAddAddress(true)} variant="contained">
+              Add address
+            </Button>
+          )}
+        </ListItem>
+        <Typography variant="h5" sx={{ borderTop: 1, my: 2 }}>
+          Actions:
+        </Typography>
+        <Button
+          title="Delete user"
+          variant="outlined"
+          color="error"
+          fullWidth
+          onClick={() =>
+            confirm("Do you want to delete yourself?", () =>
+              deleteDocument(
+                "user/self",
+                "",
+                () => window.location.reload(false),
+                notify
+              )
+            )
+          }
+        >
+          Delete account
+        </Button>
       </List>
 
       <Modal open={openAddAddress} onClose={() => setOpenAddAddress(false)}>

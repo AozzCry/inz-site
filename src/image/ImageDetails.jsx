@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Box, Button, CardMedia, MobileStepper, useTheme } from "@mui/material";
+import { Box, Button, CardMedia, MobileStepper } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
@@ -13,7 +13,6 @@ export default function ImageDetails({
   setConfirmDialog,
   refetch,
 }) {
-  const { palette } = useTheme();
   const [imageIndex, setImageIndex] = useState(0);
 
   return (
@@ -29,7 +28,7 @@ export default function ImageDetails({
         title={"product image number " + (imageIndex + 1)}
         sx={{
           objectFit: "contain",
-          bgcolor: palette.secondary.main,
+          bgcolor: "primary.dark",
         }}
         height="400px"
         width="400px"
@@ -38,11 +37,11 @@ export default function ImageDetails({
       {images && (
         <MobileStepper
           sx={{
-            bgcolor: palette.secondary.dark,
-            color: palette.text.primary,
-            ".MuiMobileStepper-dot": { bgcolor: palette.primary.main },
+            bgcolor: "secondary.dark",
+            color: "text.primary",
+            ".MuiMobileStepper-dot": { bgcolor: "primary.main" },
             ".MuiMobileStepper-dotActive": {
-              bgcolor: palette.primary.light,
+              bgcolor: "primary.light",
             },
           }}
           steps={images.length}
@@ -50,7 +49,7 @@ export default function ImageDetails({
           activeStep={imageIndex}
           nextButton={
             <Button
-              sx={{ color: palette.text.primary }}
+              sx={{ color: "text.primary" }}
               size="small"
               variant="outlined"
               onClick={() => setImageIndex(imageIndex + 1)}
@@ -62,7 +61,7 @@ export default function ImageDetails({
           }
           backButton={
             <Button
-              sx={{ color: palette.text.primary }}
+              sx={{ color: "text.primary" }}
               size="small"
               variant="outlined"
               onClick={() => setImageIndex(imageIndex - 1)}

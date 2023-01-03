@@ -21,8 +21,7 @@ export default function ProductNavbar({
   reviewsRef,
   questionsRef,
 }) {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("md"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("md"));
 
   const navigate = useNavigate();
 
@@ -37,9 +36,9 @@ export default function ProductNavbar({
       <Container
         disableGutters
         sx={{
-          bgcolor: palette.secondary.dark,
+          bgcolor: "secondary.dark",
           display: "flex",
-          button: { m: 0.5, color: palette.text.primary },
+          button: { m: 0.5, color: "text.primary" },
         }}
       >
         <Button

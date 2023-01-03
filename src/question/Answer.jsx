@@ -1,42 +1,26 @@
-import { Typography, Stack, Chip, useTheme, Button } from "@mui/material";
+import fetch from "../hooks/fetchHooks";
+
+import { Typography, Stack, Chip, Button } from "@mui/material";
 
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 
 import { useContext } from "react";
 import Context from "../utils/Context";
-import { patchFetch } from "../hooks/fetchHooks";
-import { daysSince } from "../utils/functions";
+import { reactionSubmit, banUserById, daysSince } from "../utils/functions";
 
 export default function Answer({ answer, refetch, questionId, user }) {
-  const { palette } = useTheme();
-  const { notify } = useContext(Context);
-
-  function ThumbsHandler(action) {
-    patchFetch("question/answer/" + action, {
-      questionId: questionId,
-      answerId: answer._id,
-    }).then(({ error, message }) => {
-      if (!error) {
-        refetch();
-        notify(message);
-      }
-    });
-  }
-
-  function banUserSubmit() {
-    patchFetch("/user/banbyid", { id: answer.userId }).then(({ error }) => {
-      !error && refetch();
-    });
-  }
+  const { notify, confirm } = useContext(Context);
 
   function deleteAnswerSubmit() {
-    patchFetch("/question/answer/delete", {
-      questionId: questionId,
-      answerId: answer._id,
-    }).then(({ error }) => {
-      !error && refetch();
-    });
+    fetch
+      .patch("/question/answer/delete", {
+        questionId: questionId,
+        answerId: answer._id,
+      })
+      .then(({ error }) => {
+        !error && refetch();
+      });
   }
 
   return (
@@ -44,22 +28,26 @@ export default function Answer({ answer, refetch, questionId, user }) {
       sx={{
         border: 1,
         borderRadius: 3,
-        borderColor: palette.primary.main,
+        borderColor: "primary.main",
         mb: 1,
         p: 1,
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
       }}
     >
       <Typography variant="body1">{answer.text}</Typography>
 
       <Stack
         direction="row"
-        sx={{ m: 1, borderTop: 1, borderColor: palette.primary.main }}
+        sx={{ m: 1, borderTop: 1, borderColor: "primary.main" }}
       >
         <Typography variant="h5">{answer.userUsername}</Typography>
         {user.isAdmin && (
           <Button
-            onClick={banUserSubmit}
+            onClick={() =>
+              confirm("Do you want to ban this user?", () =>
+                banUserById(answer.userId, refetch, notify)
+              )
+            }
             size="small"
             sx={{ ml: 1, mt: 0.2 }}
             variant="outlined"
@@ -75,7 +63,11 @@ export default function Answer({ answer, refetch, questionId, user }) {
       <Stack direction="row">
         {(user.isAdmin || user.userId === answer.userId) && (
           <Button
-            onClick={deleteAnswerSubmit}
+            onClick={() =>
+              confirm("Do you want to delete this answer?", () =>
+                deleteAnswerSubmit()
+              )
+            }
             size="small"
             sx={{ mr: 1 }}
             variant="outlined"
@@ -87,7 +79,15 @@ export default function Answer({ answer, refetch, questionId, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5 }}
-          onClick={() => ThumbsHandler("like")}
+          onClick={() =>
+            reactionSubmit(
+              "question/answer/like",
+              questionId,
+              refetch,
+              notify,
+              answer._id
+            )
+          }
           variant="outlined"
           label={answer.usersThatLiked.length}
           color="success"
@@ -96,7 +96,15 @@ export default function Answer({ answer, refetch, questionId, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5, ml: 1 }}
-          onClick={() => ThumbsHandler("dislike")}
+          onClick={() =>
+            reactionSubmit(
+              "question/answer/dislike",
+              questionId,
+              refetch,
+              notify,
+              answer._id
+            )
+          }
           variant="outlined"
           label={answer.usersThatDisliked.length}
           color="error"

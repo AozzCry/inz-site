@@ -1,4 +1,4 @@
-import { putFetch } from "../../hooks/fetchHooks";
+import fetch from "../../hooks/fetchHooks";
 
 import { Typography, Box, Grid, Button } from "@mui/material";
 import { StyledModal, StyledInput } from "../styled";
@@ -7,15 +7,17 @@ import CloseIcon from "@mui/icons-material/Close";
 export default function AddAddress({ close, address, refetch }) {
   function addAddressSubmit(event) {
     event.preventDefault();
-    putFetch(
-      "/user/address",
-      Object.fromEntries(new FormData(event.currentTarget))
-    ).then(({ error }) => {
-      if (!error) {
-        refetch();
-        close();
-      }
-    });
+    fetch
+      .put(
+        "/user/address",
+        Object.fromEntries(new FormData(event.currentTarget))
+      )
+      .then(({ error }) => {
+        if (!error) {
+          refetch();
+          close();
+        }
+      });
   }
 
   return (

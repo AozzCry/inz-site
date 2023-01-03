@@ -1,5 +1,6 @@
-import { Button, Typography, useTheme, Box } from "@mui/material";
 import { useContext } from "react";
+
+import { Button, Typography, useTheme, Box } from "@mui/material";
 import Context from "../utils/Context";
 
 export default function Footer() {

@@ -13,7 +13,7 @@ import Cart from "./product/Cart.jsx";
 import Checkout from "./neworder/Checkout.jsx";
 
 import AdminMenu from "./admin/AdminMenu.jsx";
-import CreateProduct from "./admin/CreateProduct.jsx";
+import CreateProduct from "./admin/ProductForm.jsx";
 import ManageCategories from "./admin/ManageCategories.jsx";
 import ManageUsers from "./admin/ManageUsers.jsx";
 import ManageOrders from "./admin/ManageOrders.jsx";
@@ -47,7 +47,7 @@ export default function App() {
             )}
             {userData.isAdmin && (
               <Route path="admin" element={<AdminMenu />}>
-                <Route path="createproduct" element={<CreateProduct />} />
+                <Route path="productform" element={<CreateProduct />} />
                 <Route path="categories" element={<ManageCategories />} />
                 <Route path="users" element={<ManageUsers />} />
                 <Route path="orders" element={<ManageOrders />} />

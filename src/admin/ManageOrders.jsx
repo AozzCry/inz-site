@@ -3,8 +3,6 @@ import { useQuery } from "react-query";
 
 import { useLocation } from "react-router-dom";
 
-import { getFetch } from "../hooks/fetchHooks";
-
 import {
   Container,
   Box,
@@ -24,8 +22,7 @@ import ManageOrder from "./ManageOrder";
 import { StyledSearch } from "../components/styled";
 
 export default function ManageOrders() {
-  const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
   const location = useLocation();
 
   const [dateFrom, setdateFrom] = useState(null);
@@ -42,8 +39,7 @@ export default function ManageOrders() {
     data: orders,
     refetch,
   } = useQuery({
-    queryKey: ["/order/getAll"],
-    queryFn: getFetch,
+    queryKey: ["order/getAll"],
   });
 
   if (isLoading) return <LoadingPage what={"orders"} />;
@@ -52,12 +48,12 @@ export default function ManageOrders() {
     <Container disableGutters sx={{ pt: 1, width: 1 }}>
       <Stack
         direction={matchesSm ? "row" : "column"}
-        sx={{ bgcolor: palette.primary.dark, borderRadius: 4 }}
+        sx={{ bgcolor: "primary.dark", borderRadius: 4 }}
       >
         <Box sx={{ width: 1, mt: 0.5 }}>
           <StyledSearch>
             <InputBase
-              sx={{ width: 1, input: { color: palette.text.contrast } }}
+              sx={{ width: 1, input: { color: "text.contrast" } }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Find order..."
@@ -91,15 +87,14 @@ export default function ManageOrders() {
         {orders
           .filter((o) =>
             search
-              ? o.userInfo.email === search ||
-                o.status.includes(search) ||
-                o._id.includes(search)
+              ? o.userInfo.email.includes(search.trim().toLowerCase()) ||
+                o.status.includes(search.trim().toLowerCase()) ||
+                o._id.includes(search.trim().toLowerCase())
               : true
           )
           .filter((o) => (dateFrom ? o.orderDate >= dateFrom : true))
           .filter((o) => (dateTo ? o.orderDate <= dateTo : true))
-
-          .map((order, index) => (
+          .map((order) => (
             <ManageOrder key={order._id} order={order} refetch={refetch} />
           ))}
       </Stack>

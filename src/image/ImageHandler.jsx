@@ -3,8 +3,8 @@ import axios from "axios";
 
 import { Button, Input } from "@mui/material";
 
-import { patchFetch } from "../hooks/fetchHooks";
 import Context from "../utils/Context";
+import { deleteDocument } from "../utils/functions";
 
 export default function ImageHandler({ productId, imageId, refetch }) {
   const { notify, confirm } = useContext(Context);
@@ -15,17 +15,25 @@ export default function ImageHandler({ productId, imageId, refetch }) {
       ["image/jpg", "image/png", "image/jpeg"].includes(
         formData.get("image").type
       ) &&
-      formData.get("image").size < 12000000
+      formData.get("image").size <
+        (e.nativeEvent.submitter.name ? 12000000 : 4000000)
     ) {
       formData.append("productId", productId);
       axios
-        .post("/image", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        .post(
+          e.nativeEvent.submitter.name === "fullimage"
+            ? "/image/full"
+            : "/image/mini",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
         .then((res) => {
           notify(res.data.message);
+          console.log(res.data.message);
           refetch();
         })
         .catch((err) => {
@@ -37,32 +45,39 @@ export default function ImageHandler({ productId, imageId, refetch }) {
         "error"
       );
   }
-  function deleteImage() {
-    patchFetch("/image", { imageId }, ({ message, error }) => {
-      if (!error) {
-        notify(message);
-        refetch();
-      }
-    });
-  }
   return (
     <form onSubmit={submitImage}>
-      <Input type="file" id="image" name="image" required />
+      <Input sx={{ width: 0.5 }} type="file" id="image" name="image" required />
       <Button
-        sx={{ ml: 1 }}
+        sx={{ width: 0.5 }}
         type="submit"
         size="small"
         color="success"
         variant="outlined"
+        name="fullimage"
+        id="fullimage"
       >
         Add image
+      </Button>
+      <Button
+        sx={{ width: 0.5 }}
+        type="submit"
+        size="small"
+        color="success"
+        variant="outlined"
+        name="miniimage"
+        id="miniimage"
+      >
+        Add mini image
       </Button>
       {imageId && (
         <Button
           onClick={() =>
-            confirm("Do you want to delete this image?", deleteImage)
+            confirm("Do you want to delete this image?", () =>
+              deleteDocument("image", imageId, refetch, notify)
+            )
           }
-          sx={{ ml: 1 }}
+          sx={{ width: 0.5 }}
           size="small"
           color="error"
           variant="outlined"

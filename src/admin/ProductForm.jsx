@@ -1,20 +1,14 @@
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
-import { getFetch, postFetch } from "../hooks/fetchHooks";
+import fetch from "../hooks/fetchHooks";
+
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import {
-  Box,
-  Button,
-  Alert,
-  Container,
-  MenuItem,
-  Stack,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Alert, Container, MenuItem, Stack } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
 import { StyledInput } from "../components/styled";
@@ -22,20 +16,26 @@ import Context from "../utils/Context";
 
 const statuses = ["in stock", "out of stock", "discontinued"];
 
-export default function CreateProduct() {
-  const { palette } = useTheme();
+export default function ProductForm() {
   const { notify } = useContext(Context);
+
+  const { state } = useLocation();
+
+  const navigate = useNavigate();
 
   const [alert, setAlert] = useState(null);
   const [specification, setSpecification] = useState({ name: "", value: "" });
-  const [specifications, setSpecifications] = useState([]);
-
-  const [categories, setCategories] = useState([]);
+  const [specifications, setSpecifications] = useState(
+    state ? state.product.specifications : []
+  );
+  const [categories, setCategories] = useState(
+    state ? state.product.categories : []
+  );
   const [searchCategories, setSearchCategories] = useState("");
 
-  const { status, data } = useQuery({
+  const { status, data: fetchedCategories } = useQuery({
     queryKey: ["/category"],
-    queryFn: getFetch,
+    queryFn: fetch.get,
   });
 
   const productValidationSchema = Yup.object().shape({
@@ -50,9 +50,7 @@ export default function CreateProduct() {
       .test(
         "has-two-decimal-places",
         "Price must have exactly two decimal places",
-        (value) => {
-          return /^\d+\.\d{2}$/.test(value);
-        }
+        (value) => /^\d+\.?\d{0,2}$/.test(value)
       ),
     shortDescription: Yup.string().max(
       63,
@@ -81,25 +79,35 @@ export default function CreateProduct() {
   });
 
   async function crerateProductSubmit(values) {
-    postFetch("/product/create", {
-      name: values.name,
-      price: values.price,
-      shortDescription: values.shortDescription,
-      longDescription: values.longDescription,
-      specifications: specifications,
-      quantity: values.quantity,
-      status: values.status,
-      categories: categories.map((c) => c.name),
-    }).then(({ error, message }) => {
-      if (error) setAlert(error);
-      else {
-        reset();
-        setSpecifications([]);
-        setCategories([]);
-        setAlert("");
-        notify(message);
-      }
-    });
+    fetch
+      .put("/product/addorupdate", {
+        _id: state ? state.product._id : null,
+        product: {
+          name: values.name,
+          nameLink: encodeURIComponent(values.name.replace(/ /g, "-")),
+          price: values.price,
+          shortDescription: values.shortDescription,
+          longDescription: values.longDescription,
+          specifications,
+          quantity: values.quantity,
+          status: values.status,
+          categories,
+        },
+      })
+      .then(({ error, message }) => {
+        if (error) setAlert(error);
+        else {
+          reset();
+          setSpecifications([]);
+          setCategories([]);
+          setAlert("");
+          notify(message);
+          navigate(
+            "../../product/" +
+              encodeURIComponent(values.name.replace(/ /g, "-"))
+          );
+        }
+      });
   }
 
   function addSpecification() {
@@ -122,6 +130,7 @@ export default function CreateProduct() {
           name="name"
           label="Name"
           type="text"
+          defaultValue={state ? state.product.name : ""}
           {...register("name")}
           error={errors.name ? true : false}
           helperText={errors.name?.message}
@@ -132,6 +141,7 @@ export default function CreateProduct() {
           fullWidth
           name="price"
           label="Price"
+          defaultValue={state ? state.product.price : ""}
           id="price"
           {...register("price")}
           error={errors.price ? true : false}
@@ -142,6 +152,7 @@ export default function CreateProduct() {
           fullWidth
           name="shortDescription"
           label="Short Description"
+          defaultValue={state ? state.product.shortDescription : ""}
           id="shortDescription"
           {...register("shortDescription")}
           error={errors.shortDescription ? true : false}
@@ -153,6 +164,7 @@ export default function CreateProduct() {
           multiline
           name="longDescription"
           label="Long description"
+          defaultValue={state ? state.product.longDescription : ""}
           id="longDescription"
           {...register("longDescription")}
           error={errors.longDescription ? true : false}
@@ -222,14 +234,14 @@ export default function CreateProduct() {
               MenuProps: {
                 MenuListProps: {
                   sx: {
-                    backgroundColor: palette.primary.dark,
+                    backgroundColor: "primary.dark",
                   },
                 },
               },
             }}
             margin="dense"
             label="Status"
-            defaultValue="out of stock"
+            defaultValue={state ? state.product.status : "out of stock"}
           >
             {statuses.map((value) => (
               <MenuItem key={value} value={value}>
@@ -243,8 +255,8 @@ export default function CreateProduct() {
             fullWidth
             name="quantity"
             label="Quantity"
+            defaultValue={state ? state.product.quantity : 0}
             id="quantity"
-            defaultValue={0}
             {...register("quantity")}
             error={errors.quantity ? true : false}
             helperText={errors.quantity?.message}
@@ -262,40 +274,40 @@ export default function CreateProduct() {
                 size="dense"
                 sx={{ m: 0.1 }}
                 variant="contained"
-                key={category._id}
-                value={category.name}
+                key={category}
+                value={category}
                 onClick={() => {
                   setCategories(categories.filter((c) => c !== category));
                   setAlert(null);
                 }}
               >
-                {category.name}
+                {category}
                 <CheckIcon />
               </Button>
             ))}
-
             {status === "success" &&
-              data
-
+              fetchedCategories
                 .filter(
                   (category) =>
                     category.name
                       .toLowerCase()
                       .includes(
-                        searchCategories ? searchCategories.trim() : null
-                      ) && !categories.includes(category)
+                        searchCategories
+                          ? searchCategories.trim().toLowerCase()
+                          : null
+                      ) && !categories.includes(category.name)
                 )
                 .map((category) => (
                   <Button
                     size="medium"
-                    sx={{ m: 0.1, color: palette.text.primary }}
+                    sx={{ m: 0.1, color: "text.primary " }}
                     variant="outlined"
                     key={category._id}
                     value={category.name}
                     onClick={() => {
                       categories.length >= 5
                         ? setAlert("You can choose up to 5 categories.")
-                        : setCategories([...categories, category]);
+                        : setCategories([...categories, category.name]);
                     }}
                   >
                     {category.name}

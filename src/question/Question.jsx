@@ -1,10 +1,7 @@
-import { patchFetch } from "../hooks/fetchHooks";
-
 import {
   Typography,
   Stack,
   Chip,
-  useTheme,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -20,42 +17,25 @@ import Context from "../utils/Context";
 
 import AddAnswer from "./AddAnswer";
 import Answer from "./Answer";
-import { daysSince } from "../utils/functions";
+import {
+  banUserById,
+  daysSince,
+  deleteDocument,
+  reactionSubmit,
+} from "../utils/functions";
 
 export default function Question({ question, refetch, user }) {
-  const { palette } = useTheme();
-  const { notify } = useContext(Context);
+  const { notify, confirm } = useContext(Context);
 
-  function ThumbsHandler(action) {
-    patchFetch("question/" + action, { questionId: question._id }).then(
-      ({ error, message }) => {
-        if (!error) {
-          refetch();
-          notify(message);
-        }
-      }
-    );
-  }
-  function banUserSubmit() {
-    patchFetch("/user/banbyid", { id: question.userId }).then(({ error }) => {
-      !error && refetch();
-    });
-  }
-
-  function deleteQuestionSubmit() {
-    patchFetch("/question/delete", { id: question._id }).then(({ error }) => {
-      !error && refetch();
-    });
-  }
   return (
     <Stack
       sx={{
         border: 1,
-        borderColor: palette.primary.main,
+        borderColor: "primary.main",
         borderRadius: 5,
         m: 1,
         p: 1,
-        bgcolor: palette.primary.dark,
+        bgcolor: "primary.dark",
       }}
     >
       <Typography variant="body1" sx={{ m: 1 }}>
@@ -64,12 +44,16 @@ export default function Question({ question, refetch, user }) {
 
       <Stack
         direction="row"
-        sx={{ m: 1, borderTop: 1, borderColor: palette.primary.main }}
+        sx={{ m: 1, borderTop: 1, borderColor: "primary.main" }}
       >
         <Typography variant="h5">{question.userUsername}</Typography>
         {user.isAdmin && (
           <Button
-            onClick={banUserSubmit}
+            onClick={() =>
+              confirm("Do you want to ban this user?", () =>
+                banUserById(question.userId, refetch, notify)
+              )
+            }
             size="small"
             sx={{ ml: 1, mt: 0.2 }}
             variant="outlined"
@@ -85,7 +69,11 @@ export default function Question({ question, refetch, user }) {
       <Stack direction="row">
         {(user.isAdmin || user.userId === question.userId) && (
           <Button
-            onClick={deleteQuestionSubmit}
+            onClick={() =>
+              confirm("Do you want to delete this question?", () =>
+                deleteDocument("question", question._id, refetch, notify)
+              )
+            }
             size="small"
             sx={{ mr: 1 }}
             variant="outlined"
@@ -98,7 +86,9 @@ export default function Question({ question, refetch, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5 }}
-          onClick={() => ThumbsHandler("like")}
+          onClick={() =>
+            reactionSubmit("question/like", question._id, refetch, notify)
+          }
           variant="outlined"
           label={question.usersThatLiked.length}
           color="success"
@@ -107,7 +97,9 @@ export default function Question({ question, refetch, user }) {
         <Chip
           clickable={true}
           sx={{ width: 0.5, ml: 1 }}
-          onClick={() => ThumbsHandler("dislike")}
+          onClick={() =>
+            reactionSubmit("question/dislike", question._id, refetch, notify)
+          }
           variant="outlined"
           label={question.usersThatDisliked.length}
           color="error"
@@ -117,7 +109,7 @@ export default function Question({ question, refetch, user }) {
       {user.isAdmin === false && (
         <Stack direction="row">
           <SubdirectoryArrowRightIcon
-            sx={{ fontSize: 50, color: palette.primary.main }}
+            sx={{ fontSize: 50, color: "primary.main" }}
           />
           <AddAnswer
             productId={question.productId}
@@ -129,14 +121,14 @@ export default function Question({ question, refetch, user }) {
       {question.answers.length > 0 && (
         <Stack direction="row">
           <SubdirectoryArrowRightIcon
-            sx={{ fontSize: 50, color: palette.primary.main }}
+            sx={{ fontSize: 50, color: "primary.main" }}
           />
           <Accordion
             sx={{
               mt: 1,
               width: 1,
-              bgcolor: palette.secondary.main,
-              ".Mui-expanded": { bgcolor: palette.secondary.dark },
+              bgcolor: "secondary.main",
+              ".Mui-expanded": { bgcolor: "secondary.dark" },
             }}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -144,9 +136,7 @@ export default function Question({ question, refetch, user }) {
                 Show answers ({question.answers.length})
               </Typography>
             </AccordionSummary>
-            <AccordionDetails
-              sx={{ m: 0.5, p: 1, bgcolor: palette.primary.dark }}
-            >
+            <AccordionDetails sx={{ m: 0.5, p: 1, bgcolor: "primary.dark" }}>
               {question.answers.map((answer) => (
                 <Answer
                   user={{ userId: user.userId, isAdmin: user.isAdmin }}

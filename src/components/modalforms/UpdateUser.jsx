@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { patchFetch } from "../../hooks/fetchHooks";
+
+import fetch from "../../hooks/fetchHooks";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,22 +35,24 @@ export default function UpdateUser({ close, user, refetch }) {
   });
 
   function updateUserSubmit(values) {
-    patchFetch("/user/update", {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      username: values.username,
-      email: values.email,
-    }).then(({ error }) => {
-      if (error) setAlert(error);
-      else {
-        refetch();
-        close();
-        setUserData({
-          username: values.username,
-          email: values.email,
-        });
-      }
-    });
+    fetch
+      .patch("/user/update", {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        username: values.username,
+        email: values.email,
+      })
+      .then(({ error }) => {
+        if (error) setAlert(error);
+        else {
+          refetch();
+          close();
+          setUserData({
+            username: values.username,
+            email: values.email,
+          });
+        }
+      });
   }
 
   return (

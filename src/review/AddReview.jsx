@@ -1,5 +1,6 @@
+import fetch from "../hooks/fetchHooks";
+
 import { useContext, useState } from "react";
-import { postFetch } from "../hooks/fetchHooks";
 import Context from "../utils/Context";
 
 import {
@@ -11,7 +12,6 @@ import {
   Rating,
   Stack,
   Typography,
-  useTheme,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -19,32 +19,32 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { StyledInput } from "../components/styled";
 
 export default function AddReview({ productId, refetch }) {
-  const { palette } = useTheme();
-
   const { notify } = useContext(Context);
 
   const [stars, setStars] = useState(5);
   const [text, setText] = useState("");
 
   function SubmitReview() {
-    postFetch("review/create", {
-      text: text,
-      stars: stars,
-      productId: productId,
-    }).then(({ error, message }) => {
-      if (!error) {
-        refetch();
-        notify(message);
-      }
-    });
+    fetch
+      .post("review/create", {
+        text: text,
+        stars: stars,
+        productId: productId,
+      })
+      .then(({ error, message }) => {
+        if (!error) {
+          refetch();
+          notify(message);
+        }
+      });
   }
 
   return (
     <Accordion
       sx={{
         mt: 1,
-        bgcolor: palette.secondary.main,
-        ".Mui-expanded": { bgcolor: palette.secondary.dark },
+        bgcolor: "secondary.main",
+        ".Mui-expanded": { bgcolor: "secondary.dark" },
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -52,7 +52,7 @@ export default function AddReview({ productId, refetch }) {
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          bgcolor: palette.primary.dark,
+          bgcolor: "primary.dark",
           m: 1,
           p: 1,
         }}
@@ -78,7 +78,7 @@ export default function AddReview({ productId, refetch }) {
                 border: 1,
                 p: 0.5,
                 mr: 1,
-                borderColor: palette.primary.main,
+                borderColor: "primary.main",
               }}
             >
               <Rating

@@ -2,12 +2,11 @@ import { useContext } from "react";
 
 import { NavLink } from "react-router-dom";
 
-import { Button, useTheme } from "@mui/material";
+import { Button } from "@mui/material";
 
 import Context from "../utils/Context";
 
 export default function AddToCartButton({ product }) {
-  const { palette } = useTheme();
   const { cart, setCart, notify } = useContext(Context);
 
   function addToCart() {
@@ -30,7 +29,7 @@ export default function AddToCartButton({ product }) {
   if (product.quantity > 0)
     return (
       <Button
-        sx={{ borderRadius: 0, bgcolor: palette.action.positive }}
+        sx={{ borderRadius: 0, bgcolor: "action.positive" }}
         fullWidth
         onClick={addToCart}
         variant="contained"

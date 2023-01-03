@@ -66,7 +66,7 @@ export default function AddressForm({ address, setAddress, setActiveStep }) {
         }
       />
       <Button
-        sx={{ m: 1 }}
+        sx={{ width: 0.5, my: 1 }}
         variant="outlined"
         onClick={() => navigate("/cart")}
       >
@@ -74,7 +74,7 @@ export default function AddressForm({ address, setAddress, setActiveStep }) {
       </Button>
       <Button
         variant="contained"
-        sx={{ m: 1 }}
+        sx={{ width: 0.5, my: 1 }}
         type="submit"
         onClick={saveAddress}
       >
