@@ -14,7 +14,6 @@ import {
   MenuItem,
   Drawer,
   useTheme,
-  TextField,
   Badge,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -29,12 +28,12 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Context from "../utils/Context";
 import LogIn from "../components/modalforms/LogIn";
 import Register from "../components/modalforms/Register";
-import Categories from "./Categories";
+import Categories from "../components/Categories";
 
 import { StyledSearch } from "../components/styled";
 
 export default function Navbar() {
-  const { palette, breakpoints } = useTheme();
+  const { breakpoints } = useTheme();
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
@@ -43,7 +42,8 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { notify, cart, userData, setUserData } = useContext(Context);
+  const { notify, cart, userData, setUserData, setSearch } =
+    useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
@@ -53,9 +53,6 @@ export default function Navbar() {
   const [anchorElLog, setAnchorElLog] = useState(null);
 
   const [openDrawer, setOpenDrawer] = useState(false);
-
-  const [searchCategories, setSearchCategories] = useState("");
-  const [search, setSearch] = useState(null);
 
   function logoutSubmit() {
     fetch.post("/auth/logout").then(({ error, message }) => {
@@ -71,18 +68,9 @@ export default function Navbar() {
     });
   }
 
-  function procSearch(category) {
-    navigate("/product", {
-      state: {
-        name: search ? search : "",
-        category: category ? [category] : [],
-      },
-    });
-  }
-
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: palette.primary.dark }}>
+      <AppBar position="static" sx={{ bgcolor: "primary.dark" }}>
         <Toolbar
           sx={{
             display: "flex",
@@ -90,7 +78,7 @@ export default function Navbar() {
           }}
         >
           <Box>
-            {location.pathname !== "/product" && (
+            {location.pathname !== "/search" && (
               <>
                 <Button
                   title="Categories"
@@ -104,22 +92,14 @@ export default function Navbar() {
                 <Drawer
                   PaperProps={{
                     sx: {
-                      bgcolor: palette.primary.dark,
+                      bgcolor: "primary.dark",
                     },
                   }}
                   open={openDrawer}
                   onClose={() => setOpenDrawer(false)}
                 >
-                  <TextField
-                    fullWidth
-                    sx={{ bgcolor: palette.primary.dark }}
-                    placeholder="Search…"
-                    onChange={(e) => setSearchCategories(e.target.value)}
-                  />
                   <Categories
                     setOpenDrawer={setOpenDrawer}
-                    procSearch={procSearch}
-                    searchCategories={searchCategories}
                     matchesSm={matchesSm}
                   />
                 </Drawer>
@@ -137,17 +117,19 @@ export default function Navbar() {
             </Button>
           </Box>
           {matchesMd &&
-            location.pathname !== "/product" &&
+            location.pathname !== "/search" &&
             !location.pathname.includes("admin") && (
               <StyledSearch>
                 <InputBase
                   fullWidth
-                  sx={{ input: { color: palette.text.contrast } }}
+                  sx={{ input: { color: "text.contrast" } }}
                   placeholder="Search…"
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && procSearch()}
+                  onChange={(e) =>
+                    setSearch({ name: e.target.value, category: [] })
+                  }
+                  onKeyDown={(e) => e.key === "Enter" && navigate("/search")}
                 />
-                <Button title="Search" onClick={() => procSearch()}>
+                <Button title="Search" onClick={() => navigate("/search")}>
                   <SearchIcon />
                 </Button>
               </StyledSearch>
@@ -169,8 +151,8 @@ export default function Navbar() {
                   color="secondary"
                   sx={{
                     "& .MuiBadge-badge": {
-                      color: palette.text.contrast,
-                      backgroundColor: palette.primary.light,
+                      color: "text.contrast",
+                      backgroundColor: "primary.light",
                     },
                   }}
                   invisible={cart.count < 0}
@@ -193,7 +175,7 @@ export default function Navbar() {
                     <Menu
                       sx={{
                         ul: {
-                          backgroundColor: palette.secondary.dark,
+                          backgroundColor: "secondary.dark",
                           p: 0,
                         },
                       }}
@@ -204,7 +186,7 @@ export default function Navbar() {
                       {userData.isAdmin ? (
                         <MenuItem
                           dense={true}
-                          sx={{ bgcolor: palette.primary.dark, py: 2 }}
+                          sx={{ bgcolor: "primary.dark", py: 2 }}
                           component={NavLink}
                           to="/admin"
                           onClick={() => {
@@ -215,7 +197,7 @@ export default function Navbar() {
                         </MenuItem>
                       ) : (
                         <MenuItem
-                          sx={{ bgcolor: palette.primary.dark, py: 2 }}
+                          sx={{ bgcolor: "primary.dark", py: 2 }}
                           component={NavLink}
                           to="/user"
                           onClick={() => {
@@ -226,7 +208,7 @@ export default function Navbar() {
                         </MenuItem>
                       )}
                       <MenuItem
-                        sx={{ bgcolor: palette.primary.dark }}
+                        sx={{ bgcolor: "primary.dark" }}
                         onClick={() => {
                           logoutSubmit();
                           setAnchorEl(null);
@@ -267,7 +249,7 @@ export default function Navbar() {
                         <AccountCircleIcon />
                       </Button>
                       <Menu
-                        sx={{ ul: { bgcolor: palette.primary.dark, p: 0 } }}
+                        sx={{ ul: { bgcolor: "primary.dark", p: 0 } }}
                         anchorEl={anchorElLog}
                         keepMounted
                         open={Boolean(anchorElLog)}
@@ -301,17 +283,17 @@ export default function Navbar() {
           </Box>
         </Toolbar>
         {!matchesMd &&
-          location.pathname !== "/product" &&
+          location.pathname !== "/search" &&
           !location.pathname.includes("admin") && (
             <StyledSearch>
               <InputBase
                 fullWidth
                 placeholder="Search…"
-                sx={{ input: { color: palette.text.contrast } }}
+                sx={{ input: { color: "text.contrast" } }}
                 onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && procSearch()}
+                onKeyDown={(e) => e.key === "Enter" && navigate("/search")}
               />
-              <Button title="Search" onClick={() => procSearch()}>
+              <Button title="Search" onClick={() => navigate("/search")}>
                 <SearchIcon />
               </Button>
             </StyledSearch>

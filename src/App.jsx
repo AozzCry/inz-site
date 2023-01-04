@@ -8,8 +8,8 @@ import Navbar from "./main/Navbar.jsx";
 import NotFoundPage from "./main/NotFoundPage.jsx";
 import Footer from "./main/Footer.jsx";
 
-import Products from "./product/Products.jsx";
-import Cart from "./product/Cart.jsx";
+import Products from "./search/Search.jsx";
+import Cart from "./Cart/Cart.jsx";
 import Checkout from "./neworder/Checkout.jsx";
 
 import AdminMenu from "./admin/AdminMenu.jsx";
@@ -38,7 +38,7 @@ export default function App() {
           <Navbar />
           <Routes>
             <Route path="" element={<Home />} />
-            <Route path="product" element={<Products />} />
+            <Route path="search" element={<Products />} />
             <Route path="product/:nameLink" element={<ProductDetails />} />
 
             <Route path="cart" element={<Cart />} />

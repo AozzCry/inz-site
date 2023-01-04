@@ -1,6 +1,6 @@
 {
   "name": "emicro",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
     "@emotion/styled": "^11.10.5",

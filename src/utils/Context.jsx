@@ -9,6 +9,7 @@ export const ContextProvider = (props) => {
     message: "",
     sevrity: "success",
   });
+  const [search, setSearch] = useState({ name: "", category: [] });
 
   const [userData, setUserData] = useState({
     username: null,
@@ -45,6 +46,9 @@ export const ContextProvider = (props) => {
       theme,
       setTheme,
 
+      search,
+      setSearch,
+
       userData,
       setUserData,
 
@@ -59,7 +63,7 @@ export const ContextProvider = (props) => {
       setConfirmDialog,
       confirm,
     }),
-    [theme, userData, cart, snackBar, confirmDialog]
+    [theme, search, userData, cart, snackBar, confirmDialog]
   );
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 };
