@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Container, ThemeProvider } from "@mui/material";
+import { Box, Container, ThemeProvider } from "@mui/material";
 import { lightTheme, darkTheme } from "./utils/themes.jsx";
 
 import Home from "./main/Home.jsx";
@@ -9,7 +9,7 @@ import NotFoundPage from "./main/NotFoundPage.jsx";
 import Footer from "./main/Footer.jsx";
 
 import Products from "./search/Search.jsx";
-import Cart from "./Cart/Cart.jsx";
+import Cart from "./cart/Cart.jsx";
 import Checkout from "./neworder/Checkout.jsx";
 
 import AdminMenu from "./admin/AdminMenu.jsx";
@@ -34,33 +34,38 @@ export default function App() {
   return (
     <ThemeProvider theme={theme ? lightTheme : darkTheme}>
       <BrowserRouter>
-        <Container disableGutters sx={{ minHeight: "100vh" }}>
-          <Navbar />
-          <Routes>
-            <Route path="" element={<Home />} />
-            <Route path="search" element={<Products />} />
-            <Route path="product/:nameLink" element={<ProductDetails />} />
+        <Container
+          disableGutters
+          sx={{ minHeight: "100vh", position: "relative" }}
+        >
+          <Box sx={{ pb: 5 }}>
+            <Navbar />
+            <Routes>
+              <Route path="" element={<Home />} />
+              <Route path="search" element={<Products />} />
+              <Route path="product/:nameLink" element={<ProductDetails />} />
 
-            <Route path="cart" element={<Cart />} />
-            {userData.username && !userData.isAdmin && (
-              <Route path="checkout" element={<Checkout />} />
-            )}
-            {userData.isAdmin && (
-              <Route path="admin" element={<AdminMenu />}>
-                <Route path="productform" element={<CreateProduct />} />
-                <Route path="categories" element={<ManageCategories />} />
-                <Route path="users" element={<ManageUsers />} />
-                <Route path="orders" element={<ManageOrders />} />
-              </Route>
-            )}
-            {userData.username && !userData.isAdmin && (
-              <Route path="user" element={<UserMenu />}>
-                <Route path="account" element={<Account />} />
-                <Route path="orders" element={<Orders />} />
-              </Route>
-            )}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+              <Route path="cart" element={<Cart />} />
+              {userData.username && !userData.isAdmin && (
+                <Route path="checkout" element={<Checkout />} />
+              )}
+              {userData.isAdmin && (
+                <Route path="admin" element={<AdminMenu />}>
+                  <Route path="productform" element={<CreateProduct />} />
+                  <Route path="categories" element={<ManageCategories />} />
+                  <Route path="users" element={<ManageUsers />} />
+                  <Route path="orders" element={<ManageOrders />} />
+                </Route>
+              )}
+              {userData.username && !userData.isAdmin && (
+                <Route path="user" element={<UserMenu />}>
+                  <Route path="account" element={<Account />} />
+                  <Route path="orders" element={<Orders />} />
+                </Route>
+              )}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Box>
           <Footer />
         </Container>
       </BrowserRouter>

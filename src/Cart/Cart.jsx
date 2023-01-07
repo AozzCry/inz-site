@@ -1,5 +1,7 @@
 import { useContext } from "react";
 
+import { useQuery } from "react-query";
+
 import { NavLink } from "react-router-dom";
 
 import {
@@ -19,13 +21,26 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 
 import Context from "../utils/Context";
 import CartProduct from "./CartProduct";
+import LoadingPage from "../main/LoadingPage";
+import ErrorPage from "../main/ErrorPage";
+import RecoProduct from "./RecoProduct";
 
 export default function Cart() {
   const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
   const matchesMd = useMediaQuery(useTheme().breakpoints.up("md"));
 
   const { cart, setCart, userData, confirm } = useContext(Context);
-
+  const {
+    isLoading,
+    isError,
+    error,
+    data: cartRecommendations,
+  } = useQuery({
+    queryKey: [
+      "/product/cart",
+      { category: cart.map((ci) => ci.productCategories).join(",") },
+    ],
+  });
   return (
     <Container
       disableGutters={!matchesSm ? true : false}
@@ -54,14 +69,8 @@ export default function Cart() {
       <Stack direction={matchesMd ? "row" : "column"}>
         <List sx={{ width: 1 }}>
           {cart &&
-            cart.map(({ product }, index) => {
-              return (
-                <CartProduct
-                  key={product._id}
-                  index={index}
-                  product={product}
-                />
-              );
+            cart.map((cartItem, index) => {
+              return <CartProduct key={cartItem.productId} index={index} />;
             })}
         </List>
         <Box sx={{ width: 1 }}>
@@ -72,7 +81,7 @@ export default function Cart() {
               </Typography>
               <Typography variant="h5" component="div">
                 {cart
-                  .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
+                  .reduce((sum, ci) => sum + ci.productPrice * ci.count, 0)
                   .toFixed(2) + " PLN"}
               </Typography>
             </CardContent>
@@ -98,6 +107,34 @@ export default function Cart() {
           </Card>
         </Box>
       </Stack>
+
+      {isLoading && <LoadingPage what="products" />}
+      {isError && <ErrorPage error={error.message} />}
+
+      {cartRecommendations && cartRecommendations.length > 0 && (
+        <>
+          <Typography variant="h4" sx={{ m: 1 }}>
+            Similar products:
+          </Typography>
+          <Container
+            disableGutters
+            sx={{
+              pl: 1,
+              display: "flex",
+              flexWrap: "wrap",
+              bgcolor: "primary.dark",
+            }}
+          >
+            {cartRecommendations
+              .filter(
+                (product) => !cart.some((ci) => ci.productId === product._id)
+              )
+              .map((product) => {
+                return <RecoProduct key={product._id} product={product} />;
+              })}
+          </Container>
+        </>
+      )}
     </Container>
   );
 }

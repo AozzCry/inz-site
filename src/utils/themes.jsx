@@ -30,7 +30,7 @@ export const darkTheme = createTheme({
       xs: 400,
       sm: 600,
       md: 900,
-      pr: 1100,
+      xl: 1600,
     },
   },
   components: {

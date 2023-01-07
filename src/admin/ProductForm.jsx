@@ -124,7 +124,6 @@ export default function ProductForm() {
     <Container>
       <Box component="form">
         <StyledInput
-          margin="dense"
           fullWidth
           id="name"
           name="name"
@@ -137,7 +136,6 @@ export default function ProductForm() {
           autoFocus
         />
         <StyledInput
-          margin="dense"
           fullWidth
           name="price"
           label="Price"
@@ -148,7 +146,6 @@ export default function ProductForm() {
           helperText={errors.price?.message}
         />
         <StyledInput
-          margin="dense"
           fullWidth
           name="shortDescription"
           label="Short Description"
@@ -159,7 +156,6 @@ export default function ProductForm() {
           helperText={errors.shortDescription?.message}
         />
         <StyledInput
-          margin="dense"
           fullWidth
           multiline
           name="longDescription"
@@ -172,7 +168,6 @@ export default function ProductForm() {
         />
         <Stack direction="row">
           <StyledInput
-            margin="dense"
             fullWidth
             name="specificationName"
             label="Specification name"
@@ -186,8 +181,6 @@ export default function ProductForm() {
             value={specification.name}
           />
           <StyledInput
-            sx={{ ml: 1 }}
-            margin="dense"
             fullWidth
             name="specificationValue"
             label="Specification value"
@@ -197,12 +190,13 @@ export default function ProductForm() {
                 return { name: s.name, value: e.target.value };
               })
             }
+            sx={{ ml: 1 }}
             value={specification.value}
           />
           <Button
             variant="contained"
             onClick={addSpecification}
-            sx={{ ml: 1, mt: 1.0, mb: 0.5 }}
+            sx={{ ml: 1, mt: 1, mb: 0.5 }}
           >
             Add
           </Button>
@@ -211,7 +205,6 @@ export default function ProductForm() {
           {specifications.map((specification) => (
             <Button
               size="dense"
-              sx={{ m: 0.5 }}
               variant="contained"
               key={specification.name}
               onClick={() => {
@@ -239,7 +232,6 @@ export default function ProductForm() {
                 },
               },
             }}
-            margin="dense"
             label="Status"
             defaultValue={state ? state.product.status : "out of stock"}
           >
@@ -250,8 +242,6 @@ export default function ProductForm() {
             ))}
           </StyledInput>
           <StyledInput
-            sx={{ ml: 1 }}
-            margin="dense"
             fullWidth
             name="quantity"
             label="Quantity"
@@ -260,18 +250,17 @@ export default function ProductForm() {
             {...register("quantity")}
             error={errors.quantity ? true : false}
             helperText={errors.quantity?.message}
+            sx={{ ml: 1 }}
           />
         </Stack>
         <Stack direction={"row"}>
           <StyledInput
-            margin="dense"
             label="Search categories"
             onChange={(e) => setSearchCategories(e.target.value)}
           />
           <Container sx={{ ml: 0.5 }} disableGutters={true}>
             {categories.map((category) => (
               <Button
-                size="dense"
                 sx={{ m: 0.1 }}
                 variant="contained"
                 key={category}
@@ -299,7 +288,6 @@ export default function ProductForm() {
                 )
                 .map((category) => (
                   <Button
-                    size="medium"
                     sx={{ m: 0.1, color: "text.primary " }}
                     variant="outlined"
                     key={category._id}

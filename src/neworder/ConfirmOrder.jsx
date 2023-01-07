@@ -29,21 +29,13 @@ export default function ConfirmOrder({
   const [errorList, setErrorList] = useState([]);
 
   const sumPrice = cart
-    .reduce((sum, ci) => sum + ci.product.price * ci.count, 0)
+    .reduce((sum, cartItem) => sum + cartItem.productPrice * cartItem.count, 0)
     .toFixed(2);
 
   function submitOrder() {
     fetch
       .post("/order/create", {
-        products: cart.map((ci) => {
-          return {
-            productName: ci.product.name,
-            productPrice: ci.product.price,
-            productNameLink: ci.product.nameLink,
-            productId: ci.product._id,
-            count: ci.count,
-          };
-        }),
+        products: cart,
         sumPrice: sumPrice,
         userId: user._id,
         userInfo: {
@@ -55,9 +47,9 @@ export default function ConfirmOrder({
         address: address,
       })
       .then(({ error, message }) => {
-        if (error && error.length > 0) {
+        if (error && Array.isArray(error)) {
           setErrorList(error);
-        } else {
+        } else if (!error) {
           setCart([]);
           notify(message);
           setActiveStep((s) => s + 1);
@@ -70,17 +62,17 @@ export default function ConfirmOrder({
         Order summary
       </Typography>
       <List disablePadding>
-        {cart.map(({ product, count }) => (
+        {cart.map((cartItem) => (
           <ListItem
-            key={product._id}
+            key={cartItem.productId}
             sx={{ p: 1, bgcolor: "secondary.dark", borderRadius: 3 }}
           >
             <ListItemText
-              primary={product.name}
-              secondary={product.shortDescription}
+              primary={cartItem.productName}
+              secondary={cartItem.productShortDescription}
             />
             <Typography variant="body2">
-              {product.price} x {count}
+              {cartItem.productPrice} x {cartItem.count}
             </Typography>
           </ListItem>
         ))}

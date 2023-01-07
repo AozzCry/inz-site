@@ -16,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
-export default function CartProduct({ product, index }) {
+export default function CartProduct({ index }) {
   const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
 
   const { notify, cart, setCart } = useContext(Context);
@@ -52,11 +52,11 @@ export default function CartProduct({ product, index }) {
         display: "flex",
         flexWrap: "wrap",
       }}
-      key={product._id}
+      key={cart[index].productId}
       disablePadding
     >
       {!matchesSm && (
-        <ListItemText sx={{ minWidth: 1 }} primary={product.name} />
+        <ListItemText sx={{ minWidth: 1 }} primary={cart[index].productName} />
       )}
       <IconButton
         title="Remove from cart"
@@ -71,11 +71,14 @@ export default function CartProduct({ product, index }) {
       </IconButton>
       {matchesSm && (
         <ListItemText
-          primary={product.name}
-          secondary={product.shortDescription}
+          primary={cart[index].productName}
+          secondary={cart[index].productShortDescription}
         />
       )}
-      <ListItemText align="right" primary={product.price.toFixed(2) + " CUR"} />
+      <ListItemText
+        align="right"
+        primary={cart[index].productPrice.toFixed(2) + " CUR"}
+      />
 
       <Stack direction="row">
         <IconButton
@@ -109,7 +112,7 @@ export default function CartProduct({ product, index }) {
           }}
           size="small"
           disabled={
-            cart[index].count < cart[index].product.quantity ? false : true
+            cart[index].count < cart[index].productQuantity ? false : true
           }
           onClick={onAdd}
         >

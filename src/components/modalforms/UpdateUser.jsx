@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Context from "../../utils/Context";
 
 export default function UpdateUser({ close, user, refetch }) {
-  const { setUserData } = useContext(Context);
+  const { refetchUserData } = useContext(Context);
   const [alert, setAlert] = useState(null);
 
   const userUpdateValidationSchema = Yup.object().shape({
@@ -47,10 +47,7 @@ export default function UpdateUser({ close, user, refetch }) {
         else {
           refetch();
           close();
-          setUserData({
-            username: values.username,
-            email: values.email,
-          });
+          refetchUserData();
         }
       });
   }

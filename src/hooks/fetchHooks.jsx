@@ -8,7 +8,6 @@ export async function doFetch(method, url, data = null) {
       data,
       withCredentials: true,
     });
-    console.log(res.statusText, res.data.message);
     return { message: res.data.message, data: res.data.content };
   } catch (error) {
     if (error.response && error.response.data.message) {

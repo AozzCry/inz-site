@@ -6,13 +6,22 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { Grid, Box, Typography, Button, Alert, Link } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  Button,
+  Alert,
+  Link,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { StyledModal, StyledInput } from "../styled";
 
-export default function LogIn({ close, setUserData, setOpenRegister }) {
-  const { notify } = useContext(Context);
+export default function LogIn({ close, setOpenRegister }) {
+  const { notify, refetchUserData } = useContext(Context);
 
   const [alert, setAlert] = useState(null);
 
@@ -43,18 +52,14 @@ export default function LogIn({ close, setUserData, setOpenRegister }) {
         email: values.email,
         password: values.password,
       })
-      .then(({ error, message, data }) => {
+      .then(({ error, message }) => {
         if (error) {
           setAlert(error);
         } else {
-          setUserData({
-            username: data.username,
-            email: data.email,
-            isAdmin: data.isAdmin,
-            userId: data.userId,
-          });
+          refetchUserData();
           setAlert(null);
           notify(message);
+          if (values.stayLoggedIn) document.cookie = "stalLoggedIn=" + true;
           close();
         }
       });
@@ -101,7 +106,18 @@ export default function LogIn({ close, setUserData, setOpenRegister }) {
           helperText={errors.password?.message}
         />
         {alert ? <Alert severity="error">{alert}</Alert> : <></>}
-
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="success"
+              {...register("stayLoggedIn")}
+              sx={{
+                color: "primary.main",
+              }}
+            />
+          }
+          label="Stay logged in?"
+        />
         <Button
           fullWidth
           variant="contained"

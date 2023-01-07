@@ -18,6 +18,7 @@ export const StyledModal = styled(Container)(({ theme }) => ({
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
+  marginTop: 8,
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: theme.palette.primary.main,

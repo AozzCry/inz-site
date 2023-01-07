@@ -10,22 +10,18 @@ import {
   CardActions,
   Stack,
   Rating,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 
 import AddToCartButton from "../components/AddToCartButton";
 
-export default function ProductHome({ product }) {
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
-
+export default function RecoProduct({ product }) {
   const navigate = useNavigate();
 
   return (
     <Card
       raised
       sx={{
-        bgcolor: "primary.dark",
+        bgcolor: "secondary.dark",
         p: 1,
         mr: 1,
         mb: 1,
@@ -39,7 +35,7 @@ export default function ProductHome({ product }) {
             navigate("/product/" + product.nameLink);
           }}
         >
-          <Stack>
+          <Stack direction="row">
             <CardMedia
               image={
                 product.miniImg
@@ -55,50 +51,34 @@ export default function ProductHome({ product }) {
                 objectFit: "contain",
                 bgcolor: "secondary.dark",
               }}
-              height={matchesSm ? 300 : 250}
-              width={matchesSm ? 300 : 250}
+              height={120}
+              width={120}
             />
+            <Stack sx={{ width: 1 }}>
+              <Typography variant="body1" sx={{ m: 1, minHeight: 0.55 }}>
+                {product.name}
+              </Typography>
 
-            <Typography variant="h6" sx={{ m: 1 }}>
-              {product.name}
-            </Typography>
-
-            <Stack direction="row" sx={{ p: 0, width: 1 }}>
               <Stack
                 direction="row"
-                sx={{
-                  border: 1,
-                  borderTopLeftRadius: "12px",
-                  borderTopRightRadius: "12px",
-                  p: 0.5,
-                  mr: 0.5,
-                  borderColor: "primary.main",
-                }}
+                sx={{ p: 0, width: 1, borderTop: 1, pt: 1 }}
               >
                 <Rating
                   readOnly
                   value={product.starsFromReviews / product.countOfReviews}
                   precision={0.5}
                 />
-                <Typography variant="body1">
-                  ({product.countOfReviews})
+                <Typography
+                  variant="body1"
+                  sx={{
+                    px: 0.5,
+                    width: 1,
+                    textAlign: "right",
+                  }}
+                >
+                  {product.price.toFixed(2)}PLN
                 </Typography>
               </Stack>
-
-              <Typography
-                variant="h5"
-                sx={{
-                  px: 0.5,
-                  width: 1,
-                  border: 1,
-                  textAlign: "right",
-                  borderColor: "primary.main",
-                  borderTopLeftRadius: "12px",
-                  borderTopRightRadius: "12px",
-                }}
-              >
-                {product.price.toFixed(2)}PLN
-              </Typography>
             </Stack>
           </Stack>
         </CardActionArea>

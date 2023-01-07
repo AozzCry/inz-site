@@ -10,7 +10,6 @@ import {
   useMediaQuery,
   Button,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
@@ -45,7 +44,6 @@ export default function Review({ review, refetch, user }) {
           readOnly
           value={review.stars}
           precision={0.5}
-          emptyIcon={<StarIcon />}
         />
         {review.userOrderedProduct ? (
           <Chip

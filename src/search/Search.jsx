@@ -8,7 +8,6 @@ import {
   Drawer,
   Input,
   Stack,
-  Typography,
   useMediaQuery,
   useTheme,
   Container,
@@ -21,12 +20,13 @@ import Products from "./Products";
 import Filter from "./Filter";
 
 export default function Search() {
-  const matchesPr = useMediaQuery(useTheme().breakpoints.up("pr"));
+  const matchesMd = useMediaQuery(useTheme().breakpoints.up("md"));
   const { search, setSearch } = useContext(Context);
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const [priceFrom, setPriceFrom] = useState("");
   const [priceTo, setPriceTo] = useState("");
+  const [whichSort, setWhichSort] = useState("popularityDesc");
 
   const debouncedSet = useRef(
     debounce((e) => {
@@ -39,11 +39,10 @@ export default function Search() {
   useEffect(() => {
     return () => debouncedSet.cancel();
   }, [debouncedSet]);
-
   return (
     <>
       <Stack direction={"row"}>
-        {matchesPr ? (
+        {matchesMd ? (
           <Filter
             {...{
               search,
@@ -52,6 +51,8 @@ export default function Search() {
               setPriceFrom,
               priceTo,
               setPriceTo,
+              whichSort,
+              setWhichSort,
             }}
           />
         ) : (
@@ -72,13 +73,15 @@ export default function Search() {
                 setPriceFrom,
                 priceTo,
                 setPriceTo,
+                whichSort,
+                setWhichSort,
               }}
             />
           </Drawer>
         )}
-        <Container>
+        <Container disableGutters sx={{ mx: 0.5 }}>
           <Container disableGutters sx={{ display: "flex" }}>
-            {!matchesPr && (
+            {!matchesMd && (
               <Button
                 title="Filter products"
                 onClick={() => setOpenDrawer(true)}
@@ -94,16 +97,6 @@ export default function Search() {
                   sx={{ input: { color: "text.contrast" } }}
                   fullWidth
                   disableUnderline={true}
-                  startAdornment={
-                    <Typography
-                      sx={{
-                        mr: 1,
-                        color: "text.contrast",
-                      }}
-                    >
-                      {search.category.length > 0 && search.category + ":"}
-                    </Typography>
-                  }
                   defaultValue={search.name}
                   placeholder={search.name === "" ? "Search products…" : ""}
                   onChange={(e) => debouncedSet(e.target.value)}
@@ -111,7 +104,7 @@ export default function Search() {
               </StyledSearch>
             </Container>
           </Container>
-          <Products {...{ search, priceFrom, priceTo }} />
+          <Products {...{ search, priceFrom, priceTo, whichSort }} />
         </Container>
       </Stack>
     </>

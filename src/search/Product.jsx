@@ -12,8 +12,8 @@ import {
   Rating,
   useMediaQuery,
   CardMedia,
+  Box,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 
 import { useTheme } from "@emotion/react";
 import AddToCartButton from "../components/AddToCartButton";
@@ -23,9 +23,10 @@ export default function Product({ product }) {
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesXl = useMediaQuery(breakpoints.up("xl"));
 
   const navigate = useNavigate();
-
+  console.log(matchesXl, matchesXs, matchesMd, matchesSm);
   return (
     <Card
       raised
@@ -38,31 +39,44 @@ export default function Product({ product }) {
         borderRadius: 2,
       }}
     >
-      <Stack direction={matchesMd ? "row" : "column"}>
+      <Stack direction={matchesXl || !matchesMd ? "column" : "row"}>
         <CardActionArea
           onClick={() => {
             navigate("/product/" + product.nameLink);
           }}
         >
           <Stack direction={matchesSm ? "row" : "column"}>
-            <CardMedia
+            <Box
+              display="flex"
+              justifyContent="center"
+              sx={{ bgcolor: "secondary.dark" }}
+            >
+              <CardMedia
+                sx={{
+                  maxWidth: matchesXs ? "300px" : 1,
+                  width: matchesXs ? "260px" : 1,
+                }}
+                image={
+                  product.miniImg
+                    ? `data:image/png;base64,${Buffer.from(
+                        product.miniImg.data,
+                        "binary"
+                      ).toString("base64")}`
+                    : "https://i.ibb.co/nRmzP38/product-Placeholder.jpg"
+                }
+                component="img"
+                alt="product image"
+              />
+            </Box>
+            <CardContent
               sx={{
-                maxWidth: matchesXs ? "300px" : 1,
-                width: matchesXs ? "250px" : 1,
+                maxWidth: matchesSm ? 0.6 : 1,
+                py: 0,
+                "&:last-child": {
+                  paddingBottom: 0,
+                },
               }}
-              image={
-                product.miniImg
-                  ? `data:image/png;base64,${Buffer.from(
-                      product.miniImg.data,
-                      "binary"
-                    ).toString("base64")}`
-                  : "https://i.ibb.co/nRmzP38/product-Placeholder.jpg"
-              }
-              component="img"
-              alt="product image"
-            />
-
-            <CardContent sx={{ maxWidth: matchesSm ? 0.6 : 1, pt: 0 }}>
+            >
               <Typography sx={{ mb: 1 }} variant="subtitle2">
                 {product.categories.join(", ")}
               </Typography>
@@ -77,7 +91,6 @@ export default function Product({ product }) {
                   readOnly
                   value={product.starsFromReviews / product.countOfReviews}
                   precision={0.5}
-                  emptyIcon={<StarIcon />}
                 />
                 <Typography variant="body1">
                   ({product.countOfReviews})

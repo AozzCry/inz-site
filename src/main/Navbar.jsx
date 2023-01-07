@@ -37,12 +37,11 @@ export default function Navbar() {
   const matchesMd = useMediaQuery(breakpoints.up("md"));
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
-  const matchesPr = useMediaQuery(breakpoints.up("pr"));
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { notify, cart, userData, setUserData, setSearch } =
+  const { notify, cart, userData, refetchUserData, setSearch } =
     useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
@@ -58,11 +57,8 @@ export default function Navbar() {
     fetch.post("/auth/logout").then(({ error, message }) => {
       if (!error) {
         notify(message);
-        setUserData({
-          username: null,
-          email: null,
-          isAdmin: null,
-        });
+        refetchUserData();
+        document.cookie = "stalLoggedIn=; max-age=0";
         navigate("/");
       }
     });
@@ -105,16 +101,19 @@ export default function Navbar() {
                 </Drawer>
               </>
             )}
-            <Button
-              title="Main page"
-              component={NavLink}
-              to="/"
-              sx={{ mr: 1 }}
-              variant="contained"
-            >
-              <HomeIcon />
-              {matchesMd && "Home"}
-            </Button>
+
+            {location.pathname !== "/" && (
+              <Button
+                title="Main page"
+                component={NavLink}
+                to="/"
+                sx={{ mr: 1 }}
+                variant="contained"
+              >
+                <HomeIcon />
+                {matchesSm && "Home"}
+              </Button>
+            )}
           </Box>
           {matchesMd &&
             location.pathname !== "/search" &&
@@ -159,18 +158,21 @@ export default function Navbar() {
                 >
                   <ShoppingCartIcon />
                 </Badge>
-                {matchesMd && "Cart"}
+                {matchesSm && "Cart"}
               </Button>
               {userData.username ? (
                 <>
                   <>
                     <Button
+                      sx={{ maxWidth: matchesSm ? 182 : 152 }}
                       title="User info"
                       variant="contained"
                       onClick={(e) => setAnchorEl(e.currentTarget)}
                     >
                       <AccountCircleIcon />
-                      {matchesXs && userData.username.slice(0, 9)}
+                      {matchesSm
+                        ? userData.username.slice(0, 12)
+                        : matchesXs && userData.username.slice(0, 9) + "..."}
                     </Button>
                     <Menu
                       sx={{
@@ -230,13 +232,13 @@ export default function Navbar() {
                           mr: 1,
                         }}
                       >
-                        {matchesPr ? "Log in" : <LoginIcon />}
+                        {matchesMd ? "Log in" : <LoginIcon />}
                       </Button>
                       <Button
                         onClick={() => setOpenRegister(true)}
                         variant="contained"
                       >
-                        {matchesPr ? "Register" : <AppRegistrationIcon />}
+                        {matchesMd ? "Register" : <AppRegistrationIcon />}
                       </Button>
                     </>
                   ) : (
@@ -290,7 +292,9 @@ export default function Navbar() {
                 fullWidth
                 placeholder="Search…"
                 sx={{ input: { color: "text.contrast" } }}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) =>
+                  setSearch({ name: e.target.value, category: [] })
+                }
                 onKeyDown={(e) => e.key === "Enter" && navigate("/search")}
               />
               <Button title="Search" onClick={() => navigate("/search")}>
@@ -304,7 +308,6 @@ export default function Navbar() {
           <>
             <LogIn
               close={() => setOpenLogIn(false)}
-              setUserData={setUserData}
               setOpenRegister={setOpenRegister}
             />
           </>

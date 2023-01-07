@@ -22,7 +22,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 
 import AdditionalInfo from "./AdditionalInfo";
 import Review from "../review/Review";
@@ -42,7 +41,7 @@ export default function ProductDetails() {
   const matchesSm = useMediaQuery(breakpoints.up("sm"));
   const matchesXs = useMediaQuery(breakpoints.up("xs"));
   const navigate = useNavigate();
-  const { userData, notify, confirm } = useContext(Context);
+  const { userData, setSearch, notify, confirm } = useContext(Context);
 
   const mainRef = useRef(null);
   const descriptionRef = useRef(null);
@@ -107,11 +106,10 @@ export default function ProductDetails() {
                     key={category}
                     sx={{ mr: 1, mb: 1, color: palette.text.primary }}
                     variant="outlined"
-                    to="/product"
-                    state={{
-                      name: "",
-                      category: category ? [category] : [],
-                    }}
+                    to="/search"
+                    onClick={() =>
+                      setSearch({ name: "", category: [category] })
+                    }
                   >
                     {category}
                   </Button>
@@ -174,7 +172,6 @@ export default function ProductDetails() {
                             data.product.countOfReviews
                           }
                           precision={0.5}
-                          emptyIcon={<StarIcon />}
                         />
                         <Typography textAlign={"center"} variant="body1">
                           ({data.product.countOfReviews})

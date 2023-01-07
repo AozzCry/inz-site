@@ -10,11 +10,23 @@ export default function AddToCartButton({ product }) {
   const { cart, setCart, notify } = useContext(Context);
 
   function addToCart() {
-    setCart([...cart, { product, count: 1 }]);
+    setCart([
+      ...cart,
+      {
+        productId: product._id,
+        productName: product.name,
+        productPrice: product.price,
+        productNameLink: product.nameLink,
+        productQuantity: product.quantity,
+        productShortDescription: product.shortDescription,
+        productCategories: product.categories,
+        count: 1,
+      },
+    ]);
     notify("Product added to cart.");
   }
 
-  if (cart && cart.some((ci) => ci.product._id === product._id))
+  if (cart && cart.some((ci) => ci.productId === product._id))
     return (
       <Button
         sx={{ borderRadius: 0 }}

@@ -1,4 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from "react";
+import { useQuery } from "react-query";
 
 const Context = createContext();
 
@@ -11,11 +12,15 @@ export const ContextProvider = (props) => {
   });
   const [search, setSearch] = useState({ name: "", category: [] });
 
-  const [userData, setUserData] = useState({
-    username: null,
-    email: null,
-    isAdmin: null,
-    userId: null,
+  const { data: userData, refetch: refetchUserData } = useQuery({
+    queryKey: ["auth/refresh"],
+    placeholderData: {
+      username: null,
+      email: null,
+      isAdmin: null,
+      userId: null,
+    },
+    enabled: document.cookie.length > 0,
   });
 
   const [cart, setCart] = useState(() => {
@@ -50,7 +55,7 @@ export const ContextProvider = (props) => {
       setSearch,
 
       userData,
-      setUserData,
+      refetchUserData,
 
       cart,
       setCart,
@@ -63,7 +68,7 @@ export const ContextProvider = (props) => {
       setConfirmDialog,
       confirm,
     }),
-    [theme, search, userData, cart, snackBar, confirmDialog]
+    [theme, search, userData, refetchUserData, cart, snackBar, confirmDialog]
   );
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 };

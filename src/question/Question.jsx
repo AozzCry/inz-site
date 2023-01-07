@@ -106,18 +106,16 @@ export default function Question({ question, refetch, user }) {
           icon={<ThumbDownAltIcon />}
         />
       </Stack>
-      {user.isAdmin === false && (
-        <Stack direction="row">
-          <SubdirectoryArrowRightIcon
-            sx={{ fontSize: 50, color: "primary.main" }}
-          />
-          <AddAnswer
-            productId={question.productId}
-            refetch={refetch}
-            questionId={question._id}
-          />
-        </Stack>
-      )}
+      <Stack direction="row">
+        <SubdirectoryArrowRightIcon
+          sx={{ fontSize: 50, color: "primary.main" }}
+        />
+        <AddAnswer
+          productId={question.productId}
+          refetch={refetch}
+          questionId={question._id}
+        />
+      </Stack>
       {question.answers.length > 0 && (
         <Stack direction="row">
           <SubdirectoryArrowRightIcon

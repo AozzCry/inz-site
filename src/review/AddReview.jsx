@@ -13,7 +13,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { StyledInput } from "../components/styled";
@@ -87,7 +86,6 @@ export default function AddReview({ productId, refetch }) {
                   setStars(newValue);
                 }}
                 precision={0.5}
-                emptyIcon={<StarIcon />}
               />
             </Box>
             <Button
