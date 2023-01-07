@@ -13,13 +13,17 @@ import ErrorPage from "../main/ErrorPage";
 const steps = ["Shipping address", "Payment details", "Confirm your order"];
 
 export default function Checkout() {
-  const [address, setAddress] = useState(null);
-  const [payment, setPayment] = useState({
+  const [address, setAddress] = useState({
     street: "",
     city: "",
-    state: "",
-    zip: "",
-    country: "",
+    streetNr: "",
+    postalCode: "",
+  });
+  const [payment, setPayment] = useState({
+    cardName: "",
+    cardNumber: "",
+    expDate: "",
+    cvv: "",
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -50,7 +54,7 @@ export default function Checkout() {
       <>
         {activeStep === 0 && (
           <AddressForm
-            address={user?.address}
+            address={user.address ? user.address : address}
             setAddress={setAddress}
             setActiveStep={setActiveStep}
           />

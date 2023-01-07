@@ -29,7 +29,7 @@ export default function Register({ close, setOpenLogIn }) {
     lastname: Yup.string().required("Fullname is required"),
     username: Yup.string()
       .required("Username is required")
-      .min(3, "Username must be at least 2 characters")
+      .min(3, "Username must be at least 3 characters")
       .max(20, "Username must not exceed 20 characters"),
     email: Yup.string()
       .required("Email is required")
@@ -39,7 +39,7 @@ export default function Register({ close, setOpenLogIn }) {
       ),
     password: Yup.string()
       .required("Password is required")
-      .min(3, "Password must be at least 2 characters")
+      .min(3, "Password must be at least 3 characters")
       .max(40, "Password must not exceed 40 characters"),
     confirmPassword: Yup.string()
       .required("Confirm Password is required")

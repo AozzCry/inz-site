@@ -2,9 +2,11 @@ import { useContext } from "react";
 
 import { Button, Typography, useTheme, Box } from "@mui/material";
 import Context from "../utils/Context";
+import { useLocation } from "react-router-dom";
 
 export default function Footer() {
   const { setTheme } = useContext(Context);
+  const location = useLocation();
   return (
     <Box
       component="footer"
@@ -14,6 +16,7 @@ export default function Footer() {
         bottom: 0,
         width: 1,
         borderTop: 1,
+        display: location.pathname.includes("admin") ? "none" : "block",
       }}
     >
       <Typography variant="body2" align="center">

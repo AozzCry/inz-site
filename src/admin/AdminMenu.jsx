@@ -104,7 +104,7 @@ export default function AdminMenu() {
           />
           <BottomNavigationAction
             component={NavLink}
-            to="/admin/createproduct"
+            to="/admin/productform"
             label="Product"
             icon={<AddBoxIcon />}
           />

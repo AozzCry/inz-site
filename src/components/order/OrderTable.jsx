@@ -6,6 +6,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -51,19 +52,25 @@ export default function OrderTable({ products, sumPrice }) {
               count,
             }) => (
               <TableRow
-                component={Link}
                 sx={{
                   textDecoration: "none",
                   ":hover": { bgcolor: "secondary.dark" },
                 }}
-                to={"../../product/" + productNameLink}
                 key={productId}
               >
                 <TableCell
                   padding={matchesXs ? "normal" : "none"}
                   variant="body"
                 >
-                  {productName}
+                  <Link
+                    to={"../../product/" + productNameLink}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Typography sx={{ color: "text.primary" }}>
+                      {" "}
+                      {productName}
+                    </Typography>
+                  </Link>
                 </TableCell>
                 <TableCell
                   padding={matchesXs ? "normal" : "none"}

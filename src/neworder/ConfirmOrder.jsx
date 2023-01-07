@@ -146,7 +146,7 @@ export default function ConfirmOrder({
               borderColor: "primary.main",
             }}
           >
-            <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
               Payment details
             </Typography>
             <Grid container>

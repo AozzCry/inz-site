@@ -77,6 +77,12 @@ export default function AddressForm({ address, setAddress, setActiveStep }) {
         sx={{ width: 0.5, my: 1 }}
         type="submit"
         onClick={saveAddress}
+        disabled={
+          !newAddress.street ||
+          !newAddress.streetNr ||
+          !newAddress.city ||
+          !newAddress.postalCode
+        }
       >
         Next
       </Button>

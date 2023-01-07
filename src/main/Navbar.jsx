@@ -165,7 +165,7 @@ export default function Navbar() {
                   <>
                     <Button
                       sx={{ maxWidth: matchesSm ? 182 : 152 }}
-                      title="User info"
+                      title="Account"
                       variant="contained"
                       onClick={(e) => setAnchorEl(e.currentTarget)}
                     >
@@ -206,7 +206,7 @@ export default function Navbar() {
                             setAnchorEl(null);
                           }}
                         >
-                          User info
+                          Account
                         </MenuItem>
                       )}
                       <MenuItem
