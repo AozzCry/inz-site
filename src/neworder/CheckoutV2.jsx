@@ -10,8 +10,6 @@ import AddressFormV2 from './AddressFormV2';
 import ConfirmOrderV2 from './ConfirmOrderV2';
 import PaymentFormV2 from './PaymentFormV2';
 
-const steps = ['Shipping address', 'Payment details', 'Confirm your order'];
-
 export default function CheckoutV2() {
   const [address, setAddress] = useState({
     street: '',
@@ -26,7 +24,7 @@ export default function CheckoutV2() {
     cvv: '',
   });
 
-  const [activeStep, setActiveStep] = useState(0);
+  const setActiveStep = () => {};
 
   const {
     isLoading,
