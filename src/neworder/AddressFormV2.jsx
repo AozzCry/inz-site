@@ -4,6 +4,8 @@ import { StyledInput } from '../components/styled';
 export default function AddressFormV2({ address, setAddress, setActiveStep }) {
   useEffect(() => {
     setAddress(address);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <form>

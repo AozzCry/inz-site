@@ -1,15 +1,8 @@
-import { useState } from 'react';
-
 import { Grid } from '@mui/material';
 
 import { StyledInput } from '../components/styled';
 
-export default function PaymentFormV2({ setActiveStep, payment, setPayment }) {
-  const [newPayment, setNewPayment] = useState(payment);
-  function savePayment() {
-    setPayment(newPayment);
-    setActiveStep((s) => s + 1);
-  }
+export default function PaymentFormV2({ setPayment }) {
   return (
     <>
       <Grid container spacing={3}>

@@ -1,29 +1,29 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useQuery } from "react-query";
+import { useQuery } from 'react-query';
 
-import { Container, Stepper, StepLabel, Typography, Step } from "@mui/material";
+import { Container, Step, StepLabel, Stepper, Typography } from '@mui/material';
 
-import AddressForm from "./AddressForm";
-import PaymentForm from "./PaymentForm";
-import ConfirmOrder from "./ConfirmOrder";
-import LoadingPage from "../main/LoadingPage";
-import ErrorPage from "../main/ErrorPage";
+import ErrorPage from '../main/ErrorPage';
+import LoadingPage from '../main/LoadingPage';
+import AddressForm from './AddressForm';
+import ConfirmOrder from './ConfirmOrder';
+import PaymentForm from './PaymentForm';
 
-const steps = ["Shipping address", "Payment details", "Confirm your order"];
+const steps = ['Shipping address', 'Payment details', 'Confirm your order'];
 
 export default function Checkout() {
   const [address, setAddress] = useState({
-    street: "",
-    city: "",
-    streetNr: "",
-    postalCode: "",
+    street: '',
+    city: '',
+    streetNr: '',
+    postalCode: '',
   });
   const [payment, setPayment] = useState({
-    cardName: "",
-    cardNumber: "",
-    expDate: "",
-    cvv: "",
+    cardName: '',
+    cardNumber: '',
+    expDate: '',
+    cvv: '',
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -34,13 +34,13 @@ export default function Checkout() {
     error,
     data: user,
   } = useQuery({
-    queryKey: ["/user"],
+    queryKey: ['/user'],
   });
 
   if (isLoading) return <LoadingPage what="checkout" />;
   if (isError) return <ErrorPage error={error.message} />;
   return (
-    <Container sx={{ bgcolor: "primary.dark" }}>
+    <Container sx={{ bgcolor: 'primary.dark' }}>
       <Typography component="h1" variant="h4" align="center">
         Checkout
       </Typography>
@@ -75,7 +75,7 @@ export default function Checkout() {
           />
         )}
         {activeStep === 3 && (
-          <Typography variant="h3" textAlign={"center"} sx={{ p: 10 }}>
+          <Typography variant="h3" textAlign={'center'} sx={{ p: 10 }}>
             Thank you for purchase!
           </Typography>
         )}
