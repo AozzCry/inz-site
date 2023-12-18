@@ -24,8 +24,7 @@ export default function CheckoutV2() {
     cvv: '',
   });
 
-  const setActiveStep = () => {};
-
+  const [finished, setFinished] = useState(false);
   const {
     isLoading,
     isError,
@@ -39,32 +38,36 @@ export default function CheckoutV2() {
   if (isError) return <ErrorPage error={error.message} />;
   return (
     <Container sx={{ bgcolor: 'primary.dark' }}>
-      <Typography component="h1" variant="h4" align="center">
-        Checkout
-      </Typography>
       <>
-        <AddressFormV2
-          address={user.address ? user.address : address}
-          setAddress={setAddress}
-          setActiveStep={setActiveStep}
-        />
+        {!finished ? (
+          <>
+            <Typography
+              component="h1"
+              variant="h4"
+              align="center"
+              sx={{ padding: '10px' }}
+            >
+              Checkout
+            </Typography>
+            <AddressFormV2
+              address={user.address ? user.address : address}
+              setAddress={setAddress}
+            />
 
-        <PaymentFormV2
-          setActiveStep={setActiveStep}
-          payment={payment}
-          setPayment={setPayment}
-        />
+            <PaymentFormV2 payment={payment} setPayment={setPayment} />
 
-        <ConfirmOrderV2
-          setActiveStep={setActiveStep}
-          address={address}
-          payment={payment}
-          user={user}
-        />
-
-        <Typography variant="h3" textAlign={'center'} sx={{ p: 10 }}>
-          Thank you for purchase!
-        </Typography>
+            <ConfirmOrderV2
+              address={address}
+              payment={payment}
+              user={user}
+              setFinished={setFinished}
+            />
+          </>
+        ) : (
+          <Typography variant="h3" textAlign={'center'} sx={{ p: 10 }}>
+            Thank you for purchase!
+          </Typography>
+        )}
       </>
     </Container>
   );

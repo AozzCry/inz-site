@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import { StyledInput } from '../components/styled';
 
@@ -21,7 +21,7 @@ export default function PaymentFormV2({ setActiveStep, payment, setPayment }) {
             fullWidth
             autoComplete="cc-name"
             onChange={(e) =>
-              setNewPayment((p) => ({ ...p, cardName: e.target.value }))
+              setPayment((p) => ({ ...p, cardName: e.target.value }))
             }
           />
         </Grid>
@@ -37,7 +37,7 @@ export default function PaymentFormV2({ setActiveStep, payment, setPayment }) {
             placeholder="____-____-____-____"
             name="card"
             onChange={(e) =>
-              setNewPayment((p) => ({ ...p, cardNumber: e.target.value }))
+              setPayment((p) => ({ ...p, cardNumber: e.target.value }))
             }
           />
         </Grid>
@@ -49,7 +49,7 @@ export default function PaymentFormV2({ setActiveStep, payment, setPayment }) {
             fullWidth
             autoComplete="cc-exp"
             onChange={(e) =>
-              setNewPayment((p) => ({ ...p, expDate: e.target.value }))
+              setPayment((p) => ({ ...p, expDate: e.target.value }))
             }
           />
         </Grid>
@@ -60,26 +60,10 @@ export default function PaymentFormV2({ setActiveStep, payment, setPayment }) {
             label="CVV"
             fullWidth
             autoComplete="cc-csc"
-            onChange={(e) =>
-              setNewPayment((p) => ({ ...p, cvv: e.target.value }))
-            }
+            onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value }))}
           />
         </Grid>
       </Grid>
-      <Button
-        variant="outlined"
-        sx={{ my: 1, width: 0.5 }}
-        onClick={() => setActiveStep((s) => s - 1)}
-      >
-        Back
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ my: 1, width: 0.5 }}
-        onClick={savePayment}
-      >
-        Save
-      </Button>
     </>
   );
 }

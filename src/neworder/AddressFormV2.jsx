@@ -1,20 +1,10 @@
-import { useState } from 'react';
-
-import { useNavigate } from 'react-router-dom';
-
-import { Button } from '@mui/material';
-
+import { useEffect } from 'react';
 import { StyledInput } from '../components/styled';
 
 export default function AddressFormV2({ address, setAddress, setActiveStep }) {
-  const navigate = useNavigate();
-
-  const [newAddress, setNewAddress] = useState(address);
-
-  function saveAddress() {
-    setAddress(newAddress);
-  }
-
+  useEffect(() => {
+    setAddress(address);
+  }, []);
   return (
     <form>
       <StyledInput
@@ -26,9 +16,7 @@ export default function AddressFormV2({ address, setAddress, setActiveStep }) {
         name="street"
         type="text"
         autoFocus
-        onChange={(e) =>
-          setNewAddress((a) => ({ ...a, street: e.target.value }))
-        }
+        onChange={(e) => setAddress((a) => ({ ...a, street: e.target.value }))}
       />
       <StyledInput
         margin="normal"
@@ -39,7 +27,7 @@ export default function AddressFormV2({ address, setAddress, setActiveStep }) {
         name="streetNr"
         type="text"
         onChange={(e) =>
-          setNewAddress((a) => ({ ...a, streetNr: e.target.value }))
+          setAddress((a) => ({ ...a, streetNr: e.target.value }))
         }
       />
       <StyledInput
@@ -50,7 +38,7 @@ export default function AddressFormV2({ address, setAddress, setActiveStep }) {
         label="City"
         name="city"
         type="text"
-        onChange={(e) => setNewAddress((a) => ({ ...a, city: e.target.value }))}
+        onChange={(e) => setAddress((a) => ({ ...a, city: e.target.value }))}
       />
       <StyledInput
         margin="normal"
@@ -61,29 +49,9 @@ export default function AddressFormV2({ address, setAddress, setActiveStep }) {
         name="postalCode"
         type="text"
         onChange={(e) =>
-          setNewAddress((a) => ({ ...a, postalCode: e.target.value }))
+          setAddress((a) => ({ ...a, postalCode: e.target.value }))
         }
       />
-      <Button
-        sx={{ width: 0.5, my: 1 }}
-        variant="outlined"
-        onClick={() => navigate('/cart')}
-      >
-        Back
-      </Button>
-      <Button
-        variant="contained"
-        sx={{ width: 0.5, my: 1 }}
-        onClick={saveAddress}
-        disabled={
-          !newAddress.street ||
-          !newAddress.streetNr ||
-          !newAddress.city ||
-          !newAddress.postalCode
-        }
-      >
-        Save
-      </Button>
     </form>
   );
 }

@@ -4,6 +4,7 @@ import AddQuestion from '../question/AddQuestion';
 import Question from '../question/Question';
 import AddReview from '../review/AddReview';
 import Review from '../review/Review';
+import AdditionalInfo from './AdditionalInfo';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -319,6 +320,7 @@ export default function ProductDetails() {
               ))}
             </TableBody>
           </Table>
+          <AdditionalInfo />
         </Stack>
       </>
     );

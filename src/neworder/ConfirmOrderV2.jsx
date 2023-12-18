@@ -17,7 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 
 export default function ConfirmOrderV2({
-  setActiveStep,
+  setFinished,
   address,
   payment,
   user,
@@ -52,13 +52,13 @@ export default function ConfirmOrderV2({
         } else if (!error) {
           setCart([]);
           notify(message);
-          setActiveStep((s) => s + 1);
+          setFinished(true);
         }
       });
   }
   return (
     <>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom sx={{ paddingTop: '30px' }}>
         Order summary
       </Typography>
       <List disablePadding>
@@ -131,15 +131,14 @@ export default function ConfirmOrderV2({
             </List>
           </Box>
         </Stack>
-        <Stack direction={matchesSm ? 'row' : 'column'}>
+        <Stack sx={{ w: '100%' }} direction={matchesSm ? 'row' : 'column'}>
           <Grid
             item
             container
             direction="column"
-            xs={12}
-            sm={6}
             sx={{
               mt: 1,
+              w: '100%',
               p: 1,
               borderRadius: 4,
               border: 1,
@@ -149,7 +148,7 @@ export default function ConfirmOrderV2({
             <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
               Payment details
             </Typography>
-            <Grid container>
+            <Grid container sx={{ w: '100%' }}>
               <Grid item xs={6}>
                 <Typography gutterBottom>
                   Name on card: {payment.cardName}
@@ -170,18 +169,13 @@ export default function ConfirmOrderV2({
               </Grid>
             </Grid>
           </Grid>
-          <Button
-            variant="outlined"
-            sx={{ height: 40, m: 1 }}
-            onClick={() => setActiveStep((s) => s - 1)}
-          >
-            Back
-          </Button>
+        </Stack>
+        <Stack sx={{ w: '100%' }}>
           <Button
             variant="contained"
-            sx={{ height: 40, m: 1 }}
+            sx={{ height: 40, m: 1, w: '100%' }}
             onClick={() => confirm('Do you confirm order?', submitOrder)}
-            disabled={!address.postalCode && !payment.cvv}
+            disabled={!address.postalCode || !payment.cvv}
           >
             Confirm
           </Button>

@@ -1,18 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 import {
   AppBar,
   Button,
-  useMediaQuery,
   Container,
+  useMediaQuery,
   useTheme,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DescriptionIcon from "@mui/icons-material/Description";
-import ReviewsIcon from "@mui/icons-material/Reviews";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+} from '@mui/material';
 
 export default function ProductNavbar({
   mainRef,
@@ -20,25 +20,26 @@ export default function ProductNavbar({
   specificationRef,
   reviewsRef,
   questionsRef,
+  theme,
 }) {
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("md"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up('md'));
 
   const navigate = useNavigate();
 
   function scrollToRef(ref) {
     ref.current.scrollIntoView({
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   }
 
   return (
-    <AppBar position="sticky">
+    <AppBar position={theme ? 'relative' : 'sticky'}>
       <Container
         disableGutters
         sx={{
-          bgcolor: "secondary.dark",
-          display: "flex",
-          button: { m: 0.5, color: "text.primary" },
+          bgcolor: 'secondary.dark',
+          display: 'flex',
+          button: { m: 0.5, color: 'text.primary' },
         }}
       >
         <Button
@@ -48,7 +49,7 @@ export default function ProductNavbar({
           onClick={() => navigate(-1)}
         >
           <ArrowBackIcon />
-          {matchesSm && "Back"}
+          {matchesSm && 'Back'}
         </Button>
         <Button
           title="Product"
@@ -57,7 +58,7 @@ export default function ProductNavbar({
           onClick={() => scrollToRef(mainRef)}
         >
           <ArrowUpwardIcon />
-          {matchesSm && "Product"}
+          {matchesSm && 'Product'}
         </Button>
         <Button
           title="Description"
@@ -66,7 +67,7 @@ export default function ProductNavbar({
           onClick={() => scrollToRef(descriptionRef)}
         >
           <DescriptionIcon />
-          {matchesSm && "Description"}
+          {matchesSm && 'Description'}
         </Button>
         <Button
           title="Specification"
@@ -75,7 +76,7 @@ export default function ProductNavbar({
           onClick={() => scrollToRef(specificationRef)}
         >
           <FormatListBulletedIcon />
-          {matchesSm && "Specification"}
+          {matchesSm && 'Specification'}
         </Button>
         <Button
           title="Reviews"
@@ -84,7 +85,7 @@ export default function ProductNavbar({
           onClick={() => scrollToRef(reviewsRef)}
         >
           <ReviewsIcon />
-          {matchesSm && "Reviews"}
+          {matchesSm && 'Reviews'}
         </Button>
         <Button
           title="Questions"
@@ -93,7 +94,7 @@ export default function ProductNavbar({
           onClick={() => scrollToRef(questionsRef)}
         >
           <QuestionAnswerIcon />
-          {matchesSm && "Questions"}
+          {matchesSm && 'Questions'}
         </Button>
       </Container>
     </AppBar>

@@ -46,18 +46,33 @@ export default function App() {
             <Navbar />
             <Routes>
               <Route path="" element={<Home />} />
-              <Route path="v2">
-                {userData.username && !userData.isAdmin && (
-                  <Route path="checkout" element={<CheckoutV2 />} />
-                )}
-                {userData.username && !userData.isAdmin && (
-                  <Route path="user/account" element={<AccountV2 />} />
-                )}
-                <Route
-                  path="product/:nameLink"
-                  element={<ProductDetailsV2 />}
-                />
-              </Route>
+              {theme ? (
+                <>
+                  {userData.username && !userData.isAdmin && (
+                    <Route path="checkout" element={<CheckoutV2 />} />
+                  )}
+                  {userData.username && !userData.isAdmin && (
+                    <Route path="user/account" element={<AccountV2 />} />
+                  )}
+                  <Route
+                    path="product/:nameLink"
+                    element={<ProductDetailsV2 />}
+                  />
+                </>
+              ) : (
+                <>
+                  {userData.username && !userData.isAdmin && (
+                    <Route path="checkout" element={<Checkout />} />
+                  )}
+                  {userData.username && !userData.isAdmin && (
+                    <Route path="user/account" element={<Account />} />
+                  )}
+                  <Route
+                    path="product/:nameLink"
+                    element={<ProductDetails />}
+                  />
+                </>
+              )}
 
               <Route path="search" element={<Products />} />
               <Route path="product/:nameLink" element={<ProductDetails />} />

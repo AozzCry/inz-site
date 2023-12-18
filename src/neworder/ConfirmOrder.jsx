@@ -1,20 +1,20 @@
-import { useContext, useState } from "react";
-import Context from "../utils/Context";
-import fetch from "../hooks/fetchHooks";
+import { useContext, useState } from 'react';
+import fetch from '../hooks/fetchHooks';
+import Context from '../utils/Context';
 
+import { useTheme } from '@emotion/react';
 import {
-  Typography,
+  Box,
+  Button,
+  Grid,
   List,
   ListItem,
   ListItemText,
-  Grid,
-  Button,
-  Box,
   Stack,
+  Typography,
   useMediaQuery,
-} from "@mui/material";
-import { useTheme } from "@emotion/react";
-import { Link } from "react-router-dom";
+} from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export default function ConfirmOrder({
   setActiveStep,
@@ -22,8 +22,8 @@ export default function ConfirmOrder({
   payment,
   user,
 }) {
-  const matchesXs = useMediaQuery(useTheme().breakpoints.up("xs"));
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
+  const matchesXs = useMediaQuery(useTheme().breakpoints.up('xs'));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up('sm'));
 
   const { notify, cart, setCart, confirm } = useContext(Context);
   const [errorList, setErrorList] = useState([]);
@@ -34,7 +34,7 @@ export default function ConfirmOrder({
 
   function submitOrder() {
     fetch
-      .post("/order/create", {
+      .post('/order/create', {
         products: cart,
         sumPrice: sumPrice,
         userId: user._id,
@@ -65,7 +65,7 @@ export default function ConfirmOrder({
         {cart.map((cartItem) => (
           <ListItem
             key={cartItem.productId}
-            sx={{ p: 1, bgcolor: "secondary.dark", borderRadius: 3 }}
+            sx={{ p: 1, bgcolor: 'secondary.dark', borderRadius: 3 }}
           >
             <ListItemText
               primary={cartItem.productName}
@@ -78,24 +78,24 @@ export default function ConfirmOrder({
         ))}
 
         <ListItem
-          sx={{ py: 1, px: 0, borderTop: 1, borderColor: "primary.main" }}
+          sx={{ py: 1, px: 0, borderTop: 1, borderColor: 'primary.main' }}
         >
           <ListItemText primary="Total" />
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-            {sumPrice + " PLN"}
+            {sumPrice + ' PLN'}
           </Typography>
         </ListItem>
       </List>
       <Grid>
-        <Stack display={"flex"} direction={matchesXs ? "row" : "column"}>
+        <Stack display={'flex'} direction={matchesXs ? 'row' : 'column'}>
           <Box
             sx={{
               flexGrow: 1,
-              color: "text.primary",
+              color: 'text.primary',
               border: 1,
               p: 1,
               borderRadius: 3,
-              borderColor: "primary.main",
+              borderColor: 'primary.main',
             }}
           >
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -111,13 +111,13 @@ export default function ConfirmOrder({
           <Box
             sx={{
               flexGrow: 1,
-              color: "text.primary",
+              color: 'text.primary',
               border: 1,
               p: 1,
               ml: matchesXs ? 1 : 0,
               mt: matchesXs ? 0 : 1,
               borderRadius: 3,
-              borderColor: "primary.main",
+              borderColor: 'primary.main',
             }}
           >
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -131,7 +131,7 @@ export default function ConfirmOrder({
             </List>
           </Box>
         </Stack>
-        <Stack direction={matchesSm ? "row" : "column"}>
+        <Stack direction={matchesSm ? 'row' : 'column'}>
           <Grid
             item
             container
@@ -143,7 +143,7 @@ export default function ConfirmOrder({
               p: 1,
               borderRadius: 4,
               border: 1,
-              borderColor: "primary.main",
+              borderColor: 'primary.main',
             }}
           >
             <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>
@@ -170,20 +170,23 @@ export default function ConfirmOrder({
               </Grid>
             </Grid>
           </Grid>
-          <Button
-            variant="outlined"
-            sx={{ height: 40, m: 1 }}
-            onClick={() => setActiveStep((s) => s - 1)}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ height: 40, m: 1 }}
-            onClick={() => confirm("Do you confirm order?", submitOrder)}
-          >
-            Confirm
-          </Button>
+          <Stack direction="column">
+            <Button
+              variant="outlined"
+              sx={{ height: 40, m: 1 }}
+              onClick={() => setActiveStep((s) => s - 1)}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ height: 40, m: 1 }}
+              onClick={() => confirm('Do you confirm order?', submitOrder)}
+              disabled={!address.postalCode && !payment.cvv}
+            >
+              Confirm
+            </Button>
+          </Stack>
         </Stack>
       </Grid>
       <Stack sx={{ p: 1 }}>

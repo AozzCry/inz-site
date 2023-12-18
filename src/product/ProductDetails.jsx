@@ -1,9 +1,9 @@
-import { useContext, useRef } from "react";
-import { useQuery } from "react-query";
+import { useContext, useRef } from 'react';
+import { useQuery } from 'react-query';
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
-import Context from "../utils/Context";
+import Context from '../utils/Context';
 
 import {
   Box,
@@ -21,25 +21,25 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
-import AdditionalInfo from "./AdditionalInfo";
-import Review from "../review/Review";
-import AddReview from "../review/AddReview";
-import AddQuestion from "../question/AddQuestion";
-import Question from "../question/Question";
-import ImageDetails from "../image/ImageDetails";
-import ProductNavbar from "./ProductNavbar";
-import LoadingPage from "../main/LoadingPage";
-import ErrorPage from "../main/ErrorPage";
-import AddToCartButton from "../components/AddToCartButton";
+import AddToCartButton from '../components/AddToCartButton';
+import ImageDetails from '../image/ImageDetails';
+import ErrorPage from '../main/ErrorPage';
+import LoadingPage from '../main/LoadingPage';
+import AddQuestion from '../question/AddQuestion';
+import Question from '../question/Question';
+import AddReview from '../review/AddReview';
+import Review from '../review/Review';
+import AdditionalInfo from './AdditionalInfo';
+import ProductNavbar from './ProductNavbar';
 
-import { deleteDocument } from "../utils/functions";
+import { deleteDocument } from '../utils/functions';
 
 export default function ProductDetails() {
   const { palette, breakpoints } = useTheme();
-  const matchesSm = useMediaQuery(breakpoints.up("sm"));
-  const matchesXs = useMediaQuery(breakpoints.up("xs"));
+  const matchesSm = useMediaQuery(breakpoints.up('sm'));
+  const matchesXs = useMediaQuery(breakpoints.up('xs'));
   const navigate = useNavigate();
   const { userData, setSearch, notify, confirm } = useContext(Context);
 
@@ -63,7 +63,7 @@ export default function ProductDetails() {
         minHeight={1}
       >
         <Typography variant="h6" textAlign="center">
-          Product with link {window.location.pathname.split("/")[2]} doesn't
+          Product with link {window.location.pathname.split('/')[2]} doesn't
           exist.
         </Typography>
       </Box>
@@ -79,6 +79,7 @@ export default function ProductDetails() {
             specificationRef,
             reviewsRef,
             questionsRef,
+            theme: true,
           }}
         />
         <Card
@@ -88,8 +89,8 @@ export default function ProductDetails() {
             flexGrow: 1,
           }}
         >
-          <Stack direction={matchesSm ? "row" : "column"}>
-            <Stack sx={{ width: matchesSm ? 0.6 : "auto" }}>
+          <Stack direction={matchesSm ? 'row' : 'column'}>
+            <Stack sx={{ width: matchesSm ? 0.6 : 'auto' }}>
               <ImageDetails
                 images={
                   data.images.length > 0 && data.images.slice(0).reverse()
@@ -108,7 +109,7 @@ export default function ProductDetails() {
                     variant="outlined"
                     to="/search"
                     onClick={() =>
-                      setSearch({ name: "", category: [category] })
+                      setSearch({ name: '', category: [category] })
                     }
                   >
                     {category}
@@ -121,7 +122,7 @@ export default function ProductDetails() {
                   <>
                     <Button
                       component={Link}
-                      to={"../../admin/productform"}
+                      to={'../../admin/productform'}
                       state={{ product: data.product }}
                       sx={{ p: 0.5, mb: 0.5, ml: matchesXs ? 0.5 : 0 }}
                       size="small"
@@ -137,10 +138,10 @@ export default function ProductDetails() {
                       color="error"
                       onClick={() =>
                         confirm(
-                          "Are you sure you want to delete this product?",
+                          'Are you sure you want to delete this product?',
                           () =>
                             deleteDocument(
-                              "product",
+                              'product',
                               data.product._id,
                               () => navigate(-1),
                               notify
@@ -173,7 +174,7 @@ export default function ProductDetails() {
                           }
                           precision={0.5}
                         />
-                        <Typography textAlign={"center"} variant="body1">
+                        <Typography textAlign={'center'} variant="body1">
                           ({data.product.countOfReviews})
                         </Typography>
                       </>
@@ -204,7 +205,7 @@ export default function ProductDetails() {
                 borderRadius: 4,
                 border: 1,
                 m: 0.25,
-                width: matchesSm ? 0.4 : "auto",
+                width: matchesSm ? 0.4 : 'auto',
               }}
             >
               <Stack sx={{ p: 1 }}>
@@ -223,8 +224,8 @@ export default function ProductDetails() {
                       sx={{
                         borderRadius: 3,
                         py: 1,
-                        display: "flex",
-                        justifyContent: "center",
+                        display: 'flex',
+                        justifyContent: 'center',
                       }}
                       disableGutters
                     >
@@ -250,7 +251,7 @@ export default function ProductDetails() {
           <Typography sx={{ mx: 1 }} variant="h4">
             Description
           </Typography>
-          <Typography sx={{ mx: 1 }} style={{ whiteSpace: "pre-line" }}>
+          <Typography sx={{ mx: 1 }} style={{ whiteSpace: 'pre-line' }}>
             {data.product.longDescription}
           </Typography>
           <Typography
