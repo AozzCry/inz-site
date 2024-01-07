@@ -1,22 +1,20 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import { Button, Typography, useTheme, Box } from "@mui/material";
-import Context from "../utils/Context";
-import { useLocation } from "react-router-dom";
+import { Box, Button, Typography, useTheme } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Context from '../utils/Context';
 
 export default function Footer() {
   const { setTheme } = useContext(Context);
-  const location = useLocation();
   return (
     <Box
       component="footer"
       sx={{
         bgcolor: useTheme().palette.secondary.dark,
-        position: "absolute",
+        position: 'absolute',
         bottom: 0,
         width: 1,
         borderTop: 1,
-        display: location.pathname.includes("admin") ? "none" : "block",
       }}
     >
       <Typography variant="body2" align="center">
@@ -28,6 +26,15 @@ export default function Footer() {
           onClick={() => setTheme((prev) => !prev)}
         >
           Change theme
+        </Button>
+        <Button
+          component={Link}
+          sx={{ ml: 1, py: 0, my: 0.5 }}
+          variant="outlined"
+          size="small"
+          to="../faq"
+        >
+          FAQ
         </Button>
       </Typography>
     </Box>

@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import Context from "../utils/Context";
+import Context from '../utils/Context';
 
 import {
   IconButton,
@@ -10,20 +10,20 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
-import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function CartProduct({ index }) {
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up('sm'));
 
   const { notify, cart, setCart } = useContext(Context);
 
   function onDelete() {
     setCart(cart.filter((c) => c !== cart[index]));
-    notify("Product removed from cart.");
+    notify('Product removed from cart.');
   }
 
   function onAdd() {
@@ -48,9 +48,9 @@ export default function CartProduct({ index }) {
         p: 1,
         border: 1,
         borderRadius: 3,
-        borderColor: "primary.main",
-        display: "flex",
-        flexWrap: "wrap",
+        borderColor: 'primary.main',
+        display: 'flex',
+        flexWrap: 'wrap',
       }}
       key={cart[index].productId}
       disablePadding
@@ -63,11 +63,11 @@ export default function CartProduct({ index }) {
         sx={{
           mr: 1,
           border: 2,
-          borderColor: "action.delete",
+          borderColor: 'action.delete',
         }}
         onClick={onDelete}
       >
-        <DeleteIcon sx={{ color: "action.delete" }} />
+        <DeleteIcon sx={{ color: 'action.delete' }} />
       </IconButton>
       {matchesSm && (
         <ListItemText
@@ -77,7 +77,7 @@ export default function CartProduct({ index }) {
       )}
       <ListItemText
         align="right"
-        primary={cart[index].productPrice.toFixed(2) + " CUR"}
+        primary={cart[index].productPrice.toFixed(2) + ' PLN'}
       />
 
       <Stack direction="row">
@@ -86,18 +86,18 @@ export default function CartProduct({ index }) {
           sx={{
             mx: 1,
             border: 2,
-            borderColor: "action.negative",
-            "&.Mui-disabled": {
-              borderColor: "action.disabled",
+            borderColor: 'action.negative',
+            '&.Mui-disabled': {
+              borderColor: 'action.disabled',
             },
           }}
           size="small"
           disabled={cart[index].count > 1 ? false : true}
           onClick={onSub}
         >
-          <ArrowBackIosNewIcon sx={{ color: "action.negative" }} />
+          <ArrowBackIosNewIcon sx={{ color: 'action.negative' }} />
         </IconButton>
-        <Typography sx={{ fontSize: "1.5em" }} color="text.primary">
+        <Typography sx={{ fontSize: '1.5em' }} color="text.primary">
           {cart[index].count}
         </Typography>
         <IconButton
@@ -105,9 +105,9 @@ export default function CartProduct({ index }) {
           sx={{
             mx: 1,
             border: 2,
-            borderColor: "action.positive",
-            "&.Mui-disabled": {
-              borderColor: "action.disabled",
+            borderColor: 'action.positive',
+            '&.Mui-disabled': {
+              borderColor: 'action.disabled',
             },
           }}
           size="small"
@@ -116,7 +116,7 @@ export default function CartProduct({ index }) {
           }
           onClick={onAdd}
         >
-          <ArrowForwardIosIcon sx={{ color: "action.positive" }} />
+          <ArrowForwardIosIcon sx={{ color: 'action.positive' }} />
         </IconButton>
       </Stack>
     </ListItem>

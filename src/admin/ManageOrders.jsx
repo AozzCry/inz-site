@@ -1,35 +1,36 @@
-import { useState } from "react";
-import { useQuery } from "react-query";
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
+import SearchIcon from '@mui/icons-material/Search';
 import {
-  Container,
   Box,
+  Container,
   InputBase,
-  useTheme,
-  TextField,
-  useMediaQuery,
   Stack,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+  TextField,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 
-import LoadingPage from "../main/LoadingPage";
-import ErrorPage from "../main/ErrorPage";
+import ErrorPage from '../main/ErrorPage';
+import LoadingPage from '../main/LoadingPage';
 
-import ManageOrder from "./ManageOrder";
+import ManageOrder from './ManageOrder';
 
-import { StyledSearch } from "../components/styled";
+import { StyledSearch } from '../components/styled';
 
 export default function ManageOrders() {
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up('sm'));
   const location = useLocation();
 
   const [dateFrom, setdateFrom] = useState(null);
   const [dateTo, setdateTo] = useState(null);
 
   const [search, setSearch] = useState(
-    location.state ? location.state.search : ""
+    location.state ? location.state.search : ''
   );
 
   const {
@@ -39,27 +40,29 @@ export default function ManageOrders() {
     data: orders,
     refetch,
   } = useQuery({
-    queryKey: ["order/getAll"],
+    queryKey: ['order/getAll'],
   });
 
-  if (isLoading) return <LoadingPage what={"orders"} />;
+  if (isLoading) return <LoadingPage what={'orders'} />;
   if (isError) return <ErrorPage message={error.message} />;
   return (
     <Container disableGutters sx={{ pt: 1, width: 1 }}>
       <Stack
-        direction={matchesSm ? "row" : "column"}
-        sx={{ bgcolor: "primary.dark", borderRadius: 4 }}
+        direction={matchesSm ? 'row' : 'column'}
+        sx={{ bgcolor: 'primary.dark', borderRadius: 4 }}
       >
         <Box sx={{ width: 1, mt: 0.5 }}>
-          <StyledSearch>
-            <InputBase
-              sx={{ width: 1, input: { color: "text.contrast" } }}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Find order..."
-            />
-            <SearchIcon />
-          </StyledSearch>
+          <Tooltip title="Search orders by email, status or order ID.">
+            <StyledSearch>
+              <InputBase
+                sx={{ width: 1, input: { color: 'text.contrast' } }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Find order..."
+              />
+              <SearchIcon />
+            </StyledSearch>
+          </Tooltip>
         </Box>
         <Stack direction="row" sx={{ my: 0.5 }}>
           <TextField

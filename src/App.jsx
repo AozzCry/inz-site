@@ -31,6 +31,7 @@ import Context from './utils/Context.jsx';
 
 import ConfirmDialog from './components/ConfirmDialog.jsx';
 import Notification from './components/Notification.jsx';
+import Faq from './main/Faq.jsx';
 
 export default function App() {
   const { userData, theme } = useContext(Context);
@@ -46,6 +47,7 @@ export default function App() {
             <Navbar />
             <Routes>
               <Route path="" element={<Home />} />
+              <Route path="faq" element={<Faq />} />
               {theme ? (
                 <>
                   {userData.username && !userData.isAdmin && (

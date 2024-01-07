@@ -1,21 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext, useState } from 'react';
 
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 import {
+  Button,
   ListItem,
   ListItemText,
-  Button,
-  useTheme,
   Menu,
   MenuItem,
-} from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Context from "../utils/Context";
-import { banUserById, deleteDocument } from "../utils/functions";
+  useTheme,
+} from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Context from '../utils/Context';
+import { banUserById, deleteDocument } from '../utils/functions';
 
 export default function ManageUser({ user, refetch }) {
-  const matches = useMediaQuery(useTheme().breakpoints.up("md"));
+  const matches = useMediaQuery(useTheme().breakpoints.up('md'));
 
   const { notify, confirm } = useContext(Context);
 
@@ -26,61 +26,61 @@ export default function ManageUser({ user, refetch }) {
     <ListItem
       sx={{
         border: 1,
-        borderRadius: "15px",
-        bgcolor: "secondary.dark",
+        borderRadius: '15px',
+        bgcolor: 'secondary.dark',
         my: 1,
       }}
       key={user._id}
     >
       <ListItemText
-        primaryTypographyProps={{ color: "text.primary" }}
+        primaryTypographyProps={{ color: 'text.primary' }}
         primary={user.username}
         secondary={user.email}
       />
       <ListItemText
-        primaryTypographyProps={{ color: "text.primary" }}
-        primary={user.isBanned && "Banned"}
-        secondary={user.isAdmin && "Admin"}
+        primaryTypographyProps={{ color: 'text.primary' }}
+        primary={user.isBanned && 'Banned'}
+        secondary={user.isAdmin && 'Admin'}
       />
       {matches ? (
         <>
           <Button
             title="View user orders"
             component={NavLink}
-            to={"../orders"}
+            to={'../orders'}
             state={{ search: user.email }}
             sx={{ mr: 1 }}
             variant="outlined"
             color="info"
-            edge={"end"}
+            edge={'end'}
           >
             Orders
           </Button>
           <Button
-            title="Ban user"
+            title={user.isBanned ? 'Unban user' : 'Ban user'}
             sx={{ mr: 1 }}
             variant="outlined"
-            edge={"end"}
+            edge={'end'}
             color="warning"
             onClick={() =>
               confirm(
-                "Do you want to " +
-                  (user.isBanned ? "unban" : "ban") +
-                  " this user?",
+                'Do you want to ' +
+                  (user.isBanned ? 'unban' : 'ban') +
+                  ' this user?',
                 () => banUserById(user._id, refetch, notify)
               )
             }
           >
-            {user.isBanned ? "Unban" : "Ban"}
+            {user.isBanned ? 'Unban' : 'Ban'}
           </Button>
           <Button
             title="Delete user"
             variant="outlined"
-            edge={"end"}
+            edge={'end'}
             color="error"
             onClick={() =>
-              confirm("Do you want to delete this user?", () =>
-                deleteDocument("user", user._id, refetch, notify)
+              confirm('Do you want to delete this user?', () =>
+                deleteDocument('user', user._id, refetch, notify)
               )
             }
           >
@@ -100,7 +100,7 @@ export default function ManageUser({ user, refetch }) {
           <Menu
             sx={{
               ul: {
-                backgroundColor: "secondary.dark",
+                backgroundColor: 'secondary.dark',
                 p: 0,
               },
             }}
@@ -111,20 +111,20 @@ export default function ManageUser({ user, refetch }) {
             <MenuItem
               title="View user orders"
               component={NavLink}
-              to={"../orders"}
+              to={'../orders'}
               state={{ search: user.email }}
               variant="contained"
-              edge={"end"}
+              edge={'end'}
             >
               Orders
             </MenuItem>
             <MenuItem
               title="Ban user"
               variant="contained"
-              edge={"end"}
+              edge={'end'}
               onClick={() =>
                 confirm(
-                  "Do you want to ban this user?",
+                  'Do you want to ban this user?',
                   banUserById(user._id, refetch, notify)
                 )
               }
@@ -132,12 +132,12 @@ export default function ManageUser({ user, refetch }) {
               Ban
             </MenuItem>
             <MenuItem
-              title="Delete user"
+              title="Delete user from database"
               variant="contained"
-              edge={"end"}
+              edge={'end'}
               onClick={() =>
-                confirm("Do you want to delete this user?", () =>
-                  deleteDocument("/user/" + user._id, refetch, notify)
+                confirm('Do you want to delete this user?', () =>
+                  deleteDocument('/user/' + user._id, refetch, notify)
                 )
               }
             >
