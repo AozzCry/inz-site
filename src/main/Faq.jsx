@@ -43,7 +43,7 @@ To add a product review on the site, you must have an account on the site and lo
 To ask a question about a product on the site, you must have an account on the site and log in to it. Then find the product you want to ask about and click on the ask a question button located under the product description on the product detail page. Fill out the question form, providing content of the question. Click on the submit button and wait for an answer from the seller or other users. You can also browse the previously asked questions and answers on the product page.`;
 
   return (
-    <Stack direction={'row'}>
+    <Stack direction={'row'} sx={{ m: '20px' }}>
       <Typography sx={{ mx: 1 }} style={{ whiteSpace: 'pre-line' }}>
         {faqTextPl}
       </Typography>
