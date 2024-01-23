@@ -1,33 +1,33 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import { useQuery } from "react-query";
+import { useQuery } from 'react-query';
 
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 import {
-  Typography,
   Box,
-  Container,
-  Stack,
   Button,
-  List,
   Card,
-  CardContent,
   CardActions,
+  CardContent,
+  Container,
+  List,
+  Stack,
+  Typography,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
-import ClearAllIcon from "@mui/icons-material/ClearAll";
+} from '@mui/material';
 
-import Context from "../utils/Context";
-import CartProduct from "./CartProduct";
-import LoadingPage from "../main/LoadingPage";
-import ErrorPage from "../main/ErrorPage";
-import RecoProduct from "./RecoProduct";
+import ErrorPage from '../main/ErrorPage';
+import LoadingPage from '../main/LoadingPage';
+import Context from '../utils/Context';
+import CartProduct from './CartProduct';
+import RecoProduct from './RecoProduct';
 
 export default function Cart() {
-  const matchesSm = useMediaQuery(useTheme().breakpoints.up("sm"));
-  const matchesMd = useMediaQuery(useTheme().breakpoints.up("md"));
+  const matchesSm = useMediaQuery(useTheme().breakpoints.up('sm'));
+  const matchesMd = useMediaQuery(useTheme().breakpoints.up('md'));
 
   const { cart, setCart, userData, confirm } = useContext(Context);
   const {
@@ -37,26 +37,26 @@ export default function Cart() {
     data: cartRecommendations,
   } = useQuery({
     queryKey: [
-      "/product/cart",
-      { category: cart.map((ci) => ci.productCategories).join(",") },
+      '/product/cart',
+      { category: cart.map((ci) => ci.productCategories).join(',') },
     ],
   });
   return (
     <Container
       disableGutters={!matchesSm ? true : false}
-      sx={{ pt: 1, bgcolor: "primary.dark" }}
+      sx={{ pt: 1, bgcolor: 'primary.dark' }}
     >
       <Stack direction="row">
         <Button
           sx={{
             mx: 1,
-            borderColor: "action.delete",
-            color: "action.delete",
+            borderColor: 'action.delete',
+            color: 'action.delete',
           }}
           title="Clear cart"
           variant="outlined"
           onClick={() =>
-            confirm("Do you want to clear your cart?", () => setCart([]))
+            confirm('Do you want to clear your cart?', () => setCart([]))
           }
         >
           Clear cart
@@ -66,7 +66,7 @@ export default function Cart() {
           Cart({cart.reduce((sum, ci) => sum + ci.count, 0)})
         </Typography>
       </Stack>
-      <Stack direction={matchesMd ? "row" : "column"}>
+      <Stack direction={matchesMd ? 'row' : 'column'}>
         <List sx={{ width: 1 }}>
           {cart &&
             cart.map((cartItem, index) => {
@@ -74,7 +74,7 @@ export default function Cart() {
             })}
         </List>
         <Box sx={{ width: 1 }}>
-          <Card sx={{ bgcolor: "secondary.dark", m: 1 }}>
+          <Card sx={{ bgcolor: 'secondary.dark', m: 1 }}>
             <CardContent>
               <Typography sx={{ fontSize: 14 }} gutterBottom>
                 Sum of order:
@@ -82,7 +82,7 @@ export default function Cart() {
               <Typography variant="h5" component="div">
                 {cart
                   .reduce((sum, ci) => sum + ci.productPrice * ci.count, 0)
-                  .toFixed(2) + " PLN"}
+                  .toFixed(2) + ' PLN'}
               </Typography>
             </CardContent>
             <CardActions>
@@ -90,17 +90,25 @@ export default function Cart() {
                 <Button
                   title="Order"
                   fullWidth
-                  sx={{ bgcolor: "action.positive" }}
-                  to={cart.length > 0 ? "../checkout" : "#"}
+                  sx={{ bgcolor: 'action.positive' }}
+                  to={cart.length > 0 ? '../checkout' : '#'}
                   component={NavLink}
-                  variant={"contained"}
+                  variant={'contained'}
                   disabled={cart.length > 0 && userData.email ? false : true}
                 >
                   Order
                 </Button>
               ) : (
-                <Typography variant="body1" sx={{ m: 1 }}>
-                  You must be logged in to order.
+                <Typography variant="h4" sx={{ m: 1, color: 'primary.light' }}>
+                  You must be logged in to order.<br/>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      mr: 1, w: "100%"
+                    }}
+                  >
+                    Log in
+                  </Button>
                 </Typography>
               )}
             </CardActions>
@@ -120,9 +128,9 @@ export default function Cart() {
             disableGutters
             sx={{
               pl: 1,
-              display: "flex",
-              flexWrap: "wrap",
-              bgcolor: "primary.dark",
+              display: 'flex',
+              flexWrap: 'wrap',
+              bgcolor: 'primary.dark',
             }}
           >
             {cartRecommendations

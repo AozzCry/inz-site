@@ -1,19 +1,19 @@
 import { useContext } from "react";
 import Context from "../utils/Context";
 
-import {
-  Rating,
-  Typography,
-  Stack,
-  Chip,
-  useTheme,
-  useMediaQuery,
-  Button,
-} from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import DoneIcon from "@mui/icons-material/Done";
 import ThumbDwonAltIcon from "@mui/icons-material/ThumbDownAlt";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import {
+  Button,
+  Chip,
+  Rating,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 
 import {
   banUserById,
@@ -107,7 +107,7 @@ export default function Review({ review, refetch, user }) {
       <Stack direction="row">
         <Chip
           clickable={true}
-          sx={{ width: 0.5 }}
+          sx={{ width: 0.5, maxWidth: "100px", bgcolor: review.usersThatLiked.includes(user.userId) ? 'lightgreen': undefined }}
           onClick={() =>
             reactionSubmit("/review/like", review._id, refetch, notify)
           }
@@ -118,7 +118,7 @@ export default function Review({ review, refetch, user }) {
         />
         <Chip
           clickable={true}
-          sx={{ width: 0.5, ml: 1 }}
+          sx={{ width: 0.5, ml: "5px", maxWidth: "100px", bgcolor: review.usersThatDisliked.includes(user.userId) ? 'darkred': undefined }}
           onClick={() =>
             reactionSubmit("/review/dislike", review._id, refetch, notify)
           }

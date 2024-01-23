@@ -1,8 +1,9 @@
-import fetch from "../hooks/fetchHooks";
-
+import AddIcon from '@mui/icons-material/Add';
 import { useContext, useState } from "react";
+import fetch from "../hooks/fetchHooks";
 import Context from "../utils/Context";
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
@@ -13,7 +14,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { StyledInput } from "../components/styled";
 
@@ -47,7 +47,7 @@ export default function AddReview({ productId, refetch }) {
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Add review</Typography>
+        <Typography>Add review</Typography><AddIcon sx={{ml: "5px"}}/>
       </AccordionSummary>
       <AccordionDetails
         sx={{

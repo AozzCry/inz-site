@@ -1,6 +1,6 @@
+import StarIcon from '@mui/icons-material/Star';
 import { useContext, useRef } from 'react';
 import { useQuery } from 'react-query';
-
 import { Link, useNavigate } from 'react-router-dom';
 
 import Context from '../utils/Context';
@@ -173,6 +173,7 @@ export default function ProductDetails() {
                             data.product.countOfReviews
                           }
                           precision={0.5}
+                          emptyIcon={<StarIcon fontSize="inherit" />}
                         />
                         <Typography textAlign={'center'} variant="body1">
                           ({data.product.countOfReviews})

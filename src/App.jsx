@@ -80,7 +80,7 @@ export default function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Box>
-          <Footer />
+          {userData.username && !userData.isAdmin && <Footer />}
         </Container>
       </BrowserRouter>
       <ConfirmDialog />

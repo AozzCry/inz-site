@@ -94,7 +94,7 @@ export default function ManageOrders() {
                 o.status.includes(search.trim().toLowerCase()) ||
                 o._id.includes(search.trim().toLowerCase())
               : true
-          )
+          ).sort((o, b) => o.orderDate < b.orderDate)
           .filter((o) => (dateFrom ? o.orderDate >= dateFrom : true))
           .filter((o) => (dateTo ? o.orderDate <= dateTo : true))
           .map((order) => (

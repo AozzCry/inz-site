@@ -41,7 +41,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { notify, cart, userData, refetchUserData, setSearch } =
+  const { notify, cart, userData, refetchUserData, setSearch, setTheme } =
     useContext(Context);
 
   const [openLogIn, setOpenLogIn] = useState(false);
@@ -281,6 +281,14 @@ export default function Navbar() {
                   )}
                 </>
               )}
+              <Button
+                sx={{ ml: 1,lineHeight:"16px" }}
+                variant="outlined"
+                size="small"
+                onClick={() => setTheme((prev) => !prev)}
+              >
+                Change <br/>theme
+              </Button>
             </>
           </Box>
         </Toolbar>
